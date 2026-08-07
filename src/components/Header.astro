@@ -20,7 +20,7 @@ const navLinks = [
 				class="h-12 w-auto"
 				aria-hidden="true"
 			/>
-			<span class="text-2xl tracking-wide">
+			<span class="text-xl tracking-wide">
 				Aeria <span class="text-accent">Trois</span>
 			</span>
 		</a>
@@ -31,7 +31,7 @@ const navLinks = [
 					navLinks.map((link) => (
 						<a
 							href={link.href}
-							class="text-sm text-muted transition-colors hover:text-accent"
+							class="text-sm uppercase text-muted transition-colors hover:text-accent"
 						>
 							{link.label}
 						</a>
@@ -63,36 +63,36 @@ const navLinks = [
 >
 	<div class="mobile-menu__panel min-h-dvh border-t border-border-subtle bg-base pt-20 animate-duration-500" data-mobile-menu-panel>
 		<div class="mx-auto flex min-h-[calc(100dvh-5rem)] max-w-7xl flex-col px-6 pb-10">
-			<nav aria-label="Menú móvil">
-				<ul>
-					{
-						navLinks.map((link, index) => (
-							<li class="border-b border-border-subtle py-6">
-								<a href={link.href} class="group flex items-baseline gap-5" data-menu-link>
-									<span class="text-xs tracking-[0.3em] text-accent">
-										{String(index + 1).padStart(2, '0')}
-									</span>
-									<span class="text-4xl font-light leading-none text-foreground transition-colors group-hover:text-accent">
-										{link.label}
-									</span>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</nav>
+			<div class="flex flex-1 flex-col items-center justify-center gap-10">
+				<nav class="w-full max-w-md" aria-label="Menú móvil">
+					<ul>
+						{
+							navLinks.map((link, index) => (
+								<li class="border-b border-border-subtle py-6">
+									<a href={link.href} class="group flex items-baseline gap-5" data-menu-link>
+										<span class="text-xs tracking-[0.3em] text-accent">
+											{String(index + 1).padStart(2, '0')}
+										</span>
+										<span class="text-4xl font-light capitalize leading-none text-foreground transition-colors group-hover:text-accent">
+											{link.label}
+										</span>
+									</a>
+								</li>
+							))
+						}
+					</ul>
+				</nav>
 
-			<div class="mt-10">
 				<a
 					href="#contacto"
-					class="inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-base font-medium text-[#050505] transition-colors hover:bg-accent-muted"
+					class="inline-flex w-full max-w-md items-center justify-center rounded-full bg-accent px-6 py-3 text-base font-medium text-[#050505] transition-colors hover:bg-accent-muted"
 					data-menu-link
 				>
 					Contacto
 				</a>
 			</div>
 
-			<p class="mt-auto pt-10 text-xs uppercase tracking-[0.24em] text-subtle">
+			<p class="pt-10 text-xs uppercase tracking-[0.24em] text-subtle">
 				Tela y aro aéreo · Madrid
 			</p>
 		</div>
