@@ -1,0 +1,28 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'> {
+	label?: string;
+	class?: string;
+}
+
+const { label = 'Abrir menú', class: className = '', ...attrs } = Astro.props;
+---
+
+<button
+	type="button"
+	class:list={['group relative flex h-10 w-10 items-center justify-center', className]}
+	aria-label={label}
+	aria-expanded="false"
+	{...attrs}
+>
+	<span class="flex flex-col gap-1.5 group-aria-expanded:hidden" aria-hidden="true">
+		<span class="block h-px w-6 bg-foreground"></span>
+		<span class="block h-px w-6 bg-foreground"></span>
+		<span class="block h-px w-6 bg-foreground"></span>
+	</span>
+	<span class="hidden group-aria-expanded:block" aria-hidden="true">
+		<span class="absolute left-1/2 top-1/2 block h-px w-7 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-foreground"></span>
+		<span class="absolute left-1/2 top-1/2 block h-px w-7 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-foreground"></span>
+	</span>
+</button>

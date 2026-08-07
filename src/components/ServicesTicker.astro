@@ -1,0 +1,25 @@
+---
+const services = [
+	'Espectáculos aéreos',
+	'Coreografías personalizadas',
+	'Eventos corporativos',
+	'Bodas y celebraciones',
+	'Festivales',
+	'Formación profesional',
+];
+---
+
+<section id="servicios" class="border-y border-border-subtle bg-base-soft py-4" aria-label="Servicios">
+	<div class="overflow-hidden">
+		<ul class="flex animate-none gap-12 whitespace-nowrap px-6 text-sm uppercase tracking-widest text-subtle md:justify-center">
+			{
+				services.map((service) => (
+					<li class="flex shrink-0 items-center gap-12">
+						<span>{service}</span>
+						<span class="text-accent" aria-hidden="true">✦</span>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>

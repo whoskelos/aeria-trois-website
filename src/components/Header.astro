@@ -1,0 +1,162 @@
+---
+import MenuButton from './MenuButton.astro';
+import logo from '../assets/logo.webp';
+
+const navLinks = [
+	{ label: 'Inicio', href: '/' },
+	{ label: 'Experiencias', href: '#experiencias' },
+	{ label: 'Nosotros', href: '#nosotros' },
+];
+---
+
+<header class="fixed inset-x-0 top-0 z-50 border-b border-border-subtle bg-base/80 backdrop-blur-md">
+	<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+		<a href="/" class="flex shrink-0 items-center gap-3 text-foreground">
+			<img
+				src={logo.src}
+				alt=""
+				width={logo.width}
+				height={logo.height}
+				class="h-12 w-auto"
+				aria-hidden="true"
+			/>
+			<span class="text-2xl tracking-wide">
+				Aeria <span class="text-accent">Trois</span>
+			</span>
+		</a>
+
+		<div class="flex items-center gap-8">
+			<nav class="hidden items-center gap-8 md:flex" aria-label="Principal">
+				{
+					navLinks.map((link) => (
+						<a
+							href={link.href}
+							class="text-sm text-muted transition-colors hover:text-accent"
+						>
+							{link.label}
+						</a>
+					))
+				}
+			</nav>
+
+			<a
+				href="#contacto"
+				class="hidden rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-accent hover:text-accent md:inline-flex"
+			>
+				Contacto
+			</a>
+
+			<MenuButton
+				class="md:hidden"
+				aria-controls="mobile-menu"
+				data-menu-toggle
+			/>
+		</div>
+	</div>
+</header>
+
+<div
+	id="mobile-menu"
+	class="mobile-menu fixed inset-0 z-40 overflow-hidden md:hidden"
+	data-mobile-menu
+	aria-hidden="true"
+>
+	<div class="mobile-menu__panel min-h-dvh border-t border-border-subtle bg-base pt-20 animate-duration-500" data-mobile-menu-panel>
+		<div class="mx-auto flex min-h-[calc(100dvh-5rem)] max-w-7xl flex-col px-6 pb-10">
+			<nav aria-label="Menú móvil">
+				<ul>
+					{
+						navLinks.map((link, index) => (
+							<li class="border-b border-border-subtle py-6">
+								<a href={link.href} class="group flex items-baseline gap-5" data-menu-link>
+									<span class="text-xs tracking-[0.3em] text-accent">
+										{String(index + 1).padStart(2, '0')}
+									</span>
+									<span class="text-4xl font-light leading-none text-foreground transition-colors group-hover:text-accent">
+										{link.label}
+									</span>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+
+			<div class="mt-10">
+				<a
+					href="#contacto"
+					class="inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-base font-medium text-[#050505] transition-colors hover:bg-accent-muted"
+					data-menu-link
+				>
+					Contacto
+				</a>
+			</div>
+
+			<p class="mt-auto pt-10 text-xs uppercase tracking-[0.24em] text-subtle">
+				Tela y aro aéreo · Madrid
+			</p>
+		</div>
+	</div>
+</div>
+
+<style>
+	.mobile-menu {
+		max-height: 0;
+		pointer-events: none;
+		transition: max-height 500ms ease-out;
+	}
+
+	.mobile-menu[data-open='true'] {
+		max-height: 100dvh;
+		pointer-events: auto;
+	}
+
+	.mobile-menu__panel {
+		min-height: 100dvh;
+		opacity: 0;
+		transform: translateY(-100%);
+		transition: transform 500ms ease-out;
+	}
+
+	.mobile-menu[data-open='true'] .mobile-menu__panel {
+		transform: translateY(0);
+	}
+</style>
+
+<script>
+	const mobileMenu = document.querySelector('[data-mobile-menu]');
+	const mobileMenuPanel = document.querySelector('[data-mobile-menu-panel]');
+	const toggleButton = document.querySelector('[data-menu-toggle]');
+	const menuLinks = document.querySelectorAll('[data-menu-link]');
+	const fadeIn = 'animate-fade-in';
+	const fadeOut = 'animate-fade-out';
+
+	const replayAnimation = (element: Element, animationClass: string) => {
+		element.classList.remove(fadeIn, fadeOut);
+		void (element as HTMLElement).offsetWidth;
+		element.classList.add(animationClass);
+	};
+
+	const setMenuOpen = (open: boolean) => {
+		if (!mobileMenu || !toggleButton || !mobileMenuPanel) return;
+
+		toggleButton.setAttribute('aria-expanded', String(open));
+		toggleButton.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+		mobileMenu.setAttribute('data-open', String(open));
+		mobileMenu.setAttribute('aria-hidden', String(!open));
+		document.body.classList.toggle('overflow-hidden', open);
+
+		replayAnimation(mobileMenuPanel, open ? fadeIn : fadeOut);
+	};
+
+	toggleButton?.addEventListener('click', () => {
+		setMenuOpen(toggleButton.getAttribute('aria-expanded') !== 'true');
+	});
+	menuLinks.forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
+
+	window.matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
+		if (event.matches) {
+			setMenuOpen(false);
+		}
+	});
+</script>
