@@ -1,5 +1,21 @@
-<section class="relative flex min-h-screen items-end px-6 pb-24 pt-32">
-	<div class="mx-auto w-full max-w-7xl">
+---
+import introVideo from '../assets/intro.webm';
+---
+
+<section class="relative flex min-h-screen items-end overflow-hidden px-6 pb-24 pt-32">
+	<div class="pointer-events-none absolute inset-0" aria-hidden="true">
+		<video
+			class="h-full w-full object-cover"
+			autoplay
+			muted
+			loop
+			playsinline
+			src={introVideo}
+		/>
+		<div class="absolute inset-0 bg-gradient-to-t from-base via-base/70 to-base/20"></div>
+	</div>
+
+	<div class="relative z-10 mx-auto w-full max-w-7xl">
 		<p class="mb-4 text-sm uppercase tracking-[0.3em] text-subtle">Espectáculos aéreos · Madrid</p>
 
 		<h1 class="max-w-4xl text-4xl font-light leading-tight text-foreground md:text-6xl lg:text-7xl">
