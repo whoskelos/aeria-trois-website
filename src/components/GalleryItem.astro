@@ -1,0 +1,80 @@
+---
+interface Props {
+	category: string;
+	title: string;
+	meta: string;
+	description: string;
+	videoSrc: string;
+	index: number;
+}
+
+const { category, title, meta, description, videoSrc, index } = Astro.props;
+---
+
+<button
+	type="button"
+	class="gallery-item group relative aspect-[3/4] w-full overflow-hidden border-0 bg-base p-0 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+	data-gallery-item
+	data-index={index}
+	data-video-src={videoSrc}
+	data-category={category}
+	data-title={title}
+	data-meta={meta}
+	data-description={description}
+	aria-label={`Abrir video: ${title}`}
+>
+	<video
+		class="gallery-item__video absolute inset-0 block h-full w-full object-cover"
+		muted
+		loop
+		playsinline
+		preload="metadata"
+		src={videoSrc}
+	></video>
+
+	<div
+		class="pointer-events-none absolute inset-0 bg-gradient-to-t from-base via-base/20 to-transparent"
+		aria-hidden="true"
+	></div>
+
+	<p
+		class="absolute left-4 top-4 text-[0.625rem] tracking-[0.24em] text-foreground/80 uppercase sm:left-5 sm:top-5 sm:text-xs"
+	>
+		{category}
+	</p>
+
+	<div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+		<div class="flex items-center gap-3">
+			<span
+				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/70 text-accent sm:h-10 sm:w-10"
+				aria-hidden="true"
+			>
+				<svg class="ml-0.5 h-3 w-3 fill-current sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24">
+					<path d="M8 5v14l11-7z"></path>
+				</svg>
+			</span>
+			<h3 class="text-xl leading-tight text-foreground sm:text-2xl">{title}</h3>
+		</div>
+		<p class="mt-2 text-xs text-muted-soft sm:text-sm">{meta}</p>
+	</div>
+</button>
+
+<style>
+	.gallery-item__video {
+		transform: translateZ(0) scale(1.01);
+		transform-origin: center;
+		transition: opacity 500ms, transform 500ms;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.gallery-item__video {
+			opacity: 0.85;
+		}
+
+		.gallery-item:hover .gallery-item__video,
+		.gallery-item:focus-visible .gallery-item__video {
+			opacity: 1;
+			transform: translateZ(0) scale(1.05);
+		}
+	}
+</style>

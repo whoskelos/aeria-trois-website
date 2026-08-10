@@ -1,0 +1,270 @@
+---
+import showcaseVideo1 from '../assets/showcase/1.webm';
+import showcaseVideo2 from '../assets/showcase/2.webm';
+import showcaseVideo3 from '../assets/showcase/3.webm';
+import GalleryItem from './GalleryItem.astro';
+
+const galleryItems = [
+	{
+		category: 'Telas aéreas',
+		title: 'Centenera Rock',
+		meta: 'Centenera, Guadalajara · Festival',
+		description:
+			'Número aéreo sobre estructura autoportante en el escenario principal del festival, integrado con el directo de las bandas.',
+		video: showcaseVideo1,
+	},
+	{
+		category: 'Aro aéreo',
+		title: 'Jowke Club',
+		meta: 'Madrid · Evento privado',
+		description:
+			'Actuación de aro aéreo en espacio interior con iluminación ambiental y coreografía adaptada al salón.',
+		video: showcaseVideo2,
+	},
+	{
+		category: 'Acrobacias aéreas',
+		title: 'Gala corporativa',
+		meta: 'Barcelona · Empresa',
+		description:
+			'Secuencia combinada de telas y acrobacias aéreas para clausura de evento corporativo de alto impacto visual.',
+		video: showcaseVideo3,
+	},
+];
+---
+
+<section id="experiencias" class="border-t border-border-subtle px-6 py-16 sm:py-24">
+	<div class="mx-auto max-w-7xl">
+		<div class="mb-10 flex flex-col gap-6 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
+			<div class="max-w-xl">
+				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase">Galería</p>
+				<h2 class="text-3xl font-light text-foreground md:text-5xl">Experiencias realizadas</h2>
+			</div>
+			<p class="max-w-sm text-sm leading-relaxed text-muted lg:text-right">
+				Pasa el cursor para ver el movimiento y haz clic para abrir el video completo con sonido.
+			</p>
+		</div>
+
+		<div class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+			{
+				galleryItems.map((item, index) => (
+					<GalleryItem
+						category={item.category}
+						title={item.title}
+						meta={item.meta}
+						description={item.description}
+						videoSrc={item.video}
+						index={index}
+					/>
+				))
+			}
+		</div>
+
+		<div class="mt-10 flex justify-center sm:mt-14">
+			<a
+				href="/experiencias"
+				class="inline-flex min-h-11 items-center justify-center border border-border px-8 py-3 text-sm tracking-[0.12em] text-muted-soft uppercase transition-colors hover:border-accent hover:text-accent"
+			>
+				Ver todas las experiencias
+			</a>
+		</div>
+	</div>
+</section>
+
+<div
+	id="gallery-modal"
+	class="gallery-modal fixed inset-0 z-[60] hidden p-0 lg:items-center lg:justify-center lg:p-6"
+	aria-hidden="true"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="gallery-modal-title"
+>
+	<div class="gallery-modal__backdrop absolute inset-0 bg-base/90 backdrop-blur-sm lg:bg-base/90" data-gallery-close></div>
+
+	<div
+		class="gallery-modal__panel relative z-10 flex h-dvh w-full flex-col overflow-hidden bg-base lg:h-auto lg:max-h-[min(90vh,52rem)] lg:max-w-5xl lg:flex-row"
+	>
+		<button
+			type="button"
+			class="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-border-subtle bg-base/80 text-foreground transition-colors hover:border-accent hover:text-accent lg:right-4 lg:top-4"
+			data-gallery-close
+			aria-label="Cerrar"
+		>
+			<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+				<path d="M6 6l12 12M18 6L6 18"></path>
+			</svg>
+		</button>
+
+		<div class="flex min-h-0 flex-1 items-center justify-center bg-black lg:shrink-0 lg:flex-none lg:w-[min(42%,20rem)]">
+			<video
+				id="gallery-modal-video"
+				class="gallery-modal__video h-full max-h-full w-full object-contain lg:min-h-full lg:object-cover"
+				controls
+				playsinline
+				preload="metadata"
+			></video>
+		</div>
+
+		<div class="flex shrink-0 flex-col justify-end overflow-y-auto px-6 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-8 lg:flex-1 lg:justify-center lg:px-10 lg:py-10">
+			<p
+				id="gallery-modal-category"
+				class="text-xs tracking-[0.24em] text-subtle uppercase"
+			></p>
+			<h3 id="gallery-modal-title" class="mt-3 text-3xl font-light text-foreground sm:text-4xl"></h3>
+			<p id="gallery-modal-meta" class="mt-2 text-sm text-accent"></p>
+			<p id="gallery-modal-description" class="mt-6 text-sm leading-relaxed text-muted-soft sm:text-base"></p>
+
+			<button
+				type="button"
+				id="gallery-modal-mute"
+				class="mt-8 inline-flex w-fit items-center gap-3 border border-border px-5 py-3 text-xs tracking-[0.18em] text-foreground uppercase transition-colors hover:border-accent hover:text-accent"
+			>
+				<svg
+					id="gallery-modal-mute-icon"
+					class="h-4 w-4"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					aria-hidden="true"
+				>
+					<path d="M11 5L6 9H3v6h3l5 4V5z"></path>
+					<path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+				</svg>
+				<span id="gallery-modal-mute-label">Silenciar</span>
+			</button>
+		</div>
+	</div>
+</div>
+
+<style>
+	.gallery-modal[data-open='true'] {
+		display: flex;
+	}
+
+	@media (max-width: 1023px) {
+		.gallery-modal[data-open='true'] .gallery-modal__backdrop {
+			background-color: var(--color-base);
+			backdrop-filter: none;
+		}
+	}
+</style>
+
+<script>
+	const modal = document.getElementById('gallery-modal');
+	const modalVideo = document.getElementById('gallery-modal-video') as HTMLVideoElement | null;
+	const modalCategory = document.getElementById('gallery-modal-category');
+	const modalTitle = document.getElementById('gallery-modal-title');
+	const modalMeta = document.getElementById('gallery-modal-meta');
+	const modalDescription = document.getElementById('gallery-modal-description');
+	const muteButton = document.getElementById('gallery-modal-mute');
+	const muteLabel = document.getElementById('gallery-modal-mute-label');
+	const muteIcon = document.getElementById('gallery-modal-mute-icon');
+	const galleryItems = document.querySelectorAll<HTMLButtonElement>('[data-gallery-item]');
+	const closeTriggers = document.querySelectorAll('[data-gallery-close]');
+
+	const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+	const updateMuteUi = (muted: boolean) => {
+		if (!muteLabel || !muteIcon) return;
+
+		muteLabel.textContent = muted ? 'Activar sonido' : 'Silenciar';
+
+		muteIcon.innerHTML = muted
+			? '<path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M23 9l-6 6M17 9l6 6"></path>'
+			: '<path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"></path>';
+	};
+
+	const pausePreviewVideos = () => {
+		galleryItems.forEach((item) => {
+			const preview = item.querySelector('video');
+			if (!preview) return;
+			preview.pause();
+			preview.currentTime = 0;
+		});
+	};
+
+	const openModal = (item: HTMLButtonElement) => {
+		if (!modal || !modalVideo) return;
+
+		const { videoSrc, category, title, meta, description } = item.dataset;
+		if (!videoSrc || !category || !title || !meta || !description) return;
+
+		modalCategory && (modalCategory.textContent = category);
+		modalTitle && (modalTitle.textContent = title);
+		modalMeta && (modalMeta.textContent = meta);
+		modalDescription && (modalDescription.textContent = description);
+
+		modalVideo.src = videoSrc;
+		modalVideo.muted = false;
+		updateMuteUi(false);
+
+		modal.dataset.open = 'true';
+		modal.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('overflow-hidden');
+
+		pausePreviewVideos();
+		void modalVideo.play().catch(() => {
+			modalVideo.muted = true;
+			updateMuteUi(true);
+			void modalVideo.play();
+		});
+	};
+
+	const closeModal = () => {
+		if (!modal || !modalVideo) return;
+
+		modal.dataset.open = 'false';
+		modal.setAttribute('aria-hidden', 'true');
+		document.body.classList.remove('overflow-hidden');
+
+		modalVideo.pause();
+		modalVideo.removeAttribute('src');
+		modalVideo.load();
+	};
+
+	galleryItems.forEach((item) => {
+		const preview = item.querySelector('video');
+
+		item.addEventListener('click', () => openModal(item));
+
+		if (!preview) return;
+
+		item.addEventListener('mouseenter', () => {
+			if (!canHover.matches) return;
+			void preview.play();
+		});
+
+		item.addEventListener('mouseleave', () => {
+			if (!canHover.matches) return;
+			preview.pause();
+			preview.currentTime = 0;
+		});
+
+		item.addEventListener('focus', () => {
+			if (!canHover.matches) return;
+			void preview.play();
+		});
+
+		item.addEventListener('blur', () => {
+			if (!canHover.matches) return;
+			preview.pause();
+			preview.currentTime = 0;
+		});
+	});
+
+	closeTriggers.forEach((trigger) => {
+		trigger.addEventListener('click', closeModal);
+	});
+
+	muteButton?.addEventListener('click', () => {
+		if (!modalVideo) return;
+		modalVideo.muted = !modalVideo.muted;
+		updateMuteUi(modalVideo.muted);
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && modal?.dataset.open === 'true') {
+			closeModal();
+		}
+	});
+</script>
