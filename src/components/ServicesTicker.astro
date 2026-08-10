@@ -1,25 +1,45 @@
 ---
-const services = [
-	'Espectáculos aéreos',
-	'Coreografías personalizadas',
-	'Eventos corporativos',
-	'Bodas y celebraciones',
-	'Festivales',
-	'Formación profesional',
-];
+const services = ['Aro aéreo', 'Telas aérea', 'Acrobacia', 'Clases'];
+
+const listClass =
+	'flex shrink-0 items-center gap-[clamp(1.5rem,3vw,4rem)] px-[clamp(1rem,3vw,2.5rem)] text-[clamp(1.25rem,0.875rem+3.5vw,4rem)] leading-none tracking-[clamp(0.08em,0.06em+0.08vw,0.12em)] whitespace-nowrap uppercase text-subtle';
+
+const itemClass = 'flex shrink-0 items-center gap-[clamp(1.5rem,3vw,4rem)]';
 ---
 
-<section id="servicios" class="border-y border-border-subtle bg-base-soft py-4" aria-label="Servicios">
+<section
+	id="servicios"
+	class="border-y border-border-subtle bg-base-soft py-[clamp(1.25rem,3vw,2.5rem)]"
+	aria-label="Servicios"
+>
 	<div class="overflow-hidden">
-		<ul class="flex animate-none gap-12 whitespace-nowrap px-6 text-sm uppercase tracking-widest text-subtle md:justify-center">
+		<div class="flex w-max animate-[ticker-scroll_22s_linear_infinite] motion-reduce:animate-none">
 			{
-				services.map((service) => (
-					<li class="flex shrink-0 items-center gap-12">
-						<span>{service}</span>
-						<span class="text-accent" aria-hidden="true">✦</span>
-					</li>
+				[false, true].map((hidden) => (
+					<ul class={listClass} aria-hidden={hidden || undefined}>
+						{
+							services.map((service) => (
+								<li class={itemClass}>
+									<span>{service}</span>
+									<span class="text-accent" aria-hidden="true">✦</span>
+								</li>
+							))
+						}
+					</ul>
 				))
 			}
-		</ul>
+		</div>
 	</div>
 </section>
+
+<style is:global>
+	@keyframes ticker-scroll {
+		from {
+			transform: translateX(0);
+		}
+
+		to {
+			transform: translateX(-50%);
+		}
+	}
+</style>

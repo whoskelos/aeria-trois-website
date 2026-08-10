@@ -2,42 +2,55 @@
 import introVideo from '../assets/intro.webm';
 ---
 
-<section class="relative flex min-h-screen items-end overflow-hidden px-6 pb-24 pt-32">
+<section
+	class="relative flex min-h-svh items-end overflow-hidden px-[clamp(1rem,3vw,2rem)] pt-[calc(3.75rem+clamp(0.75rem,2vw,1.5rem)+env(safe-area-inset-top,0px))] pb-[max(clamp(1.5rem,5vw,6rem),env(safe-area-inset-bottom,0px))] lg:pt-[calc(4rem+clamp(0.75rem,2vw,1.5rem)+env(safe-area-inset-top,0px))]"
+>
 	<div class="pointer-events-none absolute inset-0" aria-hidden="true">
 		<video
-			class="h-full w-full object-cover"
+			class="h-full w-full object-cover object-[center_35%] sm:object-center"
 			autoplay
 			muted
 			loop
 			playsinline
 			src={introVideo}
 		/>
-		<div class="absolute inset-0 bg-gradient-to-t from-base via-base/70 to-base/20"></div>
+		<div
+			class="absolute inset-0 bg-gradient-to-t from-base via-base/80 to-base/30 md:via-base/70 md:to-base/20"
+		>
+		</div>
 	</div>
 
 	<div class="relative z-10 mx-auto w-full max-w-7xl">
-		<p class="mb-4 text-sm uppercase tracking-[0.3em] text-subtle">Aeria Trois · España y Madrid</p>
+		<p
+			class="mb-[clamp(0.75rem,2vw,1rem)] text-[clamp(0.625rem,0.5rem+0.45vw,0.875rem)] leading-snug tracking-[clamp(0.16em,0.12em+0.12vw,0.3em)] uppercase text-subtle"
+		>
+			Aeria Trois · España y Madrid
+		</p>
 
-		<h1 class="max-w-5xl text-[clamp(2.75rem,2rem+8.75vw,9rem)] leading-[0.92] text-foreground">
+		<h1
+			class="max-w-[min(100%,52rem)] text-[clamp(2.25rem,1.5rem+9.375vw,9rem)] leading-[0.92] text-balance text-foreground"
+		>
 			Espectáculos<br />
 			<span class="text-accent">aéreos</span>
 		</h1>
 
-		<p class="mt-6 max-w-xl text-lg text-muted">
+		<p
+			class="mt-[clamp(1rem,2.5vw,1.5rem)] max-w-xl text-[clamp(1rem,0.925rem+0.35vw,1.25rem)] leading-relaxed text-muted lg:max-w-[38rem]"
+		>
 			Contrata espectáculos aéreos profesionales con telas aéreas, aro aéreo y acrobacias de alto
 			impacto. Creamos números personalizados para festivales, galas corporativas y eventos privados.
 		</p>
 
-		<div class="mt-10 flex flex-wrap gap-4">
+		<div class="mt-[clamp(1.5rem,4vw,2.5rem)] flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
 			<a
 				href="#contacto"
-				class="rounded-full bg-accent px-6 py-3 text-sm font-medium text-base transition-opacity hover:opacity-90"
+				class="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-[clamp(0.875rem,0.825rem+0.2vw,0.9375rem)] font-medium text-base transition-opacity hover:opacity-90 sm:w-auto [@media(pointer:coarse)]:min-h-12 [@media(pointer:coarse)]:px-7"
 			>
 				Solicitar Presupuesto
 			</a>
 			<a
 				href="#showcase"
-				class="rounded-full border border-border px-6 py-3 text-sm text-muted-soft transition-colors hover:border-accent hover:text-accent"
+				class="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-border px-6 py-3 text-[clamp(0.875rem,0.825rem+0.2vw,0.9375rem)] text-muted-soft transition-colors hover:border-accent hover:text-accent sm:w-auto [@media(pointer:coarse)]:min-h-12 [@media(pointer:coarse)]:px-7"
 			>
 				Ver Galería de Actuaciones
 			</a>
