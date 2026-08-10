@@ -1,6 +1,5 @@
 ---
 import MenuButton from './MenuButton.astro';
-import logo from '../assets/logo.webp';
 
 const navLinks = [
 	{ label: 'Inicio', href: '/' },
@@ -10,16 +9,8 @@ const navLinks = [
 ---
 
 <header class="fixed inset-x-0 top-0 z-50 border-b border-border-subtle bg-base/80 backdrop-blur-md">
-	<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-		<a href="/" class="flex shrink-0 items-center gap-2 text-foreground">
-			<img
-				src={logo.src}
-				alt=""
-				width={logo.width}
-				height={logo.height}
-				class="h-12 w-auto"
-				aria-hidden="true"
-			/>
+	<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+		<a href="/" class="flex shrink-0 items-center text-foreground">
 			<span class="font-serif text-xl tracking-wide">
 				Aeria <span class="text-accent">Trois</span>
 			</span>
@@ -61,7 +52,7 @@ const navLinks = [
 	data-mobile-menu
 	aria-hidden="true"
 >
-	<div class="mobile-menu__panel min-h-dvh border-t border-border-subtle bg-base pt-20 animate-duration-500" data-mobile-menu-panel>
+	<div class="mobile-menu__panel min-h-dvh border-t border-border-subtle bg-base pt-16 animate-duration-500" data-mobile-menu-panel>
 		<div class="mx-auto flex min-h-[calc(100dvh-5rem)] max-w-7xl flex-col px-6 pb-10">
 			<div class="flex flex-1 flex-col items-center justify-center gap-10">
 				<nav class="w-full max-w-md" aria-label="Menú móvil">
