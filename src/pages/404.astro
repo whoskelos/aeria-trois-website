@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 — Página no encontrada · Aeria Trois">
+	<main
+		class="flex min-h-dvh flex-col items-center justify-center px-6 py-[max(2rem,env(safe-area-inset-bottom))] text-center"
+	>
+		<p
+			class="font-serif text-[clamp(5rem,18vw,9rem)] font-light leading-none tracking-[-0.03em] text-foreground"
+			aria-hidden="true"
+		>
+			4<span class="text-accent">0</span>4
+		</p>
+
+		<h1 class="mt-6 max-w-md text-balance text-[clamp(1.5rem,1.25rem+1vw,2rem)] font-light text-foreground">
+			Página no encontrada
+		</h1>
+
+		<p class="mt-3 max-w-sm text-pretty text-sm leading-relaxed text-muted sm:text-base">
+			La ruta que buscas no existe o ha cambiado. Vuelve al inicio para seguir explorando.
+		</p>
+
+		<a
+			href="/"
+			class="mt-8 inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-8 py-3 text-sm font-medium tracking-[0.12em] text-base uppercase transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [@media(pointer:coarse)]:min-h-12"
+		>
+			Volver al inicio
+		</a>
+	</main>
+</Layout>
