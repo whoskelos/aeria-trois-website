@@ -3,8 +3,8 @@ import MenuButton from './MenuButton.astro';
 
 const navLinks = [
 	{ label: 'Inicio', href: '/' },
-	{ label: 'Experiencias', href: '#experiencias' },
-	{ label: 'Nosotros', href: '#nosotros' },
+	{ label: 'Experiencias', href: '/experiencias' },
+	{ label: 'Nosotros', href: '/nosotros' },
 ];
 ---
 
@@ -31,7 +31,7 @@ const navLinks = [
 			</nav>
 
 			<a
-				href="#contacto"
+				href="/contacto"
 				class="hidden rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-accent hover:text-accent md:inline-flex"
 			>
 				Contacto
@@ -75,7 +75,7 @@ const navLinks = [
 				</nav>
 
 				<a
-					href="#contacto"
+					href="/contacto"
 					class="inline-flex w-full max-w-md items-center justify-center rounded-full bg-accent px-6 py-3 text-base font-medium text-[#050505] transition-colors hover:bg-accent-muted"
 					data-menu-link
 				>
