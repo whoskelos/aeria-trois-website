@@ -1,4 +1,7 @@
 ---
+import showcasePoster1 from '../assets/showcase/1-poster.webp';
+import showcasePoster2 from '../assets/showcase/2-poster.webp';
+import showcasePoster3 from '../assets/showcase/3-poster.webp';
 import showcaseVideo1 from '../assets/showcase/1.webm';
 import showcaseVideo2 from '../assets/showcase/2.webm';
 import showcaseVideo3 from '../assets/showcase/3.webm';
@@ -12,6 +15,7 @@ const galleryItems = [
 		description:
 			'Actuación de telas aéreas en el escenario del festival, integrada con la programación en vivo del evento.',
 		video: showcaseVideo1,
+		poster: showcasePoster1,
 	},
 	{
 		category: 'Telas aéreas',
@@ -20,6 +24,7 @@ const galleryItems = [
 		description:
 			'Número de telas aéreas en el Jowke Club, con coreografía adaptada al ambiente del evento privado.',
 		video: showcaseVideo2,
+		poster: showcasePoster2,
 	},
 	{
 		category: 'Telas aéreas',
@@ -28,6 +33,7 @@ const galleryItems = [
 		description:
 			'Intervención de telas aéreas para las jornadas de bienestar organizadas por el Ayuntamiento de Arroyomolinos.',
 		video: showcaseVideo3,
+		poster: showcasePoster3,
 	},
 ];
 ---
@@ -55,6 +61,7 @@ const galleryItems = [
 						meta={item.meta}
 						description={item.description}
 						videoSrc={item.video}
+						posterSrc={item.poster.src}
 						index={index}
 					/>
 				))

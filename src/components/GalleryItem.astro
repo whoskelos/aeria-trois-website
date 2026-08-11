@@ -5,10 +5,11 @@ interface Props {
 	meta: string;
 	description: string;
 	videoSrc: string;
+	posterSrc: string;
 	index: number;
 }
 
-const { category, title, meta, description, videoSrc, index } = Astro.props;
+const { category, title, meta, description, videoSrc, posterSrc, index } = Astro.props;
 ---
 
 <button
@@ -29,7 +30,8 @@ const { category, title, meta, description, videoSrc, index } = Astro.props;
 		muted
 		loop
 		playsinline
-		preload="metadata"
+		preload="none"
+		poster={posterSrc}
 		src={videoSrc}
 	></video>
 
