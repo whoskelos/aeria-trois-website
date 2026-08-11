@@ -1,21 +1,70 @@
 ---
+import logo from '../assets/logo.webp';
+
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="border-t border-border-subtle px-6 py-12">
-	<div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 md:flex-row">
-		<p class="text-sm text-subtle">© {currentYear} Aeria Trois. Todos los derechos reservados.</p>
+<footer class="border-t border-border-subtle bg-base px-6 py-10 sm:py-12">
+	<div class="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
+		<div class="flex gap-3 sm:gap-4">
+			<a href="/" class="shrink-0">
+				<img
+					src={logo.src}
+					alt=""
+					width={logo.width}
+					height={logo.height}
+					class="h-16 w-auto sm:h-20"
+					loading="lazy"
+				/>
+			</a>
+			<div>
+				<a
+					href="/"
+					class="font-serif text-2xl font-light tracking-wide text-foreground transition-colors hover:text-accent sm:text-3xl"
+				>
+					Aeria <span class="text-accent">Trois</span>
+				</a>
+				<p class="mt-2 text-sm text-muted">
+					Andrea · Paloma · Lydia — Tela y aro aéreo · Madrid
+				</p>
+			</div>
+		</div>
 
-		<nav class="flex gap-6" aria-label="Pie de página">
-			<a href="#showcase" class="text-sm text-muted transition-colors hover:text-accent">
-				Espectáculo
+		<div class="flex flex-col gap-2 md:items-end md:text-right">
+			<a
+				href="https://www.instagram.com/aeria.trois/"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+				aria-label="Instagram de Aeria Trois (@aeria.trois)"
+			>
+				<svg
+					class="h-4 w-4 shrink-0"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					aria-hidden="true"
+				>
+					<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+					<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+					<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+				</svg>
+				@aeria.trois
 			</a>
-			<a href="#modalidades" class="text-sm text-muted transition-colors hover:text-accent">
-				Modalidades
+
+			<p class="text-sm text-muted">Performances · Eventos · Clases</p>
+
+			<p class="text-sm text-subtle">© {currentYear} Aeria Trois</p>
+
+			<a
+				href="https://kelvinguerrero.dev"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="text-xs text-subtle transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+			>
+				made with ❤️ by kelvin
 			</a>
-			<a href="#contacto" class="text-sm text-muted transition-colors hover:text-accent">
-				Contacto
-			</a>
-		</nav>
+		</div>
 	</div>
 </footer>
