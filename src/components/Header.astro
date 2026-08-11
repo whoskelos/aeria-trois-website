@@ -6,6 +6,13 @@ const navLinks = [
 	{ label: 'Experiencias', href: '/experiencias' },
 	{ label: 'Equipo', href: '/equipo' },
 ];
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const isActive = (href: string) => {
+	if (href === '/') return pathname === '/';
+	return pathname === href || pathname.startsWith(`${href}/`);
+};
 ---
 
 <header class="fixed inset-x-0 top-0 z-50 border-b border-border-subtle bg-base/80 backdrop-blur-md">
@@ -19,20 +26,33 @@ const navLinks = [
 		<div class="flex items-center gap-8">
 			<nav class="hidden items-center gap-8 lg:flex" aria-label="Principal">
 				{
-					navLinks.map((link) => (
-						<a
-							href={link.href}
-							class="text-sm uppercase text-muted transition-colors hover:text-accent"
-						>
-							{link.label}
-						</a>
-					))
+					navLinks.map((link) => {
+						const active = isActive(link.href);
+						return (
+							<a
+								href={link.href}
+								class:list={[
+									'text-sm uppercase transition-colors hover:text-accent',
+									active ? 'text-accent' : 'text-muted',
+								]}
+								aria-current={active ? 'page' : undefined}
+							>
+								{link.label}
+							</a>
+						);
+					})
 				}
 			</nav>
 
 			<a
 				href="/contacto"
-				class="hidden rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-accent hover:text-accent lg:inline-flex"
+				class:list={[
+					'hidden rounded-full border px-4 py-2 text-sm transition-colors lg:inline-flex',
+					isActive('/contacto')
+						? 'border-accent text-accent'
+						: 'border-border text-foreground hover:border-accent hover:text-accent',
+				]}
+				aria-current={isActive('/contacto') ? 'page' : undefined}
 			>
 				Contacto
 			</a>
@@ -67,22 +87,31 @@ const navLinks = [
 				<nav class="w-full max-w-md" aria-label="Menú móvil">
 					<ul>
 						{
-							navLinks.map((link, index) => (
-								<li class="border-b border-border-subtle">
-									<a
-										href={link.href}
-										class="group flex w-full items-baseline gap-5 py-6 outline-none focus-visible:text-accent"
-										data-menu-link
-									>
-										<span class="text-xs tracking-[0.3em] text-accent">
-											{String(index + 1).padStart(2, '0')}
-										</span>
-										<span class="text-4xl font-light capitalize leading-none text-foreground transition-colors group-hover:text-accent">
-											{link.label}
-										</span>
-									</a>
-								</li>
-							))
+							navLinks.map((link, index) => {
+								const active = isActive(link.href);
+								return (
+									<li class="border-b border-border-subtle">
+										<a
+											href={link.href}
+											class="group flex w-full items-baseline gap-5 py-6 outline-none focus-visible:text-accent"
+											data-menu-link
+											aria-current={active ? 'page' : undefined}
+										>
+											<span class="text-xs tracking-[0.3em] text-accent">
+												{String(index + 1).padStart(2, '0')}
+											</span>
+											<span
+												class:list={[
+													'text-4xl font-light capitalize leading-none transition-colors group-hover:text-accent',
+													active ? 'text-accent' : 'text-foreground',
+												]}
+											>
+												{link.label}
+											</span>
+										</a>
+									</li>
+								);
+							})
 						}
 					</ul>
 				</nav>
