@@ -46,7 +46,7 @@ const { category, title, meta, description, videoSrc, index } = Astro.props;
 	<div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
 		<div class="flex items-center gap-3">
 			<span
-				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/70 text-accent sm:h-10 sm:w-10"
+				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/70 bg-transparent text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-base group-focus-visible:border-accent group-focus-visible:bg-accent group-focus-visible:text-base sm:h-10 sm:w-10"
 				aria-hidden="true"
 			>
 				<svg class="ml-0.5 h-3 w-3 fill-current sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24">
