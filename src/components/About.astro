@@ -1,19 +1,55 @@
-<section id="nosotros" class="border-t border-border-subtle px-6 py-24">
-	<div class="mx-auto grid max-w-7xl gap-12 md:grid-cols-2 md:items-center">
-		<div>
-			<p class="mb-2 text-sm text-accent">✦ Nosotros</p>
-			<h2 class="text-3xl font-light text-foreground md:text-5xl">Pasión por volar</h2>
+---
+import equipoImage from '../assets/equipo.webp';
+
+const facts = [
+	{ label: 'Disciplina', value: 'Aro y telas aéreas' },
+	{ label: 'Actividad', value: 'Performances y eventos' },
+	{ label: 'Formación', value: 'Clases y talleres' },
+	{ label: 'Base', value: 'Madrid' },
+	{ label: 'Formato', value: 'Solo, dúo o trío' },
+	{ label: 'Montaje', value: 'Estructura autoportante' },
+];
+---
+
+<section id="nosotros" class="border-t border-border-subtle px-6 py-16 sm:py-24">
+	<div class="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:items-stretch md:gap-12 lg:gap-16">
+		<div class="relative aspect-[4/5] overflow-hidden md:aspect-auto md:min-h-[20rem]">
+			<img
+				src={equipoImage.src}
+				alt="Integrantes de Aeria Trois en actuación aérea"
+				width={equipoImage.width}
+				height={equipoImage.height}
+				class="absolute inset-0 h-full w-full object-cover object-[50%_62%] md:object-[50%_58%]"
+				loading="lazy"
+			/>
 		</div>
 
-		<div class="space-y-4 text-muted">
-			<p>
-				Aeria Trois nace de la unión de artistas aéreos con una visión común: elevar cada evento
-				mediante performances que combinan riesgo controlado, estética y emoción pura.
+		<div class="flex flex-col justify-center">
+			<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase">El equipo artístico</p>
+
+			<h2 class="text-3xl font-light text-foreground md:text-5xl">
+				Tres aerealistas, una misma altura
+			</h2>
+
+			<p class="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:mt-6">
+				Andrea, Paloma y Lydia forman Aeria Trois, grupo artístico madrileño de acrobacias aéreas
+				especializada en aro y telas. Trabajamos en escenarios de festivales, concentraciones y
+				espacios de sala como el festival Centenera Rock o Jowke Club, adaptando cada número al
+				espacio, la altura y el público.
 			</p>
-			<p>
-				Desde Madrid, llevamos nuestros espectáculos a toda España, adaptando cada producción al
-				espacio, la audiencia y la identidad de la marca o celebración.
-			</p>
+
+			<dl class="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:mt-12 sm:grid-cols-3">
+				{
+					facts.map((fact) => (
+						<div>
+							<dt class="text-xs tracking-[0.24em] text-foreground/80 uppercase">
+								{fact.label}
+							</dt>
+							<dd class="mt-2 text-sm text-foreground">{fact.value}</dd>
+						</div>
+					))
+				}
+			</dl>
 		</div>
 	</div>
 </section>
