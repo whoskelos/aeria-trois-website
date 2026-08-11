@@ -36,10 +36,12 @@ const galleryItems = [
 	<div class="mx-auto max-w-7xl">
 		<div class="mb-10 flex flex-col gap-6 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
 			<div class="max-w-xl">
-				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase">Galería</p>
-				<h2 class="text-3xl font-light text-foreground md:text-5xl">Experiencias realizadas</h2>
+				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase" data-reveal>Galería</p>
+				<h2 class="text-3xl font-light text-foreground md:text-5xl" data-reveal>
+					Experiencias realizadas
+				</h2>
 			</div>
-			<p class="max-w-sm text-sm leading-relaxed text-muted lg:text-right">
+			<p class="max-w-sm text-sm leading-relaxed text-muted lg:text-right" data-reveal>
 				Pasa el cursor para ver el movimiento y haz clic para abrir el video completo con sonido.
 			</p>
 		</div>
@@ -62,6 +64,7 @@ const galleryItems = [
 		<div class="mt-10 flex justify-center sm:mt-14">
 			<a
 				href="/experiencias"
+				data-reveal
 				class="inline-flex min-h-11 items-center justify-center border border-border px-8 py-3 text-sm tracking-[0.12em] text-muted-soft uppercase transition-colors hover:border-accent hover:text-accent"
 			>
 				Ver todas las experiencias

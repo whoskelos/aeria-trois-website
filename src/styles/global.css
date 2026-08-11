@@ -26,6 +26,11 @@
 
 	--font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
 	--font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+	--duration-reveal: 550ms;
+	--stagger-reveal: 70ms;
 }
 
 @layer base {
@@ -40,5 +45,13 @@
 	h5,
 	h6 {
 		@apply font-serif;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html.motion-pending [data-reveal-hero],
+	html.motion-pending [data-reveal] {
+		opacity: 0;
+		transform: translate3d(0, 16px, 0) scale(0.97);
 	}
 }

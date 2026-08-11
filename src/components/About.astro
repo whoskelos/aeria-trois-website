@@ -13,7 +13,10 @@ const facts = [
 
 <section id="nosotros" class="border-t border-border-subtle px-6 py-16 sm:py-24">
 	<div class="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:items-stretch md:gap-12 lg:gap-16">
-		<div class="relative aspect-[4/5] overflow-hidden md:aspect-auto md:min-h-[20rem]">
+		<div
+			class="relative aspect-[4/5] overflow-hidden md:aspect-auto md:min-h-[20rem]"
+			data-reveal
+		>
 			<img
 				src={equipoImage.src}
 				alt="Integrantes de Aeria Trois en actuación aérea"
@@ -25,13 +28,15 @@ const facts = [
 		</div>
 
 		<div class="flex flex-col justify-center">
-			<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase">El equipo artístico</p>
+			<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase" data-reveal>
+				El equipo artístico
+			</p>
 
-			<h2 class="text-3xl font-light text-foreground md:text-5xl">
+			<h2 class="text-3xl font-light text-foreground md:text-5xl" data-reveal>
 				Tres aerealistas, una misma altura
 			</h2>
 
-			<p class="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:mt-6">
+			<p class="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:mt-6" data-reveal>
 				Andrea, Paloma y Lydia forman Aeria Trois, grupo artístico madrileño de acrobacias aéreas
 				especializada en aro y telas. Trabajamos en escenarios de festivales, concentraciones y
 				espacios de sala como el festival Centenera Rock o Jowke Club, adaptando cada número al
@@ -41,7 +46,7 @@ const facts = [
 			<dl class="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:mt-12 sm:grid-cols-3">
 				{
 					facts.map((fact) => (
-						<div>
+						<div data-reveal>
 							<dt class="text-xs tracking-[0.24em] text-foreground/80 uppercase">
 								{fact.label}
 							</dt>

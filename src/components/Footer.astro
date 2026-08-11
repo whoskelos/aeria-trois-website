@@ -7,7 +7,7 @@ const currentYear = new Date().getFullYear();
 <footer class="border-t border-border-subtle bg-base px-6 py-10 sm:py-12">
 	<div class="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
 		<div class="flex gap-3 sm:gap-4">
-			<a href="/" class="shrink-0">
+			<a href="/" class="shrink-0" data-reveal>
 				<img
 					src={logo.src}
 					alt=""
@@ -17,7 +17,7 @@ const currentYear = new Date().getFullYear();
 					loading="lazy"
 				/>
 			</a>
-			<div>
+			<div data-reveal>
 				<a
 					href="/"
 					class="font-serif text-2xl font-light tracking-wide text-foreground transition-colors hover:text-accent sm:text-3xl"
@@ -35,6 +35,7 @@ const currentYear = new Date().getFullYear();
 				href="https://www.instagram.com/aeria.trois/"
 				target="_blank"
 				rel="noopener noreferrer"
+				data-reveal
 				class="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 				aria-label="Instagram de Aeria Trois (@aeria.trois)"
 			>
@@ -53,18 +54,20 @@ const currentYear = new Date().getFullYear();
 				@aeria.trois
 			</a>
 
-			<p class="text-sm text-muted">Performances · Eventos · Clases</p>
+			<p class="text-sm text-muted" data-reveal>Performances · Eventos · Clases</p>
 
-			<p class="text-sm text-subtle">© {currentYear} Aeria Trois</p>
+			<p class="text-sm text-subtle" data-reveal>© {currentYear} Aeria Trois</p>
 
-			<a
-				href="https://kelvinguerrero.dev"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="text-xs text-subtle transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-			>
-				made with ❤️ by kelvin
-			</a>
+			<p data-reveal>
+				<a
+					href="https://kelvinguerrero.dev"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-block text-xs text-subtle transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+				>
+					made with ❤️ by kelvin
+				</a>
+			</p>
 		</div>
 	</div>
 </footer>

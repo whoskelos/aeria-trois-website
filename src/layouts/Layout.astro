@@ -19,8 +19,18 @@ const {
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script is:inline>
+			if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+				document.documentElement.classList.add('motion-pending');
+			}
+		</script>
 	</head>
 	<body>
 		<slot />
+		<script>
+			import { initScrollReveal } from '../scripts/scrollReveal';
+
+			initScrollReveal();
+		</script>
 	</body>
 </html>

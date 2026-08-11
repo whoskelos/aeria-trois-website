@@ -56,10 +56,14 @@ const infrastructure = [
 	<div class="mx-auto max-w-7xl">
 		<div class="mb-10 flex flex-col gap-6 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
 			<div class="max-w-xl">
-				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase">Pases disponibles</p>
-				<h2 class="text-3xl font-light text-foreground md:text-5xl">Modalidades y Packs</h2>
+				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase" data-reveal>
+					Pases disponibles
+				</p>
+				<h2 class="text-3xl font-light text-foreground md:text-5xl" data-reveal>
+					Modalidades y Packs
+				</h2>
 			</div>
-			<p class="max-w-sm text-sm leading-relaxed text-muted lg:text-right">
+			<p class="max-w-sm text-sm leading-relaxed text-muted lg:text-right" data-reveal>
 				Diseñamos experiencias aéreas adaptadas a la escala de cada evento. Consulta las opciones de
 				pases y contrataciones múltiples.
 			</p>
@@ -68,7 +72,10 @@ const infrastructure = [
 		<div class="space-y-6">
 			{
 				formats.map((format) => (
-					<article class="rounded-lg border border-border bg-surface p-6 sm:p-8 lg:p-10">
+					<article
+						class="rounded-lg border border-border bg-surface p-6 sm:p-8 lg:p-10"
+						data-reveal
+					>
 						<span class="inline-block rounded-full border border-accent px-3 py-1 text-[0.625rem] tracking-[0.18em] text-accent uppercase">
 							{format.badge}
 						</span>
@@ -172,16 +179,17 @@ const infrastructure = [
 			class="mt-10 flex flex-col gap-6 rounded-lg border border-border bg-surface-raised px-6 py-8 sm:px-8 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-10"
 		>
 			<div class="max-w-xl">
-				<h3 class="text-xl font-light text-foreground sm:text-2xl">
+				<h3 class="text-xl font-light text-foreground sm:text-2xl" data-reveal>
 					¿No encajan estos tiempos con lo que estás buscando?
 				</h3>
-				<p class="mt-3 text-sm leading-relaxed text-muted">
+				<p class="mt-3 text-sm leading-relaxed text-muted" data-reveal>
 					Contáctanos y cuéntanos qué estás buscando para acercar nuestros servicios a tus
 					expectativas.
 				</p>
 			</div>
 			<a
 				href="/contacto"
+				data-reveal
 				class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-border px-6 py-3 text-sm text-muted-soft transition-colors hover:border-accent hover:text-accent"
 			>
 				Contactar
@@ -190,9 +198,13 @@ const infrastructure = [
 
 		<div class="mt-16 sm:mt-20">
 			<div class="mb-10 max-w-2xl">
-				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase">Servicios incluidos</p>
-				<h2 class="text-3xl font-light text-foreground md:text-5xl">Infraestructura y Logística</h2>
-				<p class="mt-4 text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
+				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase" data-reveal>
+					Servicios incluidos
+				</p>
+				<h2 class="text-3xl font-light text-foreground md:text-5xl" data-reveal>
+					Infraestructura y Logística
+				</h2>
+				<p class="mt-4 text-sm leading-relaxed text-muted sm:text-[0.9375rem]" data-reveal>
 					Todas las opciones de contratación incorporan una solución técnica integral y autónoma para
 					garantizar la seguridad y agilidad en el evento.
 				</p>
@@ -201,7 +213,10 @@ const infrastructure = [
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
 				{
 					infrastructure.map((item) => (
-						<article class="rounded-lg border border-border bg-surface p-5 sm:p-6">
+						<article
+							class="rounded-lg border border-border bg-surface p-5 sm:p-6"
+							data-reveal
+						>
 							<div class="mb-4 flex h-9 w-9 items-center justify-center rounded border border-accent/40">
 								{item.icon === 'expand' && (
 									<svg
@@ -263,11 +278,14 @@ const infrastructure = [
 			</div>
 
 			<div class="mt-10 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:items-end sm:justify-between">
-				<p class="max-w-md text-xs italic leading-relaxed text-subtle">
+				<p class="max-w-md text-xs italic leading-relaxed text-subtle" data-reveal>
 					*Dependiendo de la localización del evento u otras especificaciones técnicas, la propuesta
 					podrá adaptarse.
 				</p>
-				<p class="shrink-0 text-[0.625rem] tracking-[0.18em] text-accent uppercase sm:text-right">
+				<p
+					class="shrink-0 text-[0.625rem] tracking-[0.18em] text-accent uppercase sm:text-right"
+					data-reveal
+				>
 					Presupuestos a medida bajo petición
 				</p>
 			</div>

@@ -3,9 +3,9 @@ import introVideo from '../assets/intro.webm';
 ---
 
 <section
-	class="relative flex min-h-svh items-end overflow-hidden px-[clamp(1rem,3vw,2rem)] pt-[calc(3.75rem+clamp(0.75rem,2vw,1.5rem)+env(safe-area-inset-top,0px))] pb-[max(clamp(1.5rem,5vw,6rem),env(safe-area-inset-bottom,0px))] lg:pt-[calc(4rem+clamp(0.75rem,2vw,1.5rem)+env(safe-area-inset-top,0px))]"
+	class="relative flex min-h-svh items-end px-[clamp(1rem,3vw,2rem)] pt-[calc(3.75rem+clamp(0.75rem,2vw,1.5rem)+env(safe-area-inset-top,0px))] pb-[max(clamp(1.5rem,5vw,6rem),env(safe-area-inset-bottom,0px))] lg:pt-[calc(4rem+clamp(0.75rem,2vw,1.5rem)+env(safe-area-inset-top,0px))]"
 >
-	<div class="pointer-events-none absolute inset-0" aria-hidden="true">
+	<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
 		<video
 			class="h-full w-full object-cover object-[center_35%] sm:object-center"
 			autoplay
@@ -22,6 +22,7 @@ import introVideo from '../assets/intro.webm';
 
 	<div class="relative z-10 mx-auto w-full max-w-7xl">
 		<p
+			data-reveal-hero
 			class="mb-[clamp(0.75rem,2vw,1rem)] text-[clamp(0.75rem,0.65rem+0.35vw,0.875rem)] leading-snug tracking-[0.14em] uppercase"
 		>
 			<span class="text-accent">Aeria Trois</span>
@@ -29,6 +30,7 @@ import introVideo from '../assets/intro.webm';
 		</p>
 
 		<h1
+			data-reveal-hero
 			class="max-w-[min(100%,52rem)] text-[clamp(2.25rem,1.5rem+9.375vw,9rem)] leading-[0.92] text-balance text-foreground"
 		>
 			Espectáculos<br />
@@ -36,6 +38,7 @@ import introVideo from '../assets/intro.webm';
 		</h1>
 
 		<p
+			data-reveal-hero
 			class="mt-[clamp(1rem,2.5vw,1.5rem)] max-w-xl text-[clamp(1rem,0.925rem+0.35vw,1.25rem)] leading-relaxed text-muted lg:max-w-[38rem]"
 		>
 			Contrata espectáculos aéreos profesionales con telas aéreas, aro aéreo y acrobacias de alto
@@ -43,18 +46,22 @@ import introVideo from '../assets/intro.webm';
 		</p>
 
 		<div class="mt-[clamp(1.5rem,4vw,2.5rem)] flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-			<a
-				href="#contacto"
-				class="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-[clamp(0.875rem,0.825rem+0.2vw,0.9375rem)] font-medium text-base transition-opacity hover:opacity-90 sm:w-auto [@media(pointer:coarse)]:min-h-12 [@media(pointer:coarse)]:px-7"
-			>
-				Solicitar Presupuesto
-			</a>
-			<a
-				href="#experiencias"
-				class="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-border px-6 py-3 text-[clamp(0.875rem,0.825rem+0.2vw,0.9375rem)] text-muted-soft transition-colors hover:border-accent hover:text-accent sm:w-auto [@media(pointer:coarse)]:min-h-12 [@media(pointer:coarse)]:px-7"
-			>
-				Ver Experiencias
-			</a>
+			<div data-reveal-hero>
+				<a
+					href="#contacto"
+					class="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-accent px-6 py-3 text-[clamp(0.875rem,0.825rem+0.2vw,0.9375rem)] font-medium text-base hover:opacity-90 sm:w-auto [@media(pointer:coarse)]:min-h-12 [@media(pointer:coarse)]:px-7"
+				>
+					Solicitar Presupuesto
+				</a>
+			</div>
+			<div data-reveal-hero>
+				<a
+					href="#experiencias"
+					class="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-border px-6 py-3 text-[clamp(0.875rem,0.825rem+0.2vw,0.9375rem)] text-muted-soft transition-colors hover:border-accent hover:text-accent sm:w-auto [@media(pointer:coarse)]:min-h-12 [@media(pointer:coarse)]:px-7"
+				>
+					Ver Experiencias
+				</a>
+			</div>
 		</div>
 	</div>
 </section>
