@@ -17,7 +17,7 @@ const navLinks = [
 		</a>
 
 		<div class="flex items-center gap-8">
-			<nav class="hidden items-center gap-8 md:flex" aria-label="Principal">
+			<nav class="hidden items-center gap-8 lg:flex" aria-label="Principal">
 				{
 					navLinks.map((link) => (
 						<a
@@ -32,13 +32,13 @@ const navLinks = [
 
 			<a
 				href="/contacto"
-				class="hidden rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-accent hover:text-accent md:inline-flex"
+				class="hidden rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-accent hover:text-accent lg:inline-flex"
 			>
 				Contacto
 			</a>
 
 			<MenuButton
-				class="md:hidden"
+				class="lg:hidden"
 				aria-controls="mobile-menu"
 				data-menu-toggle
 			/>
@@ -48,19 +48,32 @@ const navLinks = [
 
 <div
 	id="mobile-menu"
-	class="mobile-menu fixed inset-0 z-40 overflow-hidden md:hidden"
+	class="mobile-menu fixed inset-0 z-40 lg:hidden"
 	data-mobile-menu
 	aria-hidden="true"
+	inert
 >
-	<div class="mobile-menu__panel min-h-dvh border-t border-border-subtle bg-base pt-16 animate-duration-500" data-mobile-menu-panel>
-		<div class="mx-auto flex min-h-[calc(100dvh-5rem)] max-w-7xl flex-col px-6 pb-10">
+	<button
+		type="button"
+		class="mobile-menu__backdrop absolute inset-0 border-0 bg-transparent"
+		data-mobile-menu-backdrop
+		tabindex="-1"
+		aria-label="Cerrar menú"
+	></button>
+
+	<div class="mobile-menu__panel relative z-10 min-h-dvh border-t border-border-subtle bg-base pt-16" data-mobile-menu-panel>
+		<div class="mx-auto flex min-h-[calc(100dvh-5rem)] max-w-7xl flex-col px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
 			<div class="flex flex-1 flex-col items-center justify-center gap-10">
 				<nav class="w-full max-w-md" aria-label="Menú móvil">
 					<ul>
 						{
 							navLinks.map((link, index) => (
-								<li class="border-b border-border-subtle py-6">
-									<a href={link.href} class="group flex items-baseline gap-5" data-menu-link>
+								<li class="border-b border-border-subtle">
+									<a
+										href={link.href}
+										class="group flex w-full items-baseline gap-5 py-6 outline-none focus-visible:text-accent"
+										data-menu-link
+									>
 										<span class="text-xs tracking-[0.3em] text-accent">
 											{String(index + 1).padStart(2, '0')}
 										</span>
@@ -76,7 +89,7 @@ const navLinks = [
 
 				<a
 					href="/contacto"
-					class="inline-flex w-full max-w-md items-center justify-center rounded-full bg-accent px-6 py-3 text-base font-medium text-[#050505] transition-colors hover:bg-accent-muted"
+					class="inline-flex w-full max-w-md items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-medium text-base transition-colors hover:bg-accent-muted outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-base"
 					data-menu-link
 				>
 					Contacto
@@ -92,40 +105,106 @@ const navLinks = [
 
 <style>
 	.mobile-menu {
-		max-height: 0;
 		pointer-events: none;
-		transition: max-height 500ms ease-out;
+		visibility: hidden;
 	}
 
 	.mobile-menu[data-open='true'] {
-		max-height: 100dvh;
 		pointer-events: auto;
+		visibility: visible;
 	}
 
 	.mobile-menu__panel {
-		min-height: 100dvh;
 		opacity: 0;
 		transform: translateY(-100%);
-		transition: transform 500ms ease-out;
+		transition:
+			transform 500ms var(--ease-out),
+			opacity 500ms ease-out,
+			visibility 500ms;
+		visibility: hidden;
 	}
 
 	.mobile-menu[data-open='true'] .mobile-menu__panel {
+		opacity: 1;
 		transform: translateY(0);
+		visibility: visible;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mobile-menu__panel {
+			transform: none;
+			transition: none;
+		}
+
+		.mobile-menu:not([data-open='true']) .mobile-menu__panel {
+			opacity: 0;
+			visibility: hidden;
+		}
+
+		.mobile-menu[data-open='true'] .mobile-menu__panel {
+			opacity: 1;
+			visibility: visible;
+		}
 	}
 </style>
 
 <script>
-	const mobileMenu = document.querySelector('[data-mobile-menu]');
+	const mobileMenu = document.querySelector('[data-mobile-menu]') as HTMLElement | null;
 	const mobileMenuPanel = document.querySelector('[data-mobile-menu-panel]');
-	const toggleButton = document.querySelector('[data-menu-toggle]');
+	const menuBackdrop = document.querySelector('[data-mobile-menu-backdrop]');
+	const toggleButton = document.querySelector('[data-menu-toggle]') as HTMLButtonElement | null;
 	const menuLinks = document.querySelectorAll('[data-menu-link]');
-	const fadeIn = 'animate-fade-in';
-	const fadeOut = 'animate-fade-out';
+	const desktopNavQuery = window.matchMedia('(min-width: 1024px)');
 
-	const replayAnimation = (element: Element, animationClass: string) => {
-		element.classList.remove(fadeIn, fadeOut);
-		void (element as HTMLElement).offsetWidth;
-		element.classList.add(animationClass);
+	const focusableSelector =
+		'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+	let previouslyFocused: HTMLElement | null = null;
+	let focusTrapHandler: ((event: KeyboardEvent) => void) | null = null;
+
+	const getFocusableElements = () => {
+		if (!mobileMenu) return [];
+
+		return [...mobileMenu.querySelectorAll<HTMLElement>(focusableSelector)].filter(
+			(element) => !element.hasAttribute('disabled') && element.tabIndex !== -1,
+		);
+	};
+
+	const removeFocusTrap = () => {
+		if (focusTrapHandler) {
+			document.removeEventListener('keydown', focusTrapHandler);
+			focusTrapHandler = null;
+		}
+	};
+
+	const addFocusTrap = () => {
+		removeFocusTrap();
+
+		focusTrapHandler = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setMenuOpen(false);
+				return;
+			}
+
+			if (event.key !== 'Tab' || !mobileMenu) return;
+
+			const focusables = getFocusableElements();
+			if (focusables.length === 0) return;
+
+			const first = focusables[0];
+			const last = focusables[focusables.length - 1];
+			const activeElement = document.activeElement;
+
+			if (event.shiftKey && activeElement === first) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
+		};
+
+		document.addEventListener('keydown', focusTrapHandler);
 	};
 
 	const setMenuOpen = (open: boolean) => {
@@ -135,17 +214,32 @@ const navLinks = [
 		toggleButton.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
 		mobileMenu.setAttribute('data-open', String(open));
 		mobileMenu.setAttribute('aria-hidden', String(!open));
+		mobileMenu.toggleAttribute('inert', !open);
 		document.body.classList.toggle('overflow-hidden', open);
 
-		replayAnimation(mobileMenuPanel, open ? fadeIn : fadeOut);
+		if (open) {
+			previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+			addFocusTrap();
+
+			const focusables = getFocusableElements();
+			const firstFocusable = focusables.find((element) => element.hasAttribute('data-menu-link'));
+			(firstFocusable ?? focusables[0])?.focus();
+			return;
+		}
+
+		removeFocusTrap();
+		previouslyFocused?.focus();
+		previouslyFocused = null;
 	};
 
 	toggleButton?.addEventListener('click', () => {
 		setMenuOpen(toggleButton.getAttribute('aria-expanded') !== 'true');
 	});
+
+	menuBackdrop?.addEventListener('click', () => setMenuOpen(false));
 	menuLinks.forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
 
-	window.matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
+	desktopNavQuery.addEventListener('change', (event) => {
 		if (event.matches) {
 			setMenuOpen(false);
 		}

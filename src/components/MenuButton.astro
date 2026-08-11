@@ -11,7 +11,10 @@ const { label = 'Abrir menú', class: className = '', ...attrs } = Astro.props;
 
 <button
 	type="button"
-	class:list={['group relative flex h-10 w-10 items-center justify-center', className]}
+	class:list={[
+		'group relative flex h-11 w-11 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-base',
+		className,
+	]}
 	aria-label={label}
 	aria-expanded="false"
 	{...attrs}
