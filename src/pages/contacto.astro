@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+
+const description =
+	'Contacta con Aeria Trois para contratar espectáculos aéreos, performances en eventos o clases de tela y aro aéreo en Madrid y alrededores.';
+---
+
+<Layout title="Contacto" description={description} canonicalPath="/contacto">
+	<Header />
+	<main
+		class="pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+	>
+		<Contact />
+	</main>
+	<Footer />
+</Layout>

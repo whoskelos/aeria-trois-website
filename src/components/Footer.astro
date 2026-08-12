@@ -1,7 +1,9 @@
 ---
 import logo from '../assets/logo.webp';
+import { siteConfig } from '../config/site';
 
 const currentYear = new Date().getFullYear();
+const instagramUrl = siteConfig.sameAs[0];
 ---
 
 <footer class="border-t border-border-subtle bg-base px-6 py-10 sm:py-12">
@@ -32,7 +34,7 @@ const currentYear = new Date().getFullYear();
 
 		<div class="flex flex-col gap-2 md:items-end md:text-right">
 			<a
-				href="https://www.instagram.com/aeria.trois/"
+				href={instagramUrl}
 				target="_blank"
 				rel="noopener noreferrer"
 				data-reveal

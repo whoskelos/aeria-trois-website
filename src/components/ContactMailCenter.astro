@@ -1,0 +1,244 @@
+---
+import { siteConfig } from '../config/site';
+
+const email = siteConfig.email;
+
+const themes = [
+	{
+		id: 'evento',
+		tag: 'Evento',
+		label: 'Contratación de evento',
+		subject: 'Contratación de evento — Aeria Trois',
+		body: `Hola, equipo de Aeria Trois:
+
+Me gustaría solicitar información para contratar un espectáculo aéreo.
+
+• Tipo de evento:
+• Fecha aproximada:
+• Ubicación:
+• Aforo estimado:
+
+Gracias.`,
+	},
+	{
+		id: 'clases',
+		tag: 'Clases',
+		label: 'Clases / Talleres',
+		subject: 'Clases / Talleres — Aeria Trois',
+		body: `Hola, equipo de Aeria Trois:
+
+Me interesa información sobre clases o talleres de tela y aro aéreo.
+
+• Modalidad (individual / grupo):
+• Nivel:
+• Disponibilidad:
+
+Gracias.`,
+	},
+	{
+		id: 'general',
+		tag: 'General',
+		label: 'Consulta general',
+		subject: 'Consulta general — Aeria Trois',
+		body: `Hola, equipo de Aeria Trois:
+
+Tengo una consulta general:
+
+[Escribe tu mensaje]
+
+Gracias.`,
+	},
+] as const;
+
+const defaultTheme = themes[0];
+
+function buildMailto(subject: string, body: string) {
+	return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+const initialMailto = buildMailto(defaultTheme.subject, defaultTheme.body);
+---
+
+<div
+	class="rounded-xl border border-border bg-surface-raised p-5 sm:p-6"
+	data-mail-center
+	data-reveal
+>
+	<div class="flex gap-4">
+		<span
+			class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-muted-soft"
+			aria-hidden="true"
+		>
+			<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+				<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+				<polyline points="22,6 12,13 2,6"></polyline>
+			</svg>
+		</span>
+
+		<div class="min-w-0 flex-1">
+			<h2 class="font-serif text-xl text-foreground sm:text-2xl">Centro de correo directo</h2>
+			<p class="mt-1 text-sm text-muted">Elige un tema y abre tu cliente de correo</p>
+			<p class="mt-2 font-serif text-sm text-accent sm:text-lg">{email}</p>
+		</div>
+	</div>
+
+	<div
+		class="mt-6 grid gap-3 sm:grid-cols-3"
+		role="radiogroup"
+		aria-label="Temática del mensaje"
+		data-mail-themes
+	>
+		{
+			themes.map((theme, index) => (
+				<button
+					type="button"
+					role="radio"
+					aria-checked={index === 0}
+					data-theme-id={theme.id}
+					data-active={index === 0 ? '' : undefined}
+					class="group min-h-11 rounded-lg border border-border bg-surface px-4 py-3 text-left transition-colors outline-none hover:border-accent/40 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised data-active:border-accent data-active:bg-accent/5"
+				>
+					<span class="block text-[0.625rem] tracking-[0.24em] text-foreground/70 uppercase">
+						{theme.tag}
+					</span>
+					<span class="mt-1 block text-sm leading-snug text-muted-soft group-data-active:text-foreground">
+						{theme.label}
+					</span>
+				</button>
+			))
+		}
+	</div>
+
+	<div class="mt-6 flex flex-col gap-3 sm:flex-row">
+		<a
+			href={initialMailto}
+			data-mail-open
+			class="mail-center__cta inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-sm font-medium text-base transition-[opacity,box-shadow] hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [@media(pointer:coarse)]:min-h-12"
+		>
+			<svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+				<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+				<polyline points="22,6 12,13 2,6"></polyline>
+			</svg>
+			Abrir cliente de correo
+		</a>
+
+		<button
+			type="button"
+			data-mail-copy
+			class="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border px-5 py-3 text-sm text-muted-soft transition-colors hover:border-accent/40 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [@media(pointer:coarse)]:min-h-12 sm:shrink-0"
+		>
+			<svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+				<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+				<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+			</svg>
+			<span data-mail-copy-label>Copiar email</span>
+		</button>
+	</div>
+
+	<p class="mt-5 flex gap-2.5 text-xs leading-relaxed text-muted">
+		<svg
+			class="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.5"
+			aria-hidden="true"
+		>
+			<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+			<polyline points="9 12 11 14 15 10"></polyline>
+		</svg>
+		<span>
+			No guardamos ningún dato personal ni utilizamos cookies de formulario. Al pulsar «Abrir
+			cliente de correo» se abre tu aplicación de correo habitual y el mensaje se prepara
+			localmente.
+		</span>
+	</p>
+</div>
+
+<style>
+	.mail-center__cta {
+		box-shadow:
+			0 0 0 1px rgb(226 184 87 / 0.15),
+			0 4px 24px rgb(226 184 87 / 0.2);
+	}
+
+	.mail-center__cta:hover {
+		box-shadow:
+			0 0 0 1px rgb(226 184 87 / 0.25),
+			0 6px 28px rgb(226 184 87 / 0.28);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mail-center__cta {
+			transition: none;
+		}
+	}
+</style>
+
+<script define:vars={{ email, themes }}>
+	const root = document.querySelector('[data-mail-center]');
+
+	if (root) {
+		const themeButtons = root.querySelectorAll('[data-theme-id]');
+		const mailOpen = root.querySelector('[data-mail-open]');
+		const copyButton = root.querySelector('[data-mail-copy]');
+		const copyLabel = root.querySelector('[data-mail-copy-label]');
+
+		const themeMap = Object.fromEntries(themes.map((theme) => [theme.id, theme]));
+		let activeThemeId = themes[0].id;
+		let copyResetTimer = null;
+
+		function buildMailto(subject, body) {
+			return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+		}
+
+		function setActiveTheme(themeId) {
+			const theme = themeMap[themeId];
+			if (!theme) return;
+
+			activeThemeId = themeId;
+
+			themeButtons.forEach((button) => {
+				const isActive = button.getAttribute('data-theme-id') === themeId;
+				button.setAttribute('aria-checked', String(isActive));
+				button.toggleAttribute('data-active', isActive);
+			});
+
+			if (mailOpen instanceof HTMLAnchorElement) {
+				mailOpen.href = buildMailto(theme.subject, theme.body);
+			}
+		}
+
+		themeButtons.forEach((button) => {
+			button.addEventListener('click', () => {
+				const themeId = button.getAttribute('data-theme-id');
+				if (themeId) setActiveTheme(themeId);
+			});
+		});
+
+		copyButton?.addEventListener('click', async () => {
+			if (!(copyLabel instanceof HTMLElement)) return;
+
+			const originalLabel = copyLabel.textContent ?? 'Copiar email';
+
+			try {
+				await navigator.clipboard.writeText(email);
+				copyLabel.textContent = 'Email copiado';
+
+				if (copyResetTimer) window.clearTimeout(copyResetTimer);
+				copyResetTimer = window.setTimeout(() => {
+					copyLabel.textContent = originalLabel;
+				}, 2000);
+			} catch {
+				copyLabel.textContent = 'No se pudo copiar';
+
+				if (copyResetTimer) window.clearTimeout(copyResetTimer);
+				copyResetTimer = window.setTimeout(() => {
+					copyLabel.textContent = originalLabel;
+				}, 2000);
+			}
+		});
+
+		setActiveTheme(activeThemeId);
+	}
+</script>

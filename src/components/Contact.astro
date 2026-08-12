@@ -1,0 +1,153 @@
+---
+import contactImage from '../assets/contact.webp';
+import ContactMailCenter from './ContactMailCenter.astro';
+import { siteConfig } from '../config/site';
+
+const instagramUrl = siteConfig.sameAs[0];
+
+const contactItems = [
+	{
+		label: 'Instagram',
+		value: '@aeria.trois',
+		href: instagramUrl,
+		external: true,
+		icon: 'instagram',
+	},
+	{
+		label: 'Ubicación',
+		value: 'Madrid y alrededores',
+		icon: 'location',
+	},
+	{
+		label: 'Servicios',
+		value: 'Performances · Eventos · Clases',
+		icon: 'sparkle',
+	},
+] as const;
+---
+
+<section class="px-6 py-16 sm:py-24">
+	<div class="mx-auto max-w-7xl">
+		<div class="max-w-xl">
+			<p class="mb-2 text-xs tracking-[0.24em] text-muted uppercase" data-reveal>
+				Contacto
+			</p>
+
+			<h1 class="text-3xl font-light text-foreground md:text-5xl" data-reveal>
+				Hablemos de <span class="text-accent">tu evento</span>
+			</h1>
+
+			<p class="mt-4 text-sm leading-relaxed text-muted sm:mt-6" data-reveal>
+				Trabajamos en festivales, eventos culturales, inauguraciones y galas corporativas.
+				También impartimos clases y talleres de telas aéreas y aro aéreo.
+			</p>
+		</div>
+
+		<div
+			class="mt-10 grid gap-10 md:mt-12 md:grid-cols-2 md:items-start md:gap-12 lg:gap-16"
+		>
+			<div class="flex flex-col gap-10 sm:gap-12">
+				<ContactMailCenter />
+
+				<ul role="list">
+				{
+					contactItems.map((item) => (
+						<li class="border-t border-border-subtle py-5 sm:py-6" data-reveal>
+							<div class="flex items-center gap-4">
+								<span
+									class="inline-flex h-9 w-9 shrink-0 items-center justify-center text-muted-soft"
+									aria-hidden="true"
+								>
+									{item.icon === 'instagram' && (
+										<svg
+											class="h-4 w-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.5"
+										>
+											<rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+											<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+											<line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+										</svg>
+									)}
+									{item.icon === 'location' && (
+										<svg
+											class="h-4 w-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.5"
+										>
+											<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+											<circle cx="12" cy="10" r="3" />
+										</svg>
+									)}
+									{item.icon === 'sparkle' && (
+										<svg
+											class="h-4 w-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.5"
+										>
+											<path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z" />
+											<path d="M5 3v4M3 5h4M19 17v4M17 19h4" />
+										</svg>
+									)}
+								</span>
+
+								<div class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+									<span class="text-xs tracking-[0.24em] text-foreground/80 uppercase">
+										{item.label}
+									</span>
+
+									{'href' in item && item.href ? (
+										<a
+											href={item.href}
+											target={item.external ? '_blank' : undefined}
+											rel={item.external ? 'noopener noreferrer' : undefined}
+											class="font-serif text-sm text-accent transition-colors hover:text-accent-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:text-lg"
+										>
+											{item.value}
+										</a>
+									) : (
+										<span class="font-serif text-sm text-accent sm:text-right sm:text-lg">
+											{item.value}
+										</span>
+									)}
+								</div>
+							</div>
+						</li>
+					))
+				}
+			</ul>
+			</div>
+
+			<div
+				class="relative aspect-[4/5] overflow-hidden md:aspect-auto md:min-h-[28rem] md:self-start"
+				data-reveal
+			>
+			<img
+				src={contactImage.src}
+				alt="Actuación aérea de Aeria Trois en un espacio industrial con público"
+				width={contactImage.width}
+				height={contactImage.height}
+				class="absolute inset-0 h-full w-full object-cover object-center"
+				loading="eager"
+				fetchpriority="high"
+			/>
+			<div
+				class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-base/90 via-base/40 to-transparent px-6 pb-6 pt-16"
+				aria-hidden="true"
+			/>
+			<p
+				class="absolute inset-x-0 bottom-0 px-6 pb-6 font-serif text-xl text-foreground sm:text-2xl"
+				data-reveal
+			>
+				Paloma · Andrea · Lydia
+			</p>
+			</div>
+		</div>
+	</div>
+</section>
