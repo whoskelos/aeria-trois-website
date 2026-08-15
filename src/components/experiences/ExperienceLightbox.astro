@@ -1,0 +1,190 @@
+<div
+	id="experience-lightbox"
+	class="experience-lightbox fixed inset-0 z-[70] hidden items-center justify-center p-4 sm:p-6"
+	aria-hidden="true"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="experience-lightbox-caption"
+>
+	<button
+		type="button"
+		class="experience-lightbox__backdrop absolute inset-0 border-0 bg-base/92 backdrop-blur-sm"
+		data-experience-close
+		aria-label="Cerrar"
+	></button>
+
+	<button
+		type="button"
+		class="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-border-subtle bg-base/80 text-foreground transition-colors hover:border-accent hover:text-accent sm:right-6 sm:top-6"
+		data-experience-close
+		data-experience-close-button
+		aria-label="Cerrar"
+	>
+		<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+			<path d="M6 6l12 12M18 6L6 18"></path>
+		</svg>
+	</button>
+
+	<div class="experience-lightbox__panel relative z-10 flex max-h-[min(92dvh,56rem)] w-full max-w-4xl flex-col items-center">
+		<div class="flex max-h-[calc(92dvh-4rem)] w-full items-center justify-center overflow-hidden">
+			<img
+				id="experience-lightbox-image"
+				class="experience-lightbox__image hidden max-h-[calc(92dvh-4rem)] w-auto max-w-full object-contain"
+				alt=""
+			/>
+			<video
+				id="experience-lightbox-video"
+				class="experience-lightbox__video hidden max-h-[calc(92dvh-4rem)] w-full max-w-full object-contain"
+				controls
+				playsinline
+				preload="metadata"
+			></video>
+		</div>
+		<p
+			id="experience-lightbox-caption"
+			class="mt-4 max-w-lg text-center text-xs tracking-[0.2em] text-muted-soft uppercase sm:text-sm"
+		></p>
+	</div>
+</div>
+
+<style>
+	.experience-lightbox[data-open='true'] {
+		display: flex;
+	}
+
+	.experience-lightbox__backdrop {
+		opacity: 0;
+		transition: opacity 250ms var(--ease-out);
+	}
+
+	.experience-lightbox__panel {
+		opacity: 0;
+		transform: scale(0.96);
+		transition:
+			opacity 250ms var(--ease-out),
+			transform 250ms var(--ease-out);
+	}
+
+	.experience-lightbox[data-open='true'] .experience-lightbox__backdrop {
+		opacity: 1;
+	}
+
+	.experience-lightbox[data-open='true'] .experience-lightbox__panel {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.experience-lightbox__backdrop,
+		.experience-lightbox__panel {
+			transition: opacity 200ms ease;
+		}
+
+		.experience-lightbox__panel {
+			transform: none;
+		}
+	}
+</style>
+
+<script>
+	const lightbox = document.getElementById('experience-lightbox');
+	const lightboxImage = document.getElementById('experience-lightbox-image') as HTMLImageElement | null;
+	const lightboxVideo = document.getElementById('experience-lightbox-video') as HTMLVideoElement | null;
+	const lightboxCaption = document.getElementById('experience-lightbox-caption');
+	const items = document.querySelectorAll<HTMLButtonElement>('[data-experience-item]');
+	const closeTriggers = document.querySelectorAll('[data-experience-close]');
+	const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+	let previouslyFocused: HTMLElement | null = null;
+
+	const pausePreviewVideos = () => {
+		items.forEach((item) => {
+			const preview = item.querySelector('video');
+			if (!preview || preview === lightboxVideo) return;
+			preview.pause();
+			preview.currentTime = 0;
+		});
+	};
+
+	const openLightbox = (item: HTMLButtonElement) => {
+		if (!lightbox || !lightboxImage || !lightboxVideo || !lightboxCaption) return;
+
+		const { mediaType, mediaSrc, mediaAlt, eventTitle } = item.dataset;
+		if (!mediaType || !mediaSrc) return;
+
+		previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+		lightboxCaption.textContent = mediaAlt || eventTitle || '';
+
+		if (mediaType === 'video') {
+			lightboxImage.classList.add('hidden');
+			lightboxVideo.classList.remove('hidden');
+			lightboxVideo.src = mediaSrc;
+			lightboxVideo.load();
+			void lightboxVideo.play().catch(() => undefined);
+		} else {
+			lightboxVideo.pause();
+			lightboxVideo.removeAttribute('src');
+			lightboxVideo.load();
+			lightboxVideo.classList.add('hidden');
+			lightboxImage.classList.remove('hidden');
+			lightboxImage.src = mediaSrc;
+			lightboxImage.alt = mediaAlt || eventTitle || '';
+		}
+
+		lightbox.dataset.open = 'true';
+		lightbox.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('overflow-hidden');
+		pausePreviewVideos();
+
+		const closeButton = lightbox.querySelector<HTMLButtonElement>('[data-experience-close-button]');
+		closeButton?.focus();
+	};
+
+	const closeLightbox = () => {
+		if (!lightbox || !lightboxImage || !lightboxVideo) return;
+
+		lightbox.dataset.open = 'false';
+		lightbox.setAttribute('aria-hidden', 'true');
+		document.body.classList.remove('overflow-hidden');
+
+		lightboxVideo.pause();
+		lightboxVideo.removeAttribute('src');
+		lightboxVideo.load();
+		lightboxVideo.classList.add('hidden');
+
+		lightboxImage.removeAttribute('src');
+		lightboxImage.classList.add('hidden');
+
+		previouslyFocused?.focus();
+		previouslyFocused = null;
+	};
+
+	items.forEach((item) => {
+		const preview = item.querySelector('video');
+
+		item.addEventListener('click', () => openLightbox(item));
+
+		if (!preview) return;
+
+		item.addEventListener('mouseenter', () => {
+			if (!canHover.matches) return;
+			void preview.play();
+		});
+
+		item.addEventListener('mouseleave', () => {
+			if (!canHover.matches) return;
+			preview.pause();
+			preview.currentTime = 0;
+		});
+	});
+
+	closeTriggers.forEach((trigger) => {
+		trigger.addEventListener('click', closeLightbox);
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && lightbox?.dataset.open === 'true') {
+			closeLightbox();
+		}
+	});
+</script>

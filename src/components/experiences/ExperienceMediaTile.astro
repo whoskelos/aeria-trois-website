@@ -1,0 +1,104 @@
+---
+import type { GalleryMedia } from '../../lib/gallery';
+import { bentoSpanClasses, type BentoFormat } from '../../lib/bentoLayout';
+
+interface Props {
+	media: GalleryMedia;
+	format: BentoFormat;
+	reveal?: boolean;
+	eventTitle: string;
+}
+
+const { media, format, reveal = false, eventTitle } = Astro.props;
+---
+
+<button
+	type="button"
+	class:list={[
+		'experience-tile group relative min-h-0 w-full overflow-hidden border-0 bg-surface p-0 text-left',
+		'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+		bentoSpanClasses[format],
+	]}
+	data-experience-item
+	data-media-type={media.type}
+	data-media-src={media.src}
+	data-media-alt={media.alt}
+	data-event-title={eventTitle}
+	aria-label={`Ver ${media.type === 'video' ? 'video' : 'imagen'}: ${eventTitle}`}
+	{...(reveal ? { 'data-reveal': true } : {})}
+>
+	{
+		media.type === 'video' ? (
+			<video
+				class="experience-tile__media absolute inset-0 h-full w-full object-cover"
+				muted
+				loop
+				playsinline
+				preload="metadata"
+				src={media.src}
+			/>
+		) : (
+			<img
+				class="experience-tile__media absolute inset-0 h-full w-full object-cover"
+				src={media.src}
+				width={media.width}
+				height={media.height}
+				alt={media.alt}
+				loading="lazy"
+				decoding="async"
+			/>
+		)
+	}
+
+	<div
+		class="pointer-events-none absolute inset-0 bg-gradient-to-t from-base/80 via-base/10 to-transparent"
+		aria-hidden="true"
+	/>
+
+	{
+		media.type === 'video' && (
+			<span
+				class="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 text-xs tracking-[0.12em] text-foreground/90 uppercase sm:bottom-5 sm:left-5"
+				aria-hidden="true"
+			>
+				<span class="flex h-8 w-8 items-center justify-center rounded-full border border-foreground/40 bg-base/30">
+					<svg class="ml-0.5 h-3 w-3 fill-current" viewBox="0 0 24 24">
+						<path d="M8 5v14l11-7z" />
+					</svg>
+				</span>
+			</span>
+		)
+	}
+</button>
+
+<style>
+	.experience-tile__media {
+		transform: translate3d(0, 0, 0) scale(1.01);
+		transition:
+			opacity 400ms var(--ease-out),
+			transform 400ms var(--ease-out);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.experience-tile__media {
+			opacity: 0.92;
+		}
+
+		.experience-tile:hover .experience-tile__media,
+		.experience-tile:focus-visible .experience-tile__media {
+			opacity: 1;
+			transform: translate3d(0, 0, 0) scale(1.04);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.experience-tile__media {
+			transition: opacity 200ms ease;
+		}
+
+		.experience-tile:hover .experience-tile__media,
+		.experience-tile:focus-visible .experience-tile__media {
+			transform: none;
+		}
+	}
+</style>

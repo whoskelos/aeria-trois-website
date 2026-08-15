@@ -1,0 +1,136 @@
+---
+import type { GalleryEvent } from '../../lib/gallery';
+import { assignBentoFormats } from '../../lib/bentoLayout';
+import ExperienceMediaTile from './ExperienceMediaTile.astro';
+
+interface Props {
+	event: GalleryEvent;
+}
+
+const { event } = Astro.props;
+const bentoFormats = assignBentoFormats(event.media);
+---
+
+<article class="border-b border-border-subtle px-6 py-14 sm:py-20" aria-labelledby={`event-${event.id}`}>
+	<div class="mx-auto max-w-7xl">
+		<header class="mb-8 flex flex-col gap-6 lg:mb-10 lg:flex-row lg:items-start lg:justify-between">
+			<div class="max-w-xl">
+				<p class="mb-2 text-xs tracking-[0.24em] text-accent uppercase" data-reveal>
+					{event.category}
+				</p>
+				<h2
+					id={`event-${event.id}`}
+					class="text-[clamp(2rem,1.25rem+3vw,3rem)] font-light text-foreground"
+					data-reveal
+				>
+					{event.title}
+				</h2>
+				<p class="mt-2 text-xs tracking-[0.18em] text-accent uppercase sm:text-sm" data-reveal>
+					{event.meta}
+				</p>
+			</div>
+			<p class="max-w-sm text-sm leading-relaxed text-muted lg:max-w-md lg:pt-8 lg:text-right" data-reveal>
+				{event.description}
+			</p>
+		</header>
+
+		{
+			event.media.length > 0 && (
+				<div class="experience-bento">
+					{
+						event.media.map((media, index) => (
+							<ExperienceMediaTile
+								media={media}
+								format={bentoFormats[index]}
+								reveal={index < 8}
+								eventTitle={event.title}
+							/>
+						))
+					}
+				</div>
+			)
+		}
+	</div>
+</article>
+
+<style>
+	.experience-bento {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-auto-rows: 6.5rem;
+		grid-auto-flow: dense;
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 768px) {
+		.experience-bento {
+			grid-template-columns: repeat(6, minmax(0, 1fr));
+			grid-auto-rows: 4.5rem;
+			gap: 1rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.experience-bento {
+			grid-template-columns: repeat(12, minmax(0, 1fr));
+			grid-auto-rows: 4rem;
+			gap: 1rem;
+		}
+	}
+
+	:global(.experience-bento__cell--panoramic) {
+		grid-column: span 2;
+		grid-row: span 2;
+	}
+
+	:global(.experience-bento__cell--tall) {
+		grid-column: span 1;
+		grid-row: span 3;
+	}
+
+	:global(.experience-bento__cell--square) {
+		grid-column: span 1;
+		grid-row: span 2;
+	}
+
+	@media (max-width: 767px) {
+		:global(.experience-bento__cell--tall),
+		:global(.experience-bento__cell--square) {
+			grid-column: span 2;
+		}
+	}
+
+	@media (min-width: 768px) {
+		:global(.experience-bento__cell--panoramic) {
+			grid-column: span 4;
+			grid-row: span 3;
+		}
+
+		:global(.experience-bento__cell--tall) {
+			grid-column: span 2;
+			grid-row: span 5;
+		}
+
+		:global(.experience-bento__cell--square) {
+			grid-column: span 2;
+			grid-row: span 3;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		:global(.experience-bento__cell--panoramic) {
+			grid-column: span 8;
+			grid-row: span 4;
+		}
+
+		:global(.experience-bento__cell--tall) {
+			grid-column: span 4;
+			grid-row: span 6;
+		}
+
+		:global(.experience-bento__cell--square) {
+			grid-column: span 4;
+			grid-row: span 4;
+		}
+	}
+</style>

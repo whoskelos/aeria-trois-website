@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ExperienceHero from '../components/experiences/ExperienceHero.astro';
+import ExperienceEvent from '../components/experiences/ExperienceEvent.astro';
+import ExperienceLightbox from '../components/experiences/ExperienceLightbox.astro';
+import { getGalleryEvents } from '../lib/gallery';
+
+const events = getGalleryEvents();
+
+const description =
+	'Galería de experiencias realizadas por Aeria Trois: espectáculos de telas aéreas en festivales, eventos privados y ferias en Madrid y España.';
+---
+
+<Layout title="Experiencias" description={description} canonicalPath="/experiencias">
+	<Header />
+	<main
+		class="pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+	>
+		<ExperienceHero />
+		{
+			events.map((event) => (
+				<ExperienceEvent event={event} />
+			))
+		}
+	</main>
+	<Footer />
+	<ExperienceLightbox />
+</Layout>
