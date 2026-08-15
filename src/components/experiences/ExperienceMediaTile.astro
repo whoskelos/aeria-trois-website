@@ -34,7 +34,8 @@ const { media, format, reveal = false, eventTitle } = Astro.props;
 				muted
 				loop
 				playsinline
-				preload="metadata"
+				preload="none"
+				poster={media.poster}
 				src={media.src}
 			/>
 		) : (

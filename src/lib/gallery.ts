@@ -4,6 +4,7 @@ export type GalleryMedia = {
 	id: string;
 	src: string;
 	type: 'image' | 'video';
+	poster?: string;
 	width?: number;
 	height?: number;
 	alt: string;
@@ -82,12 +83,30 @@ function mediaId(eventId: string, fileName: string) {
 
 function buildMediaList(): Map<string, GalleryMedia[]> {
 	const byEvent = new Map<string, GalleryMedia[]>();
+	const postersByEvent = new Map<
+		string,
+		Map<string, { src: string; width: number; height: number }>
+	>();
 
 	for (const [path, module] of Object.entries(imageModules)) {
 		const match = path.match(/gallery\/([^/]+)\/([^/]+)\.webp$/);
 		if (!match) continue;
 
 		const [, eventId, baseName] = match;
+
+		if (baseName.endsWith('-poster')) {
+			const videoBaseName = baseName.slice(0, -'-poster'.length);
+			const image = module.default;
+			const eventPosters = postersByEvent.get(eventId) ?? new Map();
+			eventPosters.set(videoBaseName, {
+				src: image.src,
+				width: image.width,
+				height: image.height,
+			});
+			postersByEvent.set(eventId, eventPosters);
+			continue;
+		}
+
 		const image = module.default;
 		const items = byEvent.get(eventId) ?? [];
 		items.push({
@@ -106,11 +125,15 @@ function buildMediaList(): Map<string, GalleryMedia[]> {
 		if (!match) continue;
 
 		const [, eventId, baseName] = match;
+		const poster = postersByEvent.get(eventId)?.get(baseName);
 		const items = byEvent.get(eventId) ?? [];
 		items.push({
 			id: mediaId(eventId, baseName),
 			src,
 			type: 'video',
+			poster: poster?.src,
+			width: poster?.width,
+			height: poster?.height,
 			alt: '',
 		});
 		byEvent.set(eventId, items);
@@ -123,7 +146,10 @@ function buildMediaList(): Map<string, GalleryMedia[]> {
 			return a.id.localeCompare(b.id, 'es');
 		});
 		items.forEach((item, index) => {
-			item.alt = `${title} — imagen ${index + 1}`;
+			item.alt =
+				item.type === 'video'
+					? `${title} — video ${index + 1}`
+					: `${title} — imagen ${index + 1}`;
 		});
 	}
 
