@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CallToAction from '../components/CallToAction.astro';
+import TeamHero from '../components/team/TeamHero.astro';
+import TeamStory from '../components/team/TeamStory.astro';
+
+const description =
+	'Lydia, Paloma y Andrea forman Aeria Trois: grupo artístico de Madrid especializado en tela y aro aéreo. Clases, talleres, shows y espectáculos aéreos.';
+---
+
+<Layout title="Equipo" description={description} canonicalPath="/equipo">
+	<Header />
+	<main
+		class="pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+	>
+		<TeamHero />
+		<TeamStory />
+		<CallToAction />
+	</main>
+	<Footer />
+</Layout>

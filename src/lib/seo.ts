@@ -78,9 +78,9 @@ export function buildPageJsonLd({
 					value: 3,
 				},
 				member: [
+					{ '@type': 'Person', name: 'Lydia' },
 					{ '@type': 'Person', name: 'Paloma' },
 					{ '@type': 'Person', name: 'Andrea' },
-					{ '@type': 'Person', name: 'Lydia' },
 				],
 				hasOfferCatalog: {
 					'@type': 'OfferCatalog',
