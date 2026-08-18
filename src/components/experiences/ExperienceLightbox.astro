@@ -93,13 +93,11 @@
 	const lightboxCaption = document.getElementById('experience-lightbox-caption');
 	const items = document.querySelectorAll<HTMLButtonElement>('[data-experience-item]');
 	const closeTriggers = document.querySelectorAll('[data-experience-close]');
-	const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
 	let previouslyFocused: HTMLElement | null = null;
 
 	const pausePreviewVideos = () => {
-		items.forEach((item) => {
-			const preview = item.querySelector('video');
-			if (!preview || preview === lightboxVideo) return;
+		document.querySelectorAll<HTMLVideoElement>('video[data-lazy-video]').forEach((preview) => {
+			if (preview === lightboxVideo) return;
 			preview.pause();
 			preview.currentTime = 0;
 		});
@@ -160,22 +158,7 @@
 	};
 
 	items.forEach((item) => {
-		const preview = item.querySelector('video');
-
 		item.addEventListener('click', () => openLightbox(item));
-
-		if (!preview) return;
-
-		item.addEventListener('mouseenter', () => {
-			if (!canHover.matches) return;
-			void preview.play();
-		});
-
-		item.addEventListener('mouseleave', () => {
-			if (!canHover.matches) return;
-			preview.pause();
-			preview.currentTime = 0;
-		});
 	});
 
 	closeTriggers.forEach((trigger) => {

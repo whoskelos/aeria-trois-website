@@ -1,4 +1,11 @@
 ---
+import {
+	bentoPlacementClass,
+	bentoPlacementStyle,
+	bentoSpanClasses,
+	getShowcaseAssignment,
+} from '../lib/bentoLayout';
+
 interface Props {
 	category: string;
 	title: string;
@@ -10,12 +17,24 @@ interface Props {
 }
 
 const { category, title, meta, description, videoSrc, posterSrc, index } = Astro.props;
+const assignment = getShowcaseAssignment(index);
+const { format } = assignment;
+const isHero = format === 'hero';
+const isTall = format === 'tall';
+const placementStyle = bentoPlacementStyle(assignment);
 ---
 
 <button
 	type="button"
 	data-reveal
-	class="gallery-item group relative aspect-[3/4] w-full overflow-hidden border-0 bg-base p-0 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+	class:list={[
+		'gallery-item bento-cell group relative min-h-0 w-full overflow-hidden border border-border-subtle bg-surface p-0 text-left',
+		'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+		bentoSpanClasses[format],
+		bentoPlacementClass(assignment),
+		isHero && 'gallery-item--hero',
+	]}
+	style={placementStyle}
 	data-gallery-item
 	data-index={index}
 	data-video-src={videoSrc}
@@ -27,38 +46,67 @@ const { category, title, meta, description, videoSrc, posterSrc, index } = Astro
 >
 	<video
 		class="gallery-item__video absolute inset-0 block h-full w-full object-cover"
+		data-lazy-video
+		data-src={videoSrc}
 		muted
 		loop
 		playsinline
 		preload="none"
 		poster={posterSrc}
-		src={videoSrc}
 	></video>
 
 	<div
-		class="pointer-events-none absolute inset-0 bg-gradient-to-t from-base via-base/20 to-transparent"
+		class="pointer-events-none absolute inset-0 bg-gradient-to-t from-base via-base/25 to-transparent"
 		aria-hidden="true"
 	></div>
 
 	<p
-		class="absolute left-4 top-4 text-[0.625rem] tracking-[0.24em] text-foreground/80 uppercase sm:left-5 sm:top-5 sm:text-xs"
+		class:list={[
+			'absolute left-4 top-4 tracking-[0.24em] text-foreground/80 uppercase sm:left-5 sm:top-5',
+			isHero ? 'text-xs' : 'text-[0.625rem] sm:text-xs',
+		]}
 	>
 		{category}
 	</p>
 
-	<div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+	<div
+		class:list={[
+			'absolute inset-x-0 bottom-0',
+			isHero ? 'p-5 sm:p-6 lg:p-8' : isTall ? 'p-4 sm:p-5 lg:p-6' : 'p-4 sm:p-5',
+		]}
+	>
 		<div class="flex items-center gap-3">
 			<span
-				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/70 bg-transparent text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-base group-focus-visible:border-accent group-focus-visible:bg-accent group-focus-visible:text-base sm:h-10 sm:w-10"
+				class:list={[
+					'flex shrink-0 items-center justify-center rounded-full border border-accent/70 bg-transparent text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-base group-focus-visible:border-accent group-focus-visible:bg-accent group-focus-visible:text-base',
+					isHero ? 'h-11 w-11 sm:h-12 sm:w-12' : 'h-9 w-9 sm:h-10 sm:w-10',
+				]}
 				aria-hidden="true"
 			>
-				<svg class="ml-0.5 h-3 w-3 fill-current sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24">
+				<svg
+					class:list={['ml-0.5 fill-current', isHero ? 'h-4 w-4' : 'h-3 w-3 sm:h-3.5 sm:w-3.5']}
+					viewBox="0 0 24 24"
+				>
 					<path d="M8 5v14l11-7z"></path>
 				</svg>
 			</span>
-			<h3 class="text-xl leading-tight text-foreground sm:text-2xl">{title}</h3>
+			<h3
+				class:list={[
+					'leading-tight text-foreground',
+					isHero ? 'text-2xl sm:text-3xl lg:text-4xl' : isTall ? 'text-xl sm:text-2xl' : 'text-lg sm:text-xl',
+				]}
+			>
+				{title}
+			</h3>
 		</div>
-		<p class="mt-2 text-xs text-muted-soft sm:text-sm">{meta}</p>
+		<p class:list={['text-muted-soft', isHero ? 'mt-3 text-sm sm:text-base' : 'mt-2 text-xs sm:text-sm']}>
+			{meta}
+		</p>
+		{
+			isHero && (
+				<p class="mt-4 hidden max-w-md text-sm leading-relaxed text-muted lg:block">{description}</p>
+			)
+		}
 	</div>
 </button>
 
@@ -66,18 +114,40 @@ const { category, title, meta, description, videoSrc, posterSrc, index } = Astro
 	.gallery-item__video {
 		transform: translateZ(0) scale(1.01);
 		transform-origin: center;
-		transition: opacity 500ms, transform 500ms;
+		transition:
+			opacity 500ms var(--ease-out),
+			transform 500ms var(--ease-out);
 	}
 
 	@media (hover: hover) and (pointer: fine) {
 		.gallery-item__video {
-			opacity: 0.85;
+			opacity: 0.88;
+		}
+
+		.gallery-item--hero .gallery-item__video {
+			opacity: 0.92;
 		}
 
 		.gallery-item:hover .gallery-item__video,
 		.gallery-item:focus-visible .gallery-item__video {
 			opacity: 1;
 			transform: translateZ(0) scale(1.05);
+		}
+
+		.gallery-item--hero:hover .gallery-item__video,
+		.gallery-item--hero:focus-visible .gallery-item__video {
+			transform: translateZ(0) scale(1.03);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.gallery-item__video {
+			transition: opacity 200ms ease;
+		}
+
+		.gallery-item:hover .gallery-item__video,
+		.gallery-item:focus-visible .gallery-item__video {
+			transform: none;
 		}
 	}
 </style>

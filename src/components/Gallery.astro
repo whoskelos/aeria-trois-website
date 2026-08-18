@@ -52,7 +52,7 @@ const galleryItems = [
 			</p>
 		</div>
 
-		<div class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+		<div class="bento-grid gallery-bento">
 			{
 				galleryItems.map((item, index) => (
 					<GalleryItem
@@ -172,8 +172,6 @@ const galleryItems = [
 	const galleryItems = document.querySelectorAll<HTMLButtonElement>('[data-gallery-item]');
 	const closeTriggers = document.querySelectorAll('[data-gallery-close]');
 
-	const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
-
 	const updateMuteUi = (muted: boolean) => {
 		if (!muteLabel || !muteIcon) return;
 
@@ -185,9 +183,8 @@ const galleryItems = [
 	};
 
 	const pausePreviewVideos = () => {
-		galleryItems.forEach((item) => {
-			const preview = item.querySelector('video');
-			if (!preview) return;
+		document.querySelectorAll<HTMLVideoElement>('video[data-lazy-video]').forEach((preview) => {
+			if (preview === modalVideo) return;
 			preview.pause();
 			preview.currentTime = 0;
 		});
@@ -233,33 +230,7 @@ const galleryItems = [
 	};
 
 	galleryItems.forEach((item) => {
-		const preview = item.querySelector('video');
-
 		item.addEventListener('click', () => openModal(item));
-
-		if (!preview) return;
-
-		item.addEventListener('mouseenter', () => {
-			if (!canHover.matches) return;
-			void preview.play();
-		});
-
-		item.addEventListener('mouseleave', () => {
-			if (!canHover.matches) return;
-			preview.pause();
-			preview.currentTime = 0;
-		});
-
-		item.addEventListener('focus', () => {
-			if (!canHover.matches) return;
-			void preview.play();
-		});
-
-		item.addEventListener('blur', () => {
-			if (!canHover.matches) return;
-			preview.pause();
-			preview.currentTime = 0;
-		});
 	});
 
 	closeTriggers.forEach((trigger) => {

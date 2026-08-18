@@ -55,3 +55,117 @@
 		transform: translate3d(0, 16px, 0) scale(0.97);
 	}
 }
+
+/* Bento grid — 4 logical columns on desktop (12 tracks, unit = 3) */
+.bento-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-auto-rows: 5rem;
+	grid-auto-flow: dense;
+	gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+	.bento-grid {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		grid-auto-rows: 4rem;
+		gap: 0.75rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.bento-grid {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+		grid-auto-rows: 3.75rem;
+		gap: 0.625rem;
+	}
+}
+
+/* Mobile fallbacks */
+.experience-bento__cell--hero {
+	grid-column: span 2;
+	grid-row: span 4;
+}
+
+.experience-bento__cell--wide {
+	grid-column: span 2;
+	grid-row: span 2;
+}
+
+.experience-bento__cell--tall {
+	grid-column: span 1;
+	grid-row: span 4;
+}
+
+.experience-bento__cell--small {
+	grid-column: span 1;
+	grid-row: span 2;
+}
+
+@media (max-width: 767px) {
+	.experience-bento__cell--tall,
+	.experience-bento__cell--small {
+		grid-column: span 2;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	.experience-bento__cell--hero {
+		grid-column: span 4;
+		grid-row: span 6;
+	}
+
+	.experience-bento__cell--wide {
+		grid-column: span 4;
+		grid-row: span 3;
+	}
+
+	.experience-bento__cell--tall {
+		grid-column: span 2;
+		grid-row: span 6;
+	}
+
+	.experience-bento__cell--small {
+		grid-column: span 2;
+		grid-row: span 3;
+	}
+}
+
+@media (min-width: 1024px) {
+	.bento-cell--placed {
+		grid-column: var(--bento-col) / span var(--bento-col-span);
+		grid-row: var(--bento-row) / span var(--bento-row-span);
+	}
+
+	.experience-bento__cell--hero {
+		grid-column: span 6;
+		grid-row: span 6;
+	}
+
+	.experience-bento__cell--wide {
+		grid-column: span 6;
+		grid-row: span 3;
+	}
+
+	.experience-bento__cell--tall {
+		grid-column: span 3;
+		grid-row: span 6;
+	}
+
+	.experience-bento__cell--small {
+		grid-column: span 3;
+		grid-row: span 3;
+	}
+}
+
+.bento-cell {
+	transition: border-color 300ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.bento-cell:hover,
+	.bento-cell:focus-visible {
+		border-color: rgb(226 184 87 / 0.35);
+	}
+}
+

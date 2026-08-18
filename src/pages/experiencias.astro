@@ -8,20 +8,23 @@ import ExperienceLightbox from '../components/experiences/ExperienceLightbox.ast
 import { getGalleryEvents } from '../lib/gallery';
 
 const events = getGalleryEvents();
+const firstMedia = events[0]?.media[0];
+const lcpPoster = firstMedia?.type === 'video' ? firstMedia.poster : undefined;
 
 const description =
 	'Galería de experiencias realizadas por Aeria Trois: espectáculos de telas aéreas en festivales, eventos privados y ferias en Madrid y España.';
 ---
 
 <Layout title="Experiencias" description={description} canonicalPath="/experiencias">
+	{lcpPoster && <link slot="head" rel="preload" as="image" href={lcpPoster} fetchpriority="high" />}
 	<Header />
 	<main
 		class="pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
 	>
 		<ExperienceHero />
 		{
-			events.map((event) => (
-				<ExperienceEvent event={event} />
+			events.map((event, index) => (
+				<ExperienceEvent event={event} isFirstEvent={index === 0} />
 			))
 		}
 	</main>

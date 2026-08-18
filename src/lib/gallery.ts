@@ -4,6 +4,7 @@ export type GalleryMedia = {
 	id: string;
 	src: string;
 	type: 'image' | 'video';
+	image?: ImageMetadata;
 	poster?: string;
 	width?: number;
 	height?: number;
@@ -113,6 +114,7 @@ function buildMediaList(): Map<string, GalleryMedia[]> {
 			id: mediaId(eventId, baseName),
 			src: image.src,
 			type: 'image',
+			image,
 			width: image.width,
 			height: image.height,
 			alt: '',
