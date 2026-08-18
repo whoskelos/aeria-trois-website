@@ -2,9 +2,11 @@
 import showcasePoster1 from '../assets/showcase/1-poster.webp';
 import showcasePoster2 from '../assets/showcase/2-poster.webp';
 import showcasePoster3 from '../assets/showcase/3-poster.webp';
+import showcasePoster4 from '../assets/showcase/4-poster.webp';
 import showcaseVideo1 from '../assets/showcase/1.webm';
 import showcaseVideo2 from '../assets/showcase/2.webm';
 import showcaseVideo3 from '../assets/showcase/3.webm';
+import showcaseVideo4 from '../assets/showcase/4.webm';
 import GalleryItem from './GalleryItem.astro';
 
 const galleryItems = [
@@ -34,6 +36,15 @@ const galleryItems = [
 			'Intervención de telas aéreas para las jornadas de bienestar organizadas por el Ayuntamiento de Arroyomolinos.',
 		video: showcaseVideo3,
 		poster: showcasePoster3,
+	},
+	{
+		category: 'Aro aéreo',
+		title: 'Aro O&C Eventos',
+		meta: 'Griñón, Madrid · Aniversario de Empresa',
+		description:
+			'Actuación de aro aéreo en el aniversario corporativo de O&C Eventos, integrada con la celebración del evento.',
+		video: showcaseVideo4,
+		poster: showcasePoster4,
 	},
 ];
 ---
@@ -147,6 +158,12 @@ const galleryItems = [
 </div>
 
 <style>
+	@media (min-width: 1024px) {
+		.gallery-bento {
+			grid-auto-rows: minmax(0, 3.75rem);
+		}
+	}
+
 	.gallery-modal[data-open='true'] {
 		display: flex;
 	}

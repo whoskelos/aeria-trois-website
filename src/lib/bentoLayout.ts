@@ -40,11 +40,12 @@ const SWIRL_TEMPLATE: Array<{ format: BentoFormat; col: number; row: number }> =
 	{ format: 'small', col: 9, row: 9 },
 ];
 
-/** Homepage showcase — 3 highlights in the same visual language. */
+/** Homepage showcase — 4 portrait highlights, one row, no gaps. */
 const SHOWCASE_TEMPLATE: Array<{ format: BentoFormat; col: number; row: number }> = [
-	{ format: 'hero', col: 3, row: 0 },
+	{ format: 'tall', col: 0, row: 0 },
+	{ format: 'tall', col: 3, row: 0 },
+	{ format: 'tall', col: 6, row: 0 },
 	{ format: 'tall', col: 9, row: 0 },
-	{ format: 'wide', col: 3, row: 6 },
 ];
 
 export function getShowcaseAssignment(index: number): BentoAssignment {

@@ -19,8 +19,6 @@ interface Props {
 const { category, title, meta, description, videoSrc, posterSrc, index } = Astro.props;
 const assignment = getShowcaseAssignment(index);
 const { format } = assignment;
-const isHero = format === 'hero';
-const isTall = format === 'tall';
 const placementStyle = bentoPlacementStyle(assignment);
 ---
 
@@ -32,7 +30,6 @@ const placementStyle = bentoPlacementStyle(assignment);
 		'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
 		bentoSpanClasses[format],
 		bentoPlacementClass(assignment),
-		isHero && 'gallery-item--hero',
 	]}
 	style={placementStyle}
 	data-gallery-item
@@ -61,52 +58,28 @@ const placementStyle = bentoPlacementStyle(assignment);
 	></div>
 
 	<p
-		class:list={[
-			'absolute left-4 top-4 tracking-[0.24em] text-foreground/80 uppercase sm:left-5 sm:top-5',
-			isHero ? 'text-xs' : 'text-[0.625rem] sm:text-xs',
-		]}
+		class="absolute left-4 top-4 text-[0.625rem] tracking-[0.24em] text-foreground/80 uppercase sm:left-5 sm:top-5 sm:text-xs"
 	>
 		{category}
 	</p>
 
-	<div
-		class:list={[
-			'absolute inset-x-0 bottom-0',
-			isHero ? 'p-5 sm:p-6 lg:p-8' : isTall ? 'p-4 sm:p-5 lg:p-6' : 'p-4 sm:p-5',
-		]}
-	>
+	<div class="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6">
 		<div class="flex items-center gap-3">
 			<span
-				class:list={[
-					'flex shrink-0 items-center justify-center rounded-full border border-accent/70 bg-transparent text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-base group-focus-visible:border-accent group-focus-visible:bg-accent group-focus-visible:text-base',
-					isHero ? 'h-11 w-11 sm:h-12 sm:w-12' : 'h-9 w-9 sm:h-10 sm:w-10',
-				]}
+				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/70 bg-transparent text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-base group-focus-visible:border-accent group-focus-visible:bg-accent group-focus-visible:text-base sm:h-10 sm:w-10"
 				aria-hidden="true"
 			>
-				<svg
-					class:list={['ml-0.5 fill-current', isHero ? 'h-4 w-4' : 'h-3 w-3 sm:h-3.5 sm:w-3.5']}
-					viewBox="0 0 24 24"
-				>
+				<svg class="ml-0.5 h-3 w-3 fill-current sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24">
 					<path d="M8 5v14l11-7z"></path>
 				</svg>
 			</span>
-			<h3
-				class:list={[
-					'leading-tight text-foreground',
-					isHero ? 'text-2xl sm:text-3xl lg:text-4xl' : isTall ? 'text-xl sm:text-2xl' : 'text-lg sm:text-xl',
-				]}
-			>
+			<h3 class="text-xl leading-tight text-foreground sm:text-2xl">
 				{title}
 			</h3>
 		</div>
-		<p class:list={['text-muted-soft', isHero ? 'mt-3 text-sm sm:text-base' : 'mt-2 text-xs sm:text-sm']}>
+		<p class="mt-2 text-xs text-muted-soft sm:text-sm">
 			{meta}
 		</p>
-		{
-			isHero && (
-				<p class="mt-4 hidden max-w-md text-sm leading-relaxed text-muted lg:block">{description}</p>
-			)
-		}
 	</div>
 </button>
 
@@ -124,19 +97,10 @@ const placementStyle = bentoPlacementStyle(assignment);
 			opacity: 0.88;
 		}
 
-		.gallery-item--hero .gallery-item__video {
-			opacity: 0.92;
-		}
-
 		.gallery-item:hover .gallery-item__video,
 		.gallery-item:focus-visible .gallery-item__video {
 			opacity: 1;
 			transform: translateZ(0) scale(1.05);
-		}
-
-		.gallery-item--hero:hover .gallery-item__video,
-		.gallery-item--hero:focus-visible .gallery-item__video {
-			transform: translateZ(0) scale(1.03);
 		}
 	}
 
