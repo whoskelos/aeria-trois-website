@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ExperienceHero from '../components/experiences/ExperienceHero.astro';
+import ExperienceVenues from '../components/experiences/ExperienceVenues.astro';
 import ExperienceEvent from '../components/experiences/ExperienceEvent.astro';
 import ExperienceLightbox from '../components/experiences/ExperienceLightbox.astro';
 import { getGalleryEvents } from '../lib/gallery';
@@ -22,6 +23,7 @@ const description =
 		class="pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
 	>
 		<ExperienceHero />
+		<ExperienceVenues />
 		{
 			events.map((event, index) => (
 				<ExperienceEvent event={event} isFirstEvent={index === 0} />

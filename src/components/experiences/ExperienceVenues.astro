@@ -1,0 +1,53 @@
+---
+const venues = [
+	{
+		title: 'Mercado Agostiellu',
+		meta: 'Infiesto-Piloña, Asturias',
+	},
+	{
+		title: 'Fiestas patronales de Móstoles',
+		meta: 'Móstoles, Madrid',
+	},
+	{
+		title: 'Fiestas y eventos privados',
+		meta: 'Bodas y celebraciones',
+	},
+];
+---
+
+<section
+	id="donde-mas"
+	class="border-b border-border-subtle px-6 py-12 sm:py-16"
+	aria-labelledby="experience-venues-heading"
+>
+	<div class="mx-auto max-w-7xl">
+		<div class="mb-8 flex flex-col gap-6 lg:mb-10 lg:flex-row lg:items-end lg:justify-between">
+			<div class="max-w-xl" data-reveal>
+				<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase">Alcance</p>
+				<h2
+					id="experience-venues-heading"
+					class="text-3xl font-light text-foreground md:text-4xl"
+				>
+					¿Dónde más hemos estado?
+				</h2>
+			</div>
+			<p class="max-w-md text-sm leading-relaxed text-muted lg:text-right" data-reveal>
+				Además de los eventos que documentamos en esta galería, hemos llevado nuestro espectáculo a
+				ferias, patronales y celebraciones privadas por toda España.
+			</p>
+		</div>
+
+		<ul class="grid gap-px overflow-hidden border border-border-subtle bg-border-subtle sm:grid-cols-3">
+			{
+				venues.map((venue) => (
+					<li class="bg-base px-6 py-8 sm:px-8 sm:py-10" data-reveal>
+						<p class="text-lg font-light text-foreground sm:text-xl">{venue.title}</p>
+						<p class="mt-2 text-xs tracking-[0.18em] text-accent uppercase sm:text-sm">
+							{venue.meta}
+						</p>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>
