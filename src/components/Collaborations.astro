@@ -1,0 +1,78 @@
+---
+import centeneraRockLogo from '../assets/client-logos/centenera-rock.webp';
+import jowkeLogo from '../assets/client-logos/jowke.webp';
+import enraizarteLogo from '../assets/client-logos/enraizarte.webp';
+import arroyomolinosLogo from '../assets/client-logos/arroyomolinos-ayto.webp';
+
+const clients = [
+	{
+		name: 'Centenera Rock',
+		logo: centeneraRockLogo,
+	},
+	{
+		name: 'Jowke Club',
+		logo: jowkeLogo,
+	},
+	{
+		name: 'Festival Enraizarte',
+		logo: enraizarteLogo,
+	},
+	{
+		name: 'Ayto. Arroyomolinos',
+		logo: arroyomolinosLogo,
+	},
+];
+---
+
+<section
+	id="colaboraciones"
+	class="border-t border-border-subtle px-6 py-16 sm:py-24"
+	aria-labelledby="collaborations-heading"
+>
+	<div class="mx-auto max-w-5xl text-center">
+		<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase" data-reveal>
+			Colaboraciones
+		</p>
+
+		<h2
+			id="collaborations-heading"
+			class="text-balance text-3xl font-light text-foreground md:text-5xl"
+			data-reveal
+		>
+			Han confiado <span class="text-accent">en nosotras</span>
+		</h2>
+
+		<p
+			class="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted sm:mt-6"
+			data-reveal
+		>
+			Espacios, festivales y clubes de Madrid donde hemos llevado experiencias aéreas.
+		</p>
+
+		<ul
+			class="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 sm:mt-16 sm:grid-cols-4 sm:gap-x-6 sm:gap-y-12"
+			aria-label="Clientes y colaboradores"
+		>
+			{
+				clients.map((client) => (
+					<li class="flex flex-col items-center gap-4" data-reveal>
+						<div class="flex aspect-square w-full max-w-[9.5rem] items-center justify-center rounded-lg border border-border bg-surface-raised p-5 transition-colors duration-300 [transition-timing-function:var(--ease-out)] sm:max-w-[10.5rem] sm:p-6 [@media(hover:hover)_and_(pointer:fine)]:hover:border-accent/35">
+							<img
+								src={client.logo.src}
+								alt=""
+								width={client.logo.width}
+								height={client.logo.height}
+								class="max-h-full max-w-full object-contain"
+								loading="lazy"
+								decoding="async"
+							/>
+						</div>
+						<p class="max-w-[9.5rem] text-[0.625rem] leading-snug tracking-[0.16em] text-foreground/85 uppercase sm:max-w-[10.5rem] sm:text-xs">
+							{client.name}
+						</p>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>
