@@ -5,9 +5,10 @@ import Footer from '../components/Footer.astro';
 import CallToAction from '../components/CallToAction.astro';
 import TeamHero from '../components/team/TeamHero.astro';
 import TeamStory from '../components/team/TeamStory.astro';
+import TeamCarousel from '../components/team/TeamCarousel.astro';
 
 const description =
-	'Lydia, Paloma y Andrea forman Aeria Trois: grupo artístico de Madrid especializado en tela y aro aéreo. Clases, talleres, shows y espectáculos aéreos.';
+	'Conoce a Lydia, Paloma y Andrea: el trío de Aeria Trois en tela y aro aéreo. Formación, shows y espectáculos en Madrid.';
 ---
 
 <Layout title="Equipo" description={description} canonicalPath="/equipo">
@@ -17,7 +18,12 @@ const description =
 	>
 		<TeamHero />
 		<TeamStory />
-		<CallToAction />
+		<TeamCarousel />
+		<CallToAction
+			titleLine="¿Reservamos un número"
+			titleAccent="con el trío?"
+			description="Lydia, Paloma y Andrea adaptan tela y aro a tu espacio, público y escala. Cuéntanos la fecha y el tipo de evento."
+		/>
 	</main>
 	<Footer />
 </Layout>

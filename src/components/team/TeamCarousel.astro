@@ -1,0 +1,550 @@
+---
+import lydiaImage from '../../assets/team/lydia.webp';
+import palomaImage from '../../assets/team/paloma.webp';
+import andreaImage from '../../assets/team/andrea.webp';
+
+const members = [
+	{
+		name: 'Lydia',
+		specialty: 'Tela Aérea',
+		quote: 'En la tela busco la fluidez: que cada caída parezca inevitable y ligera.',
+		image: lydiaImage,
+	},
+	{
+		name: 'Paloma',
+		specialty: 'Aro Aéreo',
+		quote: 'El aro me permite jugar con el público, incluso a un metro de distancia.',
+		image: palomaImage,
+	},
+	{
+		name: 'Andrea',
+		specialty: 'Tela y Aro',
+		quote: 'Lo que más me gusta es el trío: tres cuerpos y una sola respiración.',
+		image: andreaImage,
+	},
+];
+---
+
+<section
+	class="border-b border-border-subtle px-6 pb-14 pt-2 sm:pb-20 sm:pt-4"
+	aria-roledescription="carrusel"
+	aria-label="Artistas de Aeria Trois"
+>
+	<div class="mx-auto max-w-7xl">
+		<div
+			class="team-carousel"
+			data-team-carousel
+			data-active="0"
+			tabindex="0"
+			aria-describedby="team-carousel-hint"
+		>
+			<p
+				id="team-carousel-hint"
+				class="team-carousel__hint"
+				data-reveal
+			>
+				Selecciona una artista o desliza para conocerla
+			</p>
+
+			<div class="team-carousel__viewport" data-carousel-viewport>
+				<div class="team-carousel__track" data-carousel-track>
+					{
+						members.map((member, index) => (
+							<button
+								type="button"
+								class="team-carousel__slide"
+								data-carousel-slide
+								data-index={index}
+								id={`team-slide-${index}`}
+								aria-label={`${member.name}, ${member.specialty}`}
+								aria-current={index === 0 ? 'true' : 'false'}
+							>
+								<div class="team-carousel__frame">
+									<img
+										src={member.image.src}
+										alt={`Retrato de ${member.name}`}
+										width={member.image.width}
+										height={member.image.height}
+										class="team-carousel__image"
+										loading={index === 0 ? 'eager' : 'lazy'}
+										decoding="async"
+									/>
+									<div class="team-carousel__caption">
+										<span class="team-carousel__name">{member.name}</span>
+										<span class="team-carousel__specialty">{member.specialty}</span>
+									</div>
+								</div>
+							</button>
+						))
+					}
+				</div>
+			</div>
+
+			<figure class="team-carousel__quote-wrap" data-reveal>
+				<blockquote
+					class="team-carousel__quote"
+					id="team-carousel-quote"
+					data-carousel-quote
+					aria-live="polite"
+					aria-labelledby="team-slide-0"
+				>
+					“{members[0].quote}”
+				</blockquote>
+			</figure>
+
+			<div class="team-carousel__controls" data-reveal>
+				<button
+					type="button"
+					class="team-carousel__arrow"
+					data-carousel-prev
+					aria-label="Artista anterior"
+				>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+						<path d="M15 18l-6-6 6-6"></path>
+					</svg>
+				</button>
+
+				<div class="team-carousel__indicators" role="tablist" aria-label="Seleccionar artista">
+					{
+						members.map((member, index) => (
+							<button
+								type="button"
+								class="team-carousel__indicator"
+								data-carousel-indicator
+								data-index={index}
+								role="tab"
+								aria-selected={index === 0 ? 'true' : 'false'}
+								aria-label={member.name}
+							></button>
+						))
+					}
+				</div>
+
+				<button
+					type="button"
+					class="team-carousel__arrow"
+					data-carousel-next
+					aria-label="Artista siguiente"
+				>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"></path>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script define:vars={{ quotes: members.map((member) => member.quote) }}>
+	const carousel = document.querySelector('[data-team-carousel]');
+	if (carousel) {
+		const slides = carousel.querySelectorAll('[data-carousel-slide]');
+		const indicators = carousel.querySelectorAll('[data-carousel-indicator]');
+		const quoteEl = carousel.querySelector('[data-carousel-quote]');
+		const prevBtn = carousel.querySelector('[data-carousel-prev]');
+		const nextBtn = carousel.querySelector('[data-carousel-next]');
+		const quoteWrap = carousel.querySelector('.team-carousel__quote-wrap');
+		const total = slides.length;
+		let active = 0;
+		let touchStartX = 0;
+
+		const measureQuoteHeight = () => {
+			if (!quoteWrap || !quoteEl) return;
+
+			const styles = getComputedStyle(quoteWrap);
+			const measurer = document.createElement('p');
+			measurer.className = quoteEl.className;
+			measurer.style.cssText = `
+				position: absolute;
+				visibility: hidden;
+				pointer-events: none;
+				width: ${quoteWrap.clientWidth}px;
+				font-size: ${styles.fontSize};
+				font-family: ${styles.fontFamily};
+				line-height: ${styles.lineHeight};
+				text-wrap: balance;
+			`;
+
+			document.body.appendChild(measurer);
+
+			let maxHeight = 0;
+			for (const quote of quotes) {
+				measurer.textContent = `\u201C${quote}\u201D`;
+				maxHeight = Math.max(maxHeight, measurer.offsetHeight);
+			}
+
+			document.body.removeChild(measurer);
+			quoteWrap.style.minHeight = `${maxHeight}px`;
+		};
+
+		const wrap = (index) => ((index % total) + total) % total;
+
+		const getOffset = (index) => {
+			let diff = index - active;
+			if (diff > total / 2) diff -= total;
+			if (diff < -total / 2) diff += total;
+			return diff;
+		};
+
+		const updateSlides = () => {
+			carousel.dataset.active = String(active);
+
+			slides.forEach((slide, index) => {
+				const offset = getOffset(index);
+				slide.dataset.offset = String(offset);
+				slide.setAttribute('aria-current', offset === 0 ? 'true' : 'false');
+				slide.tabIndex = offset === 0 ? 0 : -1;
+			});
+
+			indicators.forEach((indicator, index) => {
+				indicator.setAttribute('aria-selected', index === active ? 'true' : 'false');
+				indicator.dataset.active = index === active ? 'true' : 'false';
+			});
+
+			if (quoteEl) {
+				quoteEl.textContent = `\u201C${quotes[active]}\u201D`;
+				quoteEl.setAttribute('aria-labelledby', `team-slide-${active}`);
+			}
+		};
+
+		const goTo = (index) => {
+			active = wrap(index);
+			updateSlides();
+		};
+
+		prevBtn?.addEventListener('click', () => goTo(active - 1));
+		nextBtn?.addEventListener('click', () => goTo(active + 1));
+
+		indicators.forEach((indicator) => {
+			indicator.addEventListener('click', () => {
+				const index = Number(indicator.dataset.index);
+				if (!Number.isNaN(index)) goTo(index);
+			});
+		});
+
+		slides.forEach((slide) => {
+			slide.addEventListener('click', () => {
+				const index = Number(slide.dataset.index);
+				if (!Number.isNaN(index) && index !== active) goTo(index);
+			});
+		});
+
+		carousel.addEventListener('keydown', (event) => {
+			if (event.key === 'ArrowLeft') {
+				event.preventDefault();
+				goTo(active - 1);
+			}
+			if (event.key === 'ArrowRight') {
+				event.preventDefault();
+				goTo(active + 1);
+			}
+		});
+
+		const viewport = carousel.querySelector('[data-carousel-viewport]');
+		viewport?.addEventListener(
+			'touchstart',
+			(event) => {
+				touchStartX = event.changedTouches[0]?.clientX ?? 0;
+			},
+			{ passive: true },
+		);
+
+		viewport?.addEventListener(
+			'touchend',
+			(event) => {
+				const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+				const delta = touchEndX - touchStartX;
+				if (Math.abs(delta) < 40) return;
+				if (delta > 0) goTo(active - 1);
+				else goTo(active + 1);
+			},
+			{ passive: true },
+		);
+
+		updateSlides();
+		measureQuoteHeight();
+		document.fonts?.ready.then(measureQuoteHeight);
+		window.addEventListener('resize', measureQuoteHeight, { passive: true });
+	}
+</script>
+
+<style>
+	.team-carousel {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.75rem;
+		outline: none;
+	}
+
+	.team-carousel:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 4px;
+		border-radius: 0.25rem;
+	}
+
+	.team-carousel__hint {
+		margin: 0;
+		max-width: 24rem;
+		text-align: center;
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--color-subtle);
+	}
+
+	.team-carousel__viewport {
+		position: relative;
+		width: 100%;
+		max-width: 52rem;
+		height: clamp(18rem, 52vw, 28rem);
+		overflow: hidden;
+		touch-action: pan-y;
+	}
+
+	.team-carousel__track {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	.team-carousel__slide {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: min(72%, 16.5rem);
+		height: min(100%, 26rem);
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: pointer;
+		transform: translate(-50%, -50%);
+		transition:
+			transform 550ms var(--ease-out),
+			opacity 550ms var(--ease-out),
+			filter 550ms var(--ease-out);
+		will-change: transform, opacity;
+	}
+
+	.team-carousel__slide[data-offset='0'] {
+		z-index: 3;
+		opacity: 1;
+		filter: none;
+		transform: translate(-50%, -50%) scale(1);
+		cursor: default;
+	}
+
+	.team-carousel__slide[data-offset='-1'] {
+		z-index: 2;
+		opacity: 0.38;
+		filter: brightness(0.72);
+		transform: translate(calc(-50% - clamp(7rem, 22vw, 11rem)), -50%) scale(0.86);
+	}
+
+	.team-carousel__slide[data-offset='1'] {
+		z-index: 2;
+		opacity: 0.38;
+		filter: brightness(0.72);
+		transform: translate(calc(-50% + clamp(7rem, 22vw, 11rem)), -50%) scale(0.86);
+	}
+
+	.team-carousel__slide[data-offset='-2'],
+	.team-carousel__slide[data-offset='2'] {
+		z-index: 1;
+		opacity: 0;
+		pointer-events: none;
+		transform: translate(-50%, -50%) scale(0.78);
+	}
+
+	.team-carousel__frame {
+		position: relative;
+		height: 100%;
+		overflow: hidden;
+		border: 1px solid transparent;
+		background: var(--color-surface);
+		transition: border-color 400ms var(--ease-out);
+	}
+
+	.team-carousel__slide[data-offset='0'] .team-carousel__frame {
+		border-color: var(--color-accent);
+	}
+
+	.team-carousel__image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center top;
+	}
+
+	.team-carousel__caption {
+		position: absolute;
+		inset-inline: 0;
+		bottom: 0;
+		padding: 1.25rem 1rem 1rem;
+		background: linear-gradient(to top, rgb(5 5 5 / 0.88) 0%, rgb(5 5 5 / 0.45) 55%, transparent 100%);
+		text-align: left;
+	}
+
+	.team-carousel__name {
+		display: block;
+		font-family: var(--font-serif);
+		font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+		font-weight: 400;
+		line-height: 1.1;
+		color: var(--color-foreground);
+	}
+
+	.team-carousel__specialty {
+		display: block;
+		margin-top: 0.35rem;
+		font-size: 0.625rem;
+		font-weight: 500;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: var(--color-muted-soft);
+	}
+
+	.team-carousel__quote-wrap {
+		margin: 0;
+		width: 100%;
+		max-width: 36rem;
+		padding-inline: 0.5rem;
+		font-size: clamp(1.125rem, 0.95rem + 0.6vw, 1.5rem);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.team-carousel__quote {
+		margin: 0;
+		width: 100%;
+		font-family: var(--font-serif);
+		font-size: inherit;
+		font-weight: 400;
+		font-style: normal;
+		line-height: 1.45;
+		text-align: center;
+		text-wrap: balance;
+		color: var(--color-muted-soft);
+	}
+
+	.team-carousel__controls {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1.25rem;
+	}
+
+	.team-carousel__arrow {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		width: 2.75rem;
+		height: 2.75rem;
+		padding: 0;
+		border: 1px solid var(--color-border);
+		border-radius: 9999px;
+		background: transparent;
+		color: var(--color-muted-soft);
+		transition:
+			border-color 250ms var(--ease-out),
+			color 250ms var(--ease-out);
+	}
+
+	.team-carousel__arrow svg {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.team-carousel__arrow:hover {
+			border-color: rgb(226 184 87 / 0.45);
+			color: var(--color-accent);
+		}
+
+		.team-carousel__slide[data-offset='-1']:hover,
+		.team-carousel__slide[data-offset='1']:hover {
+			opacity: 0.55;
+		}
+	}
+
+	.team-carousel__arrow:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+	}
+
+	.team-carousel__indicators {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.team-carousel__indicator {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.team-carousel__indicator::after {
+		content: '';
+		display: block;
+		width: 2rem;
+		height: 2px;
+		border-radius: 9999px;
+		background: var(--color-border);
+		transition:
+			width 350ms var(--ease-out),
+			background-color 350ms var(--ease-out);
+	}
+
+	.team-carousel__indicator[data-active='true']::after {
+		width: 2.75rem;
+		background: var(--color-accent);
+	}
+
+	.team-carousel__indicator:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
+	@media (max-width: 639px) {
+		.team-carousel__viewport {
+			height: clamp(16rem, 78vw, 22rem);
+		}
+
+		.team-carousel__slide {
+			width: min(78%, 14rem);
+		}
+
+		.team-carousel__slide[data-offset='-1'],
+		.team-carousel__slide[data-offset='1'] {
+			opacity: 0.52;
+		}
+
+		.team-carousel__slide[data-offset='-1'] {
+			transform: translate(calc(-50% - 5.5rem), -50%) scale(0.84);
+		}
+
+		.team-carousel__slide[data-offset='1'] {
+			transform: translate(calc(-50% + 5.5rem), -50%) scale(0.84);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.team-carousel__slide,
+		.team-carousel__indicator::after,
+		.team-carousel__arrow {
+			transition-duration: 150ms;
+		}
+	}
+</style>
