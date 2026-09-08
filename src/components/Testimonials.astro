@@ -1,0 +1,632 @@
+---
+import { testimonials } from '../data/testimonials.ts';
+---
+
+<section
+	id="opiniones"
+	class="testimonials-section border-t border-border-subtle px-6 py-16 sm:py-24"
+	aria-labelledby="testimonials-heading"
+>
+	<div class="mx-auto max-w-7xl">
+		<div class="mx-auto max-w-3xl text-center">
+			<p class="mb-2 text-xs tracking-[0.24em] text-subtle uppercase" data-reveal>
+				Opiniones
+			</p>
+
+			<h2
+				id="testimonials-heading"
+				class="text-balance text-3xl font-light text-foreground md:text-5xl"
+				data-reveal
+			>
+				Lo que dicen <span class="text-accent">quienes nos contratan</span>
+			</h2>
+
+			<p
+				class="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted sm:mt-6"
+				data-reveal
+			>
+				Experiencias de quienes han confiado en Aeria Trois para sus eventos, festivales y galas.
+			</p>
+		</div>
+
+		<div
+			class="testimonials-carousel"
+			data-testimonials-carousel
+			data-active="0"
+			tabindex="0"
+			aria-roledescription="carrusel"
+			aria-label="Opiniones de clientes"
+			data-reveal
+		>
+			<div class="testimonials-carousel__viewport" data-carousel-viewport>
+				<div class="testimonials-carousel__track" data-carousel-track>
+					{
+						testimonials.map((item, index) => (
+							<article
+								class="testimonials-carousel__slide"
+								data-carousel-slide
+								data-index={index}
+								id={`testimonial-slide-${index}`}
+								aria-roledescription="slide"
+								aria-label={`Opinión de ${item.client}`}
+								aria-current={index === 0 ? 'true' : 'false'}
+							>
+								<div class="testimonials-card">
+									<svg
+										class="testimonials-card__quote-icon"
+										viewBox="0 0 32 24"
+										fill="currentColor"
+										aria-hidden="true"
+									>
+										<path d="M0 24V14.4C0 9.6 1.067 5.733 3.2 2.8 5.333-.133 8.267-1.6 12-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4h7.6V24H0Zm18 0V14.4c0-4.8 1.067-8.667 3.2-11.6C23.333-.133 26.267-1.6 30-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4H28V24H18Z" />
+									</svg>
+
+									<blockquote class="testimonials-card__comment">
+										“{item.comment}”
+									</blockquote>
+
+									<footer class="testimonials-card__footer">
+										<cite class="testimonials-card__client">{item.client}</cite>
+										<div
+											class="testimonials-card__stars"
+											role="img"
+											aria-label={`${item.stars} de 5 estrellas`}
+										>
+											{
+												Array.from({ length: 5 }, (_, starIndex) => (
+													<svg
+														class:list={[
+															'testimonials-card__star',
+															starIndex < item.stars && 'testimonials-card__star--filled',
+														]}
+														viewBox="0 0 20 20"
+														fill="currentColor"
+														aria-hidden="true"
+													>
+														<path d="M10 1.5l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.35 5.06 16.7l.94-5.5-4-3.9 5.53-.8L10 1.5z" />
+													</svg>
+												))
+											}
+										</div>
+									</footer>
+								</div>
+							</article>
+						))
+					}
+				</div>
+			</div>
+
+			<div class="testimonials-carousel__controls">
+				<button
+					type="button"
+					class="testimonials-carousel__arrow"
+					data-carousel-prev
+					aria-label="Opinión anterior"
+				>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+						<path d="M15 18l-6-6 6-6"></path>
+					</svg>
+				</button>
+
+				<div class="testimonials-carousel__indicators" role="tablist" aria-label="Seleccionar opinión">
+					{
+						testimonials.map((item, index) => (
+							<button
+								type="button"
+								class="testimonials-carousel__indicator"
+								data-carousel-indicator
+								data-index={index}
+								role="tab"
+								aria-selected={index === 0 ? 'true' : 'false'}
+								aria-label={item.client}
+							></button>
+						))
+					}
+				</div>
+
+				<button
+					type="button"
+					class="testimonials-carousel__arrow"
+					data-carousel-next
+					aria-label="Opinión siguiente"
+				>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"></path>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script define:vars={{ total: testimonials.length }}>
+	const carousel = document.querySelector('[data-testimonials-carousel]');
+	if (carousel) {
+		const slides = carousel.querySelectorAll('[data-carousel-slide]');
+		const indicators = carousel.querySelectorAll('[data-carousel-indicator]');
+		const prevBtn = carousel.querySelector('[data-carousel-prev]');
+		const nextBtn = carousel.querySelector('[data-carousel-next]');
+		const viewport = carousel.querySelector('[data-carousel-viewport]');
+		const AUTOPLAY_MS = 3000;
+		const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		let active = 0;
+		let touchStartX = 0;
+		let autoplayTimer = null;
+		let isPaused = false;
+
+		const wrap = (index) => ((index % total) + total) % total;
+
+		const getOffset = (index) => {
+			let diff = index - active;
+			if (diff > total / 2) diff -= total;
+			if (diff < -total / 2) diff += total;
+			return diff;
+		};
+
+		const updateSlides = () => {
+			carousel.dataset.active = String(active);
+
+			slides.forEach((slide, index) => {
+				const offset = getOffset(index);
+				slide.dataset.offset = String(offset);
+				slide.setAttribute('aria-current', offset === 0 ? 'true' : 'false');
+				slide.tabIndex = offset === 0 ? 0 : -1;
+			});
+
+			indicators.forEach((indicator, index) => {
+				indicator.setAttribute('aria-selected', index === active ? 'true' : 'false');
+				indicator.dataset.active = index === active ? 'true' : 'false';
+			});
+		};
+
+		const stopAutoplay = () => {
+			if (autoplayTimer) {
+				clearInterval(autoplayTimer);
+				autoplayTimer = null;
+			}
+		};
+
+		const startAutoplay = () => {
+			if (prefersReducedMotion || isPaused) return;
+			stopAutoplay();
+			autoplayTimer = setInterval(() => goTo(active + 1, { fromAutoplay: true }), AUTOPLAY_MS);
+		};
+
+		const goTo = (index, { fromAutoplay = false } = {}) => {
+			active = wrap(index);
+			updateSlides();
+			if (!fromAutoplay) startAutoplay();
+		};
+
+		prevBtn?.addEventListener('click', () => goTo(active - 1));
+		nextBtn?.addEventListener('click', () => goTo(active + 1));
+
+		indicators.forEach((indicator) => {
+			indicator.addEventListener('click', () => {
+				const index = Number(indicator.dataset.index);
+				if (!Number.isNaN(index)) goTo(index);
+			});
+		});
+
+		slides.forEach((slide) => {
+			slide.addEventListener('click', () => {
+				const index = Number(slide.dataset.index);
+				if (!Number.isNaN(index) && index !== active) goTo(index);
+			});
+		});
+
+		carousel.addEventListener('keydown', (event) => {
+			if (event.key === 'ArrowLeft') {
+				event.preventDefault();
+				goTo(active - 1);
+			}
+			if (event.key === 'ArrowRight') {
+				event.preventDefault();
+				goTo(active + 1);
+			}
+		});
+
+		carousel.addEventListener('mouseenter', () => {
+			isPaused = true;
+			stopAutoplay();
+		});
+
+		carousel.addEventListener('mouseleave', () => {
+			isPaused = false;
+			startAutoplay();
+		});
+
+		carousel.addEventListener('focusin', () => {
+			isPaused = true;
+			stopAutoplay();
+		});
+
+		carousel.addEventListener('focusout', (event) => {
+			if (carousel.contains(event.relatedTarget)) return;
+			isPaused = false;
+			startAutoplay();
+		});
+
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) stopAutoplay();
+			else startAutoplay();
+		});
+
+		viewport?.addEventListener(
+			'touchstart',
+			(event) => {
+				touchStartX = event.changedTouches[0]?.clientX ?? 0;
+			},
+			{ passive: true },
+		);
+
+		viewport?.addEventListener(
+			'touchend',
+			(event) => {
+				const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+				const delta = touchEndX - touchStartX;
+				if (Math.abs(delta) < 40) return;
+				if (delta > 0) goTo(active - 1);
+				else goTo(active + 1);
+			},
+			{ passive: true },
+		);
+
+		updateSlides();
+		startAutoplay();
+	}
+</script>
+
+<style>
+	.testimonials-section {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.testimonials-section::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			ellipse 70% 45% at 50% 0%,
+			rgb(226 184 87 / 0.07) 0%,
+			transparent 70%
+		);
+	}
+
+	.testimonials-carousel {
+		position: relative;
+		margin-top: 3rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2rem;
+		width: 100%;
+		max-width: 100%;
+		outline: none;
+	}
+
+	@media (min-width: 640px) {
+		.testimonials-carousel {
+			margin-top: 4rem;
+		}
+	}
+
+	.testimonials-carousel:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 4px;
+		border-radius: 0.25rem;
+	}
+
+	.testimonials-carousel__viewport {
+		position: relative;
+		width: 100%;
+		max-width: 68rem;
+		height: clamp(19rem, 52vw, 22.5rem);
+		overflow: hidden;
+		touch-action: pan-y;
+	}
+
+	.testimonials-carousel__track {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	.testimonials-carousel__slide {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: min(88%, 20rem);
+		height: auto;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: pointer;
+		transform: translate(-50%, -50%);
+		transition:
+			transform 550ms var(--ease-out),
+			opacity 550ms var(--ease-out),
+			filter 550ms var(--ease-out);
+		will-change: transform, opacity;
+	}
+
+	.testimonials-carousel__slide[data-offset='0'] {
+		z-index: 3;
+		opacity: 1;
+		filter: none;
+		transform: translate(-50%, -50%) scale(1);
+		cursor: default;
+	}
+
+	.testimonials-carousel__slide[data-offset='-1'] {
+		z-index: 2;
+		opacity: 0.42;
+		filter: brightness(0.78);
+		transform: translate(calc(-50% - clamp(8rem, 24vw, 13rem)), -50%) scale(0.9);
+	}
+
+	.testimonials-carousel__slide[data-offset='1'] {
+		z-index: 2;
+		opacity: 0.42;
+		filter: brightness(0.78);
+		transform: translate(calc(-50% + clamp(8rem, 24vw, 13rem)), -50%) scale(0.9);
+	}
+
+	.testimonials-carousel__slide[data-offset='-2'],
+	.testimonials-carousel__slide[data-offset='2'] {
+		z-index: 1;
+		opacity: 0;
+		pointer-events: none;
+		transform: translate(-50%, -50%) scale(0.84);
+	}
+
+	@media (min-width: 768px) {
+		.testimonials-carousel__slide {
+			width: min(34%, 22rem);
+		}
+
+		.testimonials-carousel__viewport {
+			height: clamp(20rem, 28vw, 23rem);
+		}
+	}
+
+	.testimonials-card {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		min-height: clamp(17rem, 44vw, 19.5rem);
+		padding: 1.75rem 1.5rem 1.5rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.875rem;
+		background: var(--color-surface-raised);
+		text-align: left;
+		transition: border-color 400ms var(--ease-out);
+	}
+
+	.testimonials-carousel__slide[data-offset='0'] .testimonials-card {
+		border-color: rgb(226 184 87 / 0.55);
+	}
+
+	.testimonials-card__quote-icon {
+		width: 2rem;
+		height: 1.5rem;
+		flex-shrink: 0;
+		color: var(--color-accent);
+	}
+
+	.testimonials-card__comment {
+		margin: 0;
+		flex: 1;
+		font-family: var(--font-serif);
+		font-size: clamp(1.0625rem, 0.95rem + 0.35vw, 1.3125rem);
+		font-weight: 400;
+		font-style: normal;
+		line-height: 1.45;
+		text-wrap: balance;
+		color: var(--color-foreground);
+	}
+
+	.testimonials-card__footer {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+		margin-top: auto;
+		font-style: normal;
+	}
+
+	.testimonials-card__client {
+		font-size: 0.625rem;
+		font-weight: 500;
+		font-style: normal;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: var(--color-accent);
+	}
+
+	.testimonials-card__stars {
+		display: flex;
+		align-items: center;
+		gap: 0.2rem;
+	}
+
+	.testimonials-card__star {
+		width: 0.875rem;
+		height: 0.875rem;
+		color: var(--color-border);
+	}
+
+	.testimonials-card__star--filled {
+		color: var(--color-accent);
+	}
+
+	.testimonials-carousel__controls {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1.25rem;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.testimonials-carousel__arrow {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		width: 2.75rem;
+		height: 2.75rem;
+		padding: 0;
+		border: 1px solid var(--color-border);
+		border-radius: 9999px;
+		background: transparent;
+		color: var(--color-muted-soft);
+		transition:
+			border-color 250ms var(--ease-out),
+			color 250ms var(--ease-out);
+	}
+
+	.testimonials-carousel__arrow svg {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.testimonials-carousel__arrow:hover {
+			border-color: rgb(226 184 87 / 0.45);
+			color: var(--color-accent);
+		}
+
+		.testimonials-carousel__slide[data-offset='-1']:hover,
+		.testimonials-carousel__slide[data-offset='1']:hover {
+			opacity: 0.58;
+		}
+	}
+
+	.testimonials-carousel__arrow:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+	}
+
+	.testimonials-carousel__indicators {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.testimonials-carousel__indicator {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.testimonials-carousel__indicator::after {
+		content: '';
+		display: block;
+		width: 2rem;
+		height: 2px;
+		border-radius: 9999px;
+		background: var(--color-border);
+		transition:
+			width 350ms var(--ease-out),
+			background-color 350ms var(--ease-out);
+	}
+
+	.testimonials-carousel__indicator[data-active='true']::after {
+		width: 2.75rem;
+		background: var(--color-accent);
+	}
+
+	.testimonials-carousel__indicator:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
+	@media (max-width: 639px) {
+		.testimonials-carousel__viewport::before,
+		.testimonials-carousel__viewport::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 3rem;
+			z-index: 4;
+			pointer-events: none;
+		}
+
+		.testimonials-carousel__viewport::before {
+			left: 0;
+			background: linear-gradient(to right, var(--color-base) 10%, transparent 100%);
+		}
+
+		.testimonials-carousel__viewport::after {
+			right: 0;
+			background: linear-gradient(to left, var(--color-base) 10%, transparent 100%);
+		}
+
+		.testimonials-carousel__slide[data-offset='-1'] {
+			transform: translate(calc(-50% - 6rem), -50%) scale(0.88);
+		}
+
+		.testimonials-carousel__slide[data-offset='1'] {
+			transform: translate(calc(-50% + 6rem), -50%) scale(0.88);
+		}
+
+		.testimonials-carousel__slide[data-offset='-1'] .testimonials-card {
+			-webkit-mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.4) 22%, black 48%);
+			mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.4) 22%, black 48%);
+		}
+
+		.testimonials-carousel__slide[data-offset='1'] .testimonials-card {
+			-webkit-mask-image: linear-gradient(to left, transparent 0%, rgb(0 0 0 / 0.4) 22%, black 48%);
+			mask-image: linear-gradient(to left, transparent 0%, rgb(0 0 0 / 0.4) 22%, black 48%);
+		}
+
+		.testimonials-card {
+			min-height: 16.5rem;
+			padding: 1.5rem 1.25rem 1.25rem;
+		}
+
+		.testimonials-carousel__controls {
+			display: grid;
+			grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.testimonials-carousel__indicators {
+			justify-content: center;
+			gap: 0.25rem;
+			min-width: 0;
+		}
+
+		.testimonials-carousel__indicator {
+			min-width: 1.375rem;
+		}
+
+		.testimonials-carousel__indicator::after {
+			width: 1rem;
+		}
+
+		.testimonials-carousel__indicator[data-active='true']::after {
+			width: 1.375rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.testimonials-carousel__slide,
+		.testimonials-carousel__indicator::after,
+		.testimonials-carousel__arrow {
+			transition-duration: 150ms;
+		}
+	}
+</style>
