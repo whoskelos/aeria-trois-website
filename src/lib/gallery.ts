@@ -21,6 +21,8 @@ export type GalleryEvent = {
 };
 
 const eventDescriptions: Record<string, string> = {
+	'Festival-Centenera-Rock_Festival-Aldeacentenera-Caceres':
+		'Actuación de telas aéreas en el escenario del Centenera Rock, integrada con la programación en vivo del festival.',
 	'Festival-Enraizarte_Festival-Peñascosa-Albacete':
 		'Actuación de telas aéreas en el escenario del festival, integrada con la programación en vivo del evento.',
 	'Jornadas-De-Bienestar_Ayto-Arroyomolinos_Arroyomolinos-Madrid':
@@ -162,6 +164,7 @@ const mediaByEvent = buildMediaList();
 
 export function getGalleryEvents(): GalleryEvent[] {
 	const eventOrder = [
+		'Festival-Centenera-Rock_Festival-Aldeacentenera-Caceres',
 		'Festival-Enraizarte_Festival-Peñascosa-Albacete',
 		'Jowke-Racing_Jowke-Club_Madrid-EventoPrivado',
 		'Jowke-Racing_Jowke_Madrid-EventoPrivado',
