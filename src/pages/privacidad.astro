@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config/site';
+
+const description =
+	'Política de privacidad de Aeria Trois sobre los datos que puedes enviar a través del formulario de reseñas.';
+---
+
+<Layout title="Política de privacidad" description={description} canonicalPath="/privacidad">
+	<Header />
+	<main
+		class="pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+	>
+		<article class="mx-auto max-w-2xl px-6 py-16 sm:py-24">
+			<h1 class="text-balance text-3xl font-light text-foreground md:text-5xl" data-reveal>
+				Política de <span class="text-accent">privacidad</span>
+			</h1>
+			<p class="mt-4 text-sm leading-relaxed text-muted sm:mt-6" data-reveal>
+				Responsable: {siteConfig.name}. Contacto:
+				<a
+					class="text-accent underline decoration-1 underline-offset-4 hover:text-accent-muted"
+					href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a
+				>.
+			</p>
+			<div class="mt-10 space-y-5 text-sm leading-relaxed text-muted-soft" data-reveal>
+				<p>
+					El formulario de reseñas pide una valoración, un nombre (o el de la empresa) y un texto
+					de opinión. Hoy esos datos no se envían a un servidor: se muestran en la consola del
+					navegador para pruebas.
+				</p>
+				<p>
+					Cuando el envío quede conectado, usaremos esa información solo para publicar o
+					moderar opiniones sobre nuestros espectáculos, y la conservaremos el tiempo necesario
+					para esa finalidad.
+				</p>
+				<p>
+					Puedes solicitar acceso, rectificación o supresión escribiendo a {siteConfig.email}.
+				</p>
+			</div>
+			<p class="mt-12" data-reveal>
+				<a
+					href="/review"
+					class="inline-flex min-h-11 items-center justify-center rounded-full border border-border px-6 py-3 text-sm tracking-[0.12em] text-muted-soft uppercase transition-colors hover:border-accent hover:text-accent"
+				>
+					Volver a la reseña
+				</a>
+			</p>
+		</article>
+	</main>
+	<Footer />
+</Layout>

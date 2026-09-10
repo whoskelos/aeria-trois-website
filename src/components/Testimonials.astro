@@ -1,5 +1,8 @@
 ---
-import { testimonials } from '../data/testimonials.ts';
+import { getApprovedReviews } from '../lib/reviews';
+
+const testimonials = await getApprovedReviews();
+const hasTestimonials = testimonials.length > 0;
 ---
 
 <section
@@ -27,53 +30,62 @@ import { testimonials } from '../data/testimonials.ts';
 			>
 				Experiencias de quienes han confiado en Aeria Trois para sus eventos, festivales y galas.
 			</p>
+
+			<div class="mt-8 sm:mt-10" data-reveal>
+				<a
+					href="/review"
+					class="inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-8 py-3 text-sm font-medium tracking-[0.12em] text-base uppercase transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [@media(pointer:coarse)]:min-h-12"
+				>
+					Dejar una reseña
+				</a>
+			</div>
 		</div>
 
-		<div
-			class="testimonials-carousel"
-			data-testimonials-carousel
-			data-active="0"
-			tabindex="0"
-			aria-roledescription="carrusel"
-			aria-label="Opiniones de clientes"
-			data-reveal
-		>
-			<div class="testimonials-carousel__viewport" data-carousel-viewport>
-				<div class="testimonials-carousel__track" data-carousel-track>
-					{
-						testimonials.map((item, index) => (
-							<article
-								class="testimonials-carousel__slide"
-								data-carousel-slide
-								data-index={index}
-								id={`testimonial-slide-${index}`}
-								aria-roledescription="slide"
-								aria-label={`Opinión de ${item.client}`}
-								aria-current={index === 0 ? 'true' : 'false'}
-							>
-								<div class="testimonials-card">
-									<svg
-										class="testimonials-card__quote-icon"
-										viewBox="0 0 32 24"
-										fill="currentColor"
-										aria-hidden="true"
-									>
-										<path d="M0 24V14.4C0 9.6 1.067 5.733 3.2 2.8 5.333-.133 8.267-1.6 12-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4h7.6V24H0Zm18 0V14.4c0-4.8 1.067-8.667 3.2-11.6C23.333-.133 26.267-1.6 30-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4H28V24H18Z" />
-									</svg>
-
-									<blockquote class="testimonials-card__comment">
-										“{item.comment}”
-									</blockquote>
-
-									<footer class="testimonials-card__footer">
-										<cite class="testimonials-card__client">{item.client}</cite>
-										<div
-											class="testimonials-card__stars"
-											role="img"
-											aria-label={`${item.stars} de 5 estrellas`}
+		{
+			hasTestimonials && (
+				<div
+					class="testimonials-carousel"
+					data-testimonials-carousel
+					data-active="0"
+					tabindex="0"
+					aria-roledescription="carrusel"
+					aria-label="Opiniones de clientes"
+					data-reveal
+				>
+					<div class="testimonials-carousel__viewport" data-carousel-viewport>
+						<div class="testimonials-carousel__track" data-carousel-track>
+							{testimonials.map((item, index) => (
+								<article
+									class="testimonials-carousel__slide"
+									data-carousel-slide
+									data-index={index}
+									id={`testimonial-slide-${index}`}
+									aria-roledescription="slide"
+									aria-label={`Opinión de ${item.client}`}
+									aria-current={index === 0 ? 'true' : 'false'}
+								>
+									<div class="testimonials-card">
+										<svg
+											class="testimonials-card__quote-icon"
+											viewBox="0 0 32 24"
+											fill="currentColor"
+											aria-hidden="true"
 										>
-											{
-												Array.from({ length: 5 }, (_, starIndex) => (
+											<path d="M0 24V14.4C0 9.6 1.067 5.733 3.2 2.8 5.333-.133 8.267-1.6 12-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4h7.6V24H0Zm18 0V14.4c0-4.8 1.067-8.667 3.2-11.6C23.333-.133 26.267-1.6 30-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4H28V24H18Z" />
+										</svg>
+
+										<blockquote class="testimonials-card__comment">
+											“{item.comment}”
+										</blockquote>
+
+										<footer class="testimonials-card__footer">
+											<cite class="testimonials-card__client">{item.client}</cite>
+											<div
+												class="testimonials-card__stars"
+												role="img"
+												aria-label={`${item.stars} de 5 estrellas`}
+											>
+												{Array.from({ length: 5 }, (_, starIndex) => (
 													<svg
 														class:list={[
 															'testimonials-card__star',
@@ -85,61 +97,61 @@ import { testimonials } from '../data/testimonials.ts';
 													>
 														<path d="M10 1.5l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.35 5.06 16.7l.94-5.5-4-3.9 5.53-.8L10 1.5z" />
 													</svg>
-												))
-											}
-										</div>
-									</footer>
-								</div>
-							</article>
-						))
-					}
+												))}
+											</div>
+										</footer>
+									</div>
+								</article>
+							))}
+						</div>
+					</div>
+
+					<div class="testimonials-carousel__controls">
+						<button
+							type="button"
+							class="testimonials-carousel__arrow"
+							data-carousel-prev
+							aria-label="Opinión anterior"
+						>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+								<path d="M15 18l-6-6 6-6"></path>
+							</svg>
+						</button>
+
+						<div class="testimonials-carousel__indicators" role="tablist" aria-label="Seleccionar opinión">
+							{testimonials.map((item, index) => (
+								<button
+									type="button"
+									class="testimonials-carousel__indicator"
+									data-carousel-indicator
+									data-index={index}
+									role="tab"
+									aria-selected={index === 0 ? 'true' : 'false'}
+									aria-label={item.client}
+								></button>
+							))}
+						</div>
+
+						<button
+							type="button"
+							class="testimonials-carousel__arrow"
+							data-carousel-next
+							aria-label="Opinión siguiente"
+						>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+								<path d="M9 18l6-6-6-6"></path>
+							</svg>
+						</button>
+					</div>
 				</div>
-			</div>
-
-			<div class="testimonials-carousel__controls">
-				<button
-					type="button"
-					class="testimonials-carousel__arrow"
-					data-carousel-prev
-					aria-label="Opinión anterior"
-				>
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-						<path d="M15 18l-6-6 6-6"></path>
-					</svg>
-				</button>
-
-				<div class="testimonials-carousel__indicators" role="tablist" aria-label="Seleccionar opinión">
-					{
-						testimonials.map((item, index) => (
-							<button
-								type="button"
-								class="testimonials-carousel__indicator"
-								data-carousel-indicator
-								data-index={index}
-								role="tab"
-								aria-selected={index === 0 ? 'true' : 'false'}
-								aria-label={item.client}
-							></button>
-						))
-					}
-				</div>
-
-				<button
-					type="button"
-					class="testimonials-carousel__arrow"
-					data-carousel-next
-					aria-label="Opinión siguiente"
-				>
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-						<path d="M9 18l6-6-6-6"></path>
-					</svg>
-				</button>
-			</div>
-		</div>
+			)
+		}
 	</div>
 </section>
 
-<script define:vars={{ total: testimonials.length }}>
+{
+	hasTestimonials && (
+		<script define:vars={{ total: testimonials.length }}>
 	const carousel = document.querySelector('[data-testimonials-carousel]');
 	if (carousel) {
 		const slides = carousel.querySelectorAll('[data-carousel-slide]');
@@ -276,7 +288,9 @@ import { testimonials } from '../data/testimonials.ts';
 		updateSlides();
 		startAutoplay();
 	}
-</script>
+		</script>
+	)
+}
 
 <style>
 	.testimonials-section {

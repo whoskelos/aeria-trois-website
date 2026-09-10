@@ -1,0 +1,552 @@
+---
+import { REVIEW_LIMITS } from '../lib/reviewValidation';
+
+const stars = [1, 2, 3, 4, 5] as const;
+---
+
+<form
+	class="review-form"
+	data-review-form
+	novalidate
+	aria-labelledby="review-heading"
+>
+	<div class="review-form__panel" data-review-panel>
+		<fieldset class="review-form__field" data-field="rating">
+			<legend class="review-form__label">Valoración</legend>
+			<div
+				class="review-stars"
+				role="radiogroup"
+				aria-required="true"
+				aria-describedby="review-error-rating"
+			>
+				{
+					[...stars].reverse().map((value) => (
+						<>
+							<input
+								class="review-stars__input"
+								type="radio"
+								id={`rating-${value}`}
+								name="rating"
+								value={String(value)}
+								required
+							/>
+							<label class="review-stars__label" for={`rating-${value}`}>
+								<span class="sr-only">{value} {value === 1 ? 'estrella' : 'estrellas'}</span>
+								<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+									<path d="M10 1.5l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.35 5.06 16.7l.94-5.5-4-3.9 5.53-.8L10 1.5z" />
+								</svg>
+							</label>
+						</>
+					))
+				}
+			</div>
+			<p class="review-form__error" id="review-error-rating" data-error hidden></p>
+		</fieldset>
+
+		<div class="review-form__field" data-field="name">
+			<label class="review-form__label" for="review-name">Nombre</label>
+			<input
+				class="review-form__input"
+				id="review-name"
+				name="name"
+				type="text"
+				autocomplete="name"
+				placeholder="Tu nombre o el de la empresa"
+				required
+				minlength={REVIEW_LIMITS.nameMin}
+				maxlength={REVIEW_LIMITS.nameMax}
+				aria-describedby="review-error-name"
+			/>
+			<p class="review-form__error" id="review-error-name" data-error hidden></p>
+		</div>
+
+		<div class="review-form__field" data-field="opinion">
+			<label class="review-form__label" for="review-opinion">Opinión</label>
+			<textarea
+				class="review-form__input review-form__textarea"
+				id="review-opinion"
+				name="opinion"
+				placeholder="¿Qué te pareció el espectáculo?"
+				required
+				rows="5"
+				minlength={REVIEW_LIMITS.opinionMin}
+				maxlength={REVIEW_LIMITS.opinionMax}
+				aria-describedby="review-opinion-count review-error-opinion"
+			></textarea>
+			<p class="review-form__count" id="review-opinion-count" data-opinion-count>
+				0 / {REVIEW_LIMITS.opinionMax}
+			</p>
+			<p class="review-form__error" id="review-error-opinion" data-error hidden></p>
+		</div>
+
+		<div class="review-form__field review-form__field--check" data-field="privacy">
+			<label class="review-form__check">
+				<input
+					class="review-form__checkbox"
+					id="review-privacy"
+					name="privacy"
+					type="checkbox"
+					value="accepted"
+					required
+					aria-describedby="review-error-privacy"
+				/>
+				<span>
+					Acepto la{' '}
+					<a href="/privacidad" target="_blank" rel="noopener noreferrer">política de privacidad</a>
+					{' '}y el{' '}
+					<a href="/aviso-legal" target="_blank" rel="noopener noreferrer">aviso legal</a>.
+				</span>
+			</label>
+			<p class="review-form__error" id="review-error-privacy" data-error hidden></p>
+		</div>
+
+		<p
+			class="review-form__error review-form__error--form"
+			data-submit-error
+			role="alert"
+			hidden
+		></p>
+
+		<button class="review-form__submit" type="submit" data-review-submit>
+			Enviar opinión
+		</button>
+	</div>
+
+	<div class="review-form__success" data-review-success hidden>
+		<h2 class="review-form__success-title" tabindex="-1">Gracias por tu reseña</h2>
+		<p class="review-form__success-copy">
+			La hemos recibido correctamente. La revisaremos antes de publicarla en la web.
+		</p>
+		<button class="review-form__again" type="button" data-review-again>
+			Escribir otra reseña
+		</button>
+	</div>
+</form>
+
+<script>
+	import { REVIEW_LIMITS, validateReview, type ReviewField } from '../lib/reviewValidation';
+
+	const fields: ReviewField[] = ['rating', 'name', 'opinion', 'privacy'];
+	const form = document.querySelector<HTMLFormElement>('[data-review-form]');
+
+	if (form) {
+		const panel = form.querySelector<HTMLElement>('[data-review-panel]');
+		const success = form.querySelector<HTMLElement>('[data-review-success]');
+		const again = form.querySelector<HTMLButtonElement>('[data-review-again]');
+		const submit = form.querySelector<HTMLButtonElement>('[data-review-submit]');
+		const submitError = form.querySelector<HTMLElement>('[data-submit-error]');
+		const opinion = form.querySelector<HTMLTextAreaElement>('#review-opinion');
+		const count = form.querySelector<HTMLElement>('[data-opinion-count]');
+		const submitLabel = submit?.textContent?.trim() ?? 'Enviar opinión';
+
+		const fieldError = (name: ReviewField) =>
+			form.querySelector<HTMLElement>(`[data-field="${name}"] [data-error]`);
+
+		const setError = (name: ReviewField, message = '') => {
+			const el = fieldError(name);
+			const field = form.querySelector(`[data-field="${name}"]`);
+			if (!el || !field) return;
+			const show = Boolean(message);
+			el.hidden = !show;
+			el.textContent = message;
+			field.toggleAttribute('data-invalid', show);
+		};
+
+		const clearErrors = () => {
+			fields.forEach((name) => setError(name));
+		};
+
+		const setSubmitError = (message = '') => {
+			if (!submitError) return;
+			const show = Boolean(message);
+			submitError.hidden = !show;
+			submitError.textContent = message;
+		};
+
+		const setSubmitting = (isSubmitting: boolean) => {
+			if (!submit) return;
+			submit.disabled = isSubmitting;
+			submit.textContent = isSubmitting ? 'Enviando…' : submitLabel;
+		};
+
+		const readInput = () => {
+			const rating = form.querySelector<HTMLInputElement>('input[name="rating"]:checked');
+			const name = form.querySelector<HTMLInputElement>('#review-name');
+			const opinionField = form.querySelector<HTMLTextAreaElement>('#review-opinion');
+			const privacy = form.querySelector<HTMLInputElement>('#review-privacy');
+
+			return {
+				rating: rating?.value,
+				name: name?.value ?? '',
+				opinion: opinionField?.value ?? '',
+				privacyAccepted: privacy?.checked === true,
+			};
+		};
+
+		const updateCount = () => {
+			if (!count || !opinion) return;
+			count.textContent = `${opinion.value.length} / ${REVIEW_LIMITS.opinionMax}`;
+		};
+
+		form.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			const result = validateReview(readInput());
+			clearErrors();
+			setSubmitError();
+
+			if (!result.ok || !result.data) {
+				fields.forEach((name) => setError(name, result.errors[name] ?? ''));
+				const firstInvalid = form.querySelector<HTMLElement>('[data-field][data-invalid]');
+				firstInvalid
+					?.querySelector<HTMLElement>('input, textarea, .review-stars__input')
+					?.focus();
+				return;
+			}
+
+			setSubmitting(true);
+
+			try {
+				const response = await fetch('/api/reviews', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(result.data),
+				});
+
+				const payload = (await response.json()) as {
+					ok?: boolean;
+					error?: string;
+					errors?: Partial<Record<ReviewField, string>>;
+				};
+
+				if (!response.ok) {
+					if (payload.errors) {
+						fields.forEach((name) => setError(name, payload.errors?.[name] ?? ''));
+					} else {
+						setSubmitError(payload.error ?? 'No se pudo guardar tu reseña. Inténtalo de nuevo.');
+					}
+					return;
+				}
+
+				if (panel && success) {
+					panel.hidden = true;
+					success.hidden = false;
+					success.querySelector<HTMLElement>('.review-form__success-title')?.focus();
+				}
+			} catch {
+				setSubmitError('No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.');
+			} finally {
+				setSubmitting(false);
+			}
+		});
+
+		form.addEventListener('input', (event) => {
+			const target = event.target;
+			if (!(target instanceof HTMLElement)) return;
+			if (target === opinion) updateCount();
+			const key = target.closest('[data-field]')?.getAttribute('data-field');
+			if (key && fields.includes(key as ReviewField)) setError(key as ReviewField);
+		});
+
+		form.addEventListener('change', (event) => {
+			const target = event.target;
+			if (!(target instanceof HTMLElement)) return;
+			const key = target.closest('[data-field]')?.getAttribute('data-field');
+			if (key === 'rating' || key === 'privacy') setError(key);
+		});
+
+		again?.addEventListener('click', () => {
+			form.reset();
+			clearErrors();
+			setSubmitError();
+			updateCount();
+			if (panel && success) {
+				success.hidden = true;
+				panel.hidden = false;
+			}
+			form.querySelector<HTMLInputElement>('#review-name')?.focus();
+		});
+
+		updateCount();
+	}
+</script>
+
+<style>
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.review-form {
+		text-align: left;
+	}
+
+	.review-form__panel,
+	.review-form__success {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		padding: 1.75rem 1.5rem 1.5rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.875rem;
+		background: var(--color-surface-raised);
+	}
+
+	@media (min-width: 640px) {
+		.review-form__panel,
+		.review-form__success {
+			padding: 2rem 2rem 1.75rem;
+			gap: 1.75rem;
+		}
+	}
+
+	.review-form__field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+	}
+
+	.review-form__field--check {
+		gap: 0.5rem;
+	}
+
+	.review-form__label {
+		margin: 0;
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: var(--color-muted);
+	}
+
+	.review-form__input {
+		width: 100%;
+		min-height: 2.75rem;
+		padding: 0.75rem 0.9rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.5rem;
+		background: var(--color-base);
+		color: var(--color-foreground);
+		font: inherit;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		transition: border-color 250ms var(--ease-out);
+	}
+
+	.review-form__textarea {
+		min-height: 8.5rem;
+		resize: vertical;
+	}
+
+	.review-form__input::placeholder {
+		color: var(--color-subtle);
+	}
+
+	.review-form__input:hover {
+		border-color: rgb(226 184 87 / 0.35);
+	}
+
+	.review-form__input:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+		border-color: rgb(226 184 87 / 0.55);
+	}
+
+	.review-form__field[data-invalid] .review-form__input,
+	.review-form__field[data-invalid] .review-stars {
+		border-color: rgb(248 113 113 / 0.7);
+	}
+
+	.review-form__count {
+		margin: 0;
+		font-size: 0.75rem;
+		letter-spacing: 0.04em;
+		color: var(--color-subtle);
+		text-align: right;
+	}
+
+	.review-form__error {
+		margin: 0;
+		font-size: 0.8125rem;
+		line-height: 1.4;
+		color: #fca5a5;
+	}
+
+	.review-form__error--form {
+		text-align: center;
+	}
+
+	.review-form__submit:disabled {
+		opacity: 0.65;
+		cursor: not-allowed;
+	}
+
+	.review-stars {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+		gap: 0.35rem;
+		padding: 0.15rem 0;
+	}
+
+	.review-stars__input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.review-stars__label {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		color: var(--color-border);
+		cursor: pointer;
+		transition: color 200ms var(--ease-out), transform 200ms var(--ease-out);
+	}
+
+	.review-stars__label svg {
+		width: 1.75rem;
+		height: 1.75rem;
+	}
+
+	.review-stars__input:focus-visible + .review-stars__label {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+		border-radius: 0.25rem;
+	}
+
+	.review-stars__label:hover,
+	.review-stars__label:hover ~ .review-stars__label,
+	.review-stars__input:checked + .review-stars__label,
+	.review-stars__input:checked ~ .review-stars__label {
+		color: var(--color-accent);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.review-stars__label:hover {
+			transform: scale(1.08);
+		}
+	}
+
+	.review-form__check {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+		font-size: 0.875rem;
+		line-height: 1.55;
+		color: var(--color-muted-soft);
+		cursor: pointer;
+	}
+
+	.review-form__checkbox {
+		appearance: none;
+		flex-shrink: 0;
+		width: 1.125rem;
+		height: 1.125rem;
+		margin-top: 0.2rem;
+		border: 1px solid var(--color-muted-soft);
+		border-radius: 0.2rem;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.review-form__checkbox:checked {
+		border-color: var(--color-accent);
+		background: var(--color-accent);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23050505' stroke-width='2'%3E%3Cpath d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E");
+		background-size: 0.85rem;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	.review-form__checkbox:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+	}
+
+	.review-form__check a {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+		text-decoration-thickness: 1px;
+	}
+
+	.review-form__check a:hover {
+		color: var(--color-accent-muted);
+	}
+
+	.review-form__check a:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
+	.review-form__submit,
+	.review-form__again {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		min-height: 2.75rem;
+		padding: 0.85rem 1.25rem;
+		border: 0;
+		border-radius: 9999px;
+		background: var(--color-accent);
+		color: var(--color-base);
+		font: inherit;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: opacity 200ms var(--ease-out);
+	}
+
+	.review-form__submit:hover,
+	.review-form__again:hover {
+		opacity: 0.9;
+	}
+
+	.review-form__submit:focus-visible,
+	.review-form__again:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
+	.review-form__success-title {
+		margin: 0;
+		font-family: var(--font-serif);
+		font-size: 1.75rem;
+		font-weight: 400;
+		line-height: 1.2;
+		color: var(--color-foreground);
+	}
+
+	.review-form__success-copy {
+		margin: 0;
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		color: var(--color-muted);
+	}
+
+	.review-form__again {
+		margin-top: 0.25rem;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.review-form__input,
+		.review-stars__label,
+		.review-form__submit {
+			transition: none;
+		}
+	}
+</style>

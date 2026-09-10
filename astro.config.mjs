@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import vercel from '@astrojs/vercel';
 
 import tailwindcss from '@tailwindcss/vite';
 
@@ -16,6 +17,8 @@ const siteUrl =
 
 export default defineConfig({
   site: siteUrl,
+  output: 'static',
+  adapter: vercel(),
   vite: {
     plugins: [tailwindcss()]
   }

@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ReviewForm from '../components/ReviewForm.astro';
+
+const description =
+	'Comparte tu experiencia con Aeria Trois. Si nos has visto actuar, tu reseña ayuda a otras personas a descubrir nuestro trabajo.';
+---
+
+<Layout title="Opinión" description={description} canonicalPath="/review">
+	<!--
+		THESIS: After the show, one desk: leave a rating and words. Refuses a marketing hero stacked over a generic card grid.
+		OWN-WORLD: Aeria Trois night gold — #050505 ground, #e2b857 accent, Manrope + Instrument Serif, hairline borders, raised surface, pill CTAs.
+		STORY: A visitor who saw the spectacle records how it felt so others can find the work.
+		FIRST VIEWPORT: Centered “Comparte tu experiencia”; the form card is the action; gold submit sits at the card foot.
+		FORM: Specified mockup inside the incumbent site world; no concept-seed (narrow request).
+		FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+	-->
+	<Header />
+	<main
+		class="review-page pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+	>
+		<section class="relative overflow-hidden px-6 py-16 sm:py-24">
+			<div class="review-page__glow" aria-hidden="true"></div>
+
+			<div class="relative mx-auto max-w-2xl text-center">
+				<h1
+					id="review-heading"
+					class="text-balance text-3xl font-light text-foreground md:text-5xl"
+					data-reveal
+				>
+					Comparte tu <span class="text-accent">experiencia</span>
+				</h1>
+
+				<p
+					class="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted sm:mt-6"
+					data-reveal
+				>
+					Si nos has visto actuar, cuéntanos cómo fue. Tu reseña ayuda a otras personas a
+					descubrir nuestro trabajo.
+				</p>
+			</div>
+
+			<div class="relative mx-auto mt-10 max-w-lg sm:mt-12" data-reveal>
+				<ReviewForm />
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.review-page {
+		caret-color: var(--color-accent);
+	}
+
+	.review-page ::selection {
+		background: rgb(226 184 87 / 0.35);
+		color: var(--color-foreground);
+	}
+
+	.review-page__glow {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			ellipse 70% 40% at 50% 0%,
+			rgb(226 184 87 / 0.07) 0%,
+			transparent 70%
+		);
+	}
+</style>
