@@ -1,6 +1,4 @@
 import { defineMiddleware } from 'astro:middleware';
-import { getReviewerSession } from './lib/reviewPanelAuth';
-import { createSupabaseAuthClient } from './lib/supabaseAuth';
 
 const LOGIN_PATH = '/reviews-panel/login';
 const LOGIN_API_PATH = '/api/reviews-panel/login';
@@ -18,6 +16,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	if (pathname === LOGIN_PATH || pathname === LOGIN_API_PATH || pathname === LOGOUT_API_PATH) {
 		return next();
 	}
+
+	const [{ createSupabaseAuthClient }, { getReviewerSession }] = await Promise.all([
+		import('./lib/supabaseAuth'),
+		import('./lib/reviewPanelAuth'),
+	]);
 
 	const supabase = createSupabaseAuthClient(context.request, context.cookies);
 	const session = await getReviewerSession(supabase);

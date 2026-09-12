@@ -1,10 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './database.types';
-
 export type Testimonial = {
 	comment: string;
 	client: string;
 	stars: number;
+};
+
+type ReviewRow = {
+	name: string;
+	opinion: string;
+	rating: number;
 };
 
 export async function getApprovedReviews(): Promise<Testimonial[]> {
@@ -15,27 +18,34 @@ export async function getApprovedReviews(): Promise<Testimonial[]> {
 		return [];
 	}
 
-	const supabase = createClient<Database>(url, key, {
-		auth: {
-			autoRefreshToken: false,
-			persistSession: false,
-		},
+	const params = new URLSearchParams({
+		select: 'name,opinion,rating',
+		status: 'eq.approved',
+		order: 'created_at.desc',
 	});
 
-	const { data, error } = await supabase
-		.from('reviews')
-		.select('name, opinion, rating')
-		.eq('status', 'approved')
-		.order('created_at', { ascending: false });
+	try {
+		const response = await fetch(`${url}/rest/v1/reviews?${params}`, {
+			headers: {
+				apikey: key,
+				Authorization: `Bearer ${key}`,
+			},
+		});
 
-	if (error) {
-		console.error('Failed to fetch approved reviews:', error.message);
+		if (!response.ok) {
+			console.error('Failed to fetch approved reviews:', response.statusText);
+			return [];
+		}
+
+		const data = (await response.json()) as ReviewRow[];
+
+		return data.map((row) => ({
+			client: row.name,
+			comment: row.opinion,
+			stars: row.rating,
+		}));
+	} catch (error) {
+		console.error('Failed to fetch approved reviews:', error);
 		return [];
 	}
-
-	return (data ?? []).map((row) => ({
-		client: row.name,
-		comment: row.opinion,
-		stars: row.rating,
-	}));
 }
