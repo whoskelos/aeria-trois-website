@@ -1,0 +1,741 @@
+---
+import ReviewPanelLayout from '../../layouts/ReviewPanelLayout.astro';
+
+export const prerender = false;
+---
+
+<ReviewPanelLayout title="Moderación de reseñas">
+	<div class="panel-toolbar">
+		<header class="panel-header">
+			<div class="panel-header__inner">
+				<h1 class="panel-header__title">Moderación de reseñas</h1>
+				<button class="panel-logout" type="button" data-panel-logout aria-label="Cerrar sesión">
+					<svg class="panel-logout__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<path
+							d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+							stroke="currentColor"
+							stroke-width="1.75"
+							stroke-linecap="round"
+							stroke-linejoin="round"></path>
+					</svg>
+					<span class="panel-logout__label">Salir</span>
+				</button>
+			</div>
+		</header>
+
+		<div
+			class="panel-filters"
+			role="tablist"
+			aria-label="Filtrar reseñas"
+			data-panel-filters
+		>
+			<button class="panel-filter is-active" type="button" data-status="pending" role="tab" aria-selected="true">
+				Pendientes
+			</button>
+			<button class="panel-filter" type="button" data-status="approved" role="tab" aria-selected="false">
+				Aprobadas
+			</button>
+			<button class="panel-filter" type="button" data-status="rejected" role="tab" aria-selected="false">
+				Rechazadas
+			</button>
+			<button class="panel-filter" type="button" data-status="all" role="tab" aria-selected="false">
+				Todas
+			</button>
+		</div>
+	</div>
+
+	<main class="panel-main">
+		<p class="panel-status" data-panel-status hidden></p>
+		<div class="panel-list" data-panel-list role="list"></div>
+		<p class="panel-empty" data-panel-empty hidden>No hay reseñas en este filtro.</p>
+	</main>
+
+	<div class="panel-modal" data-panel-modal hidden>
+		<div class="panel-modal__backdrop" data-panel-modal-close tabindex="-1"></div>
+		<div
+			class="panel-modal__dialog"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="panel-modal-title"
+		>
+			<div class="panel-modal__handle" aria-hidden="true"></div>
+			<h2 class="panel-modal__title" id="panel-modal-title">Confirmar cambio</h2>
+			<p class="panel-modal__text" data-panel-modal-text></p>
+			<p class="panel-modal__error" data-panel-modal-error hidden></p>
+			<div class="panel-modal__actions">
+				<button class="panel-modal__confirm" type="button" data-panel-modal-confirm>Confirmar</button>
+				<button class="panel-modal__cancel" type="button" data-panel-modal-close>Cancelar</button>
+			</div>
+		</div>
+	</div>
+</ReviewPanelLayout>
+
+<style>
+	.panel-toolbar {
+		position: sticky;
+		top: 0;
+		z-index: 20;
+		background: rgb(5 5 5 / 0.92);
+		backdrop-filter: blur(12px);
+		border-bottom: 1px solid var(--color-border);
+		padding-top: env(safe-area-inset-top);
+	}
+
+	.panel-header {
+		padding: 0.875rem var(--panel-gutter, 1rem);
+	}
+
+	.panel-header__inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		max-width: 64rem;
+		margin-inline: auto;
+	}
+
+	.panel-header__title {
+		margin: 0;
+		font-size: 1.125rem;
+		font-weight: 600;
+		line-height: 1.3;
+	}
+
+	.panel-logout {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.375rem;
+		min-height: var(--panel-touch, 2.75rem);
+		padding: 0 0.875rem;
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		background: transparent;
+		color: var(--color-muted-soft);
+		font: inherit;
+		font-size: 0.875rem;
+		cursor: pointer;
+		flex-shrink: 0;
+		touch-action: manipulation;
+		-webkit-tap-highlight-color: transparent;
+		transition:
+			border-color 150ms ease,
+			color 150ms ease,
+			background-color 150ms ease;
+	}
+
+	.panel-logout:active {
+		background: var(--color-surface);
+		border-color: var(--color-accent);
+		color: var(--color-foreground);
+	}
+
+	@media (hover: hover) {
+		.panel-logout:hover {
+			border-color: var(--color-accent);
+			color: var(--color-foreground);
+		}
+	}
+
+	.panel-logout__icon {
+		flex-shrink: 0;
+	}
+
+	.panel-filters {
+		display: flex;
+		gap: 0.5rem;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		flex-wrap: nowrap;
+		padding: 0 var(--panel-gutter, 1rem) 0.875rem;
+		max-width: 64rem;
+		margin-inline: auto;
+	}
+
+	.panel-filters::-webkit-scrollbar {
+		display: none;
+	}
+
+	.panel-filter {
+		flex: 0 0 auto;
+		min-height: var(--panel-touch, 2.75rem);
+		padding: 0 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		background: var(--color-surface);
+		color: var(--color-muted-soft);
+		font: inherit;
+		font-size: 0.875rem;
+		white-space: nowrap;
+		cursor: pointer;
+		touch-action: manipulation;
+		-webkit-tap-highlight-color: transparent;
+		transition:
+			border-color 150ms ease,
+			color 150ms ease,
+			background-color 150ms ease;
+	}
+
+	.panel-filter:active {
+		background: var(--color-surface-raised);
+	}
+
+	.panel-filter.is-active {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+		background: rgb(226 184 87 / 0.08);
+	}
+
+	@media (hover: hover) {
+		.panel-filter:hover:not(.is-active) {
+			border-color: rgb(255 255 255 / 0.2);
+			color: var(--color-foreground);
+		}
+	}
+
+	.panel-main {
+		max-width: 64rem;
+		margin-inline: auto;
+		padding: 1rem var(--panel-gutter, 1rem) 2rem;
+	}
+
+	.panel-status {
+		margin: 0 0 1rem;
+		font-size: 0.875rem;
+		color: var(--color-muted);
+	}
+
+	.panel-list {
+		display: grid;
+		gap: 0.875rem;
+	}
+
+	:global(.panel-card) {
+		padding: 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.875rem;
+		background: var(--color-surface-raised);
+	}
+
+	@media (min-width: 640px) {
+		:global(.panel-card) {
+			padding: 1.25rem;
+			border-radius: 1rem;
+		}
+	}
+
+	:global(.panel-card__header) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: start;
+		gap: 0.625rem;
+	}
+
+	:global(.panel-card__name) {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 600;
+		line-height: 1.35;
+		overflow-wrap: anywhere;
+	}
+
+	:global(.panel-card__meta) {
+		margin: 0.25rem 0 0;
+		font-size: 0.8125rem;
+		color: var(--color-muted);
+	}
+
+	:global(.panel-card__badge) {
+		padding: 0.3rem 0.65rem;
+		border-radius: 999px;
+		font-size: 0.75rem;
+		font-weight: 500;
+		text-transform: capitalize;
+		white-space: nowrap;
+	}
+
+	:global(.panel-card__badge--pending) {
+		background: rgb(234 179 8 / 0.15);
+		color: #facc15;
+	}
+
+	:global(.panel-card__badge--approved) {
+		background: rgb(34 197 94 / 0.15);
+		color: #4ade80;
+	}
+
+	:global(.panel-card__badge--rejected) {
+		background: rgb(248 113 113 / 0.15);
+		color: #f87171;
+	}
+
+	:global(.panel-card__stars) {
+		margin: 0.875rem 0 0;
+		color: var(--color-accent);
+		font-size: 1.0625rem;
+		letter-spacing: 0.06em;
+	}
+
+	:global(.panel-card__opinion) {
+		margin: 0.625rem 0 0;
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		color: var(--color-muted-soft);
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+	}
+
+	:global(.panel-card__actions) {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: 1rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	@media (min-width: 480px) {
+		:global(.panel-card__actions) {
+			flex-direction: row;
+			flex-wrap: wrap;
+			border-top: none;
+			padding-top: 0;
+		}
+	}
+
+	:global(.panel-action) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: var(--panel-touch, 2.75rem);
+		padding: 0 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.625rem;
+		background: transparent;
+		color: var(--color-foreground);
+		font: inherit;
+		font-size: 0.875rem;
+		font-weight: 500;
+		cursor: pointer;
+		touch-action: manipulation;
+		-webkit-tap-highlight-color: transparent;
+		transition:
+			border-color 150ms ease,
+			background-color 150ms ease,
+			color 150ms ease;
+	}
+
+	@media (max-width: 479px) {
+		:global(.panel-action) {
+			width: 100%;
+		}
+	}
+
+	:global(.panel-action:active) {
+		background: var(--color-surface);
+	}
+
+	:global(.panel-action--approve) {
+		border-color: rgb(34 197 94 / 0.45);
+		color: #4ade80;
+	}
+
+	:global(.panel-action--approve:active) {
+		background: rgb(34 197 94 / 0.12);
+	}
+
+	:global(.panel-action--reject) {
+		border-color: rgb(248 113 113 / 0.45);
+		color: #f87171;
+	}
+
+	:global(.panel-action--reject:active) {
+		background: rgb(248 113 113 / 0.12);
+	}
+
+	:global(.panel-action--pending) {
+		border-color: rgb(234 179 8 / 0.45);
+		color: #facc15;
+	}
+
+	:global(.panel-action--pending:active) {
+		background: rgb(234 179 8 / 0.12);
+	}
+
+	.panel-empty {
+		margin-top: 2rem;
+		padding: 2rem 1rem;
+		text-align: center;
+		font-size: 0.9375rem;
+		color: var(--color-muted);
+	}
+
+	.panel-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 50;
+		display: grid;
+		place-items: end center;
+		padding: 0;
+	}
+
+	@media (min-width: 640px) {
+		.panel-modal {
+			place-items: center;
+			padding: 1rem;
+		}
+	}
+
+	.panel-modal__backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgb(0 0 0 / 0.65);
+	}
+
+	.panel-modal__dialog {
+		position: relative;
+		width: 100%;
+		max-height: min(90dvh, 32rem);
+		overflow-y: auto;
+		padding: 0.75rem 1.25rem max(1.25rem, env(safe-area-inset-bottom));
+		border: 1px solid var(--color-border);
+		border-bottom: none;
+		border-radius: 1rem 1rem 0 0;
+		background: var(--color-surface-elevated);
+	}
+
+	@media (min-width: 640px) {
+		.panel-modal__dialog {
+			width: min(100%, 28rem);
+			max-height: none;
+			padding: 1.5rem;
+			border-bottom: 1px solid var(--color-border);
+			border-radius: 1rem;
+		}
+	}
+
+	.panel-modal__handle {
+		width: 2.25rem;
+		height: 0.25rem;
+		margin: 0 auto 0.875rem;
+		border-radius: 999px;
+		background: var(--color-border);
+	}
+
+	@media (min-width: 640px) {
+		.panel-modal__handle {
+			display: none;
+		}
+	}
+
+	.panel-modal__title {
+		margin: 0;
+		font-size: 1.125rem;
+		font-weight: 600;
+	}
+
+	.panel-modal__text {
+		margin: 0.625rem 0 0;
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		color: var(--color-muted-soft);
+	}
+
+	.panel-modal__error {
+		margin: 0.75rem 0 0;
+		font-size: 0.875rem;
+		color: #f87171;
+	}
+
+	.panel-modal__actions {
+		display: flex;
+		flex-direction: column-reverse;
+		gap: 0.5rem;
+		margin-top: 1.25rem;
+	}
+
+	@media (min-width: 640px) {
+		.panel-modal__actions {
+			flex-direction: row;
+			justify-content: flex-end;
+		}
+	}
+
+	.panel-modal__cancel,
+	.panel-modal__confirm {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: var(--panel-touch, 2.75rem);
+		padding: 0 1rem;
+		border-radius: 0.625rem;
+		font: inherit;
+		font-size: 0.9375rem;
+		cursor: pointer;
+		touch-action: manipulation;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	@media (max-width: 639px) {
+		.panel-modal__cancel,
+		.panel-modal__confirm {
+			width: 100%;
+		}
+	}
+
+	.panel-modal__cancel {
+		border: 1px solid var(--color-border);
+		background: transparent;
+		color: var(--color-muted-soft);
+	}
+
+	.panel-modal__cancel:active {
+		background: var(--color-surface);
+	}
+
+	.panel-modal__confirm {
+		border: none;
+		background: var(--color-accent);
+		color: var(--color-base);
+		font-weight: 600;
+	}
+
+	.panel-modal__confirm:active {
+		filter: brightness(0.95);
+	}
+
+	.panel-modal__confirm:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+</style>
+
+<script>
+	type ReviewStatus = 'pending' | 'approved' | 'rejected';
+
+	type Review = {
+		id: string;
+		rating: number;
+		name: string;
+		opinion: string;
+		status: ReviewStatus;
+		created_at: string;
+		updated_at: string;
+	};
+
+	const STATUS_LABELS: Record<ReviewStatus, string> = {
+		pending: 'Pendiente',
+		approved: 'Aprobada',
+		rejected: 'Rechazada',
+	};
+
+	const listEl = document.querySelector<HTMLElement>('[data-panel-list]');
+	const emptyEl = document.querySelector<HTMLElement>('[data-panel-empty]');
+	const statusEl = document.querySelector<HTMLElement>('[data-panel-status]');
+	const modalEl = document.querySelector<HTMLElement>('[data-panel-modal]');
+	const modalTextEl = document.querySelector<HTMLElement>('[data-panel-modal-text]');
+	const modalErrorEl = document.querySelector<HTMLElement>('[data-panel-modal-error]');
+	const modalConfirmEl = document.querySelector<HTMLButtonElement>('[data-panel-modal-confirm]');
+	const filterButtons = document.querySelectorAll<HTMLButtonElement>('.panel-filter');
+
+	let currentFilter: ReviewStatus | 'all' = 'pending';
+	let pendingChange: { id: string; status: ReviewStatus } | null = null;
+
+	function formatDate(value: string) {
+		return new Intl.DateTimeFormat('es-ES', {
+			dateStyle: 'medium',
+			timeStyle: 'short',
+		}).format(new Date(value));
+	}
+
+	function renderStars(rating: number) {
+		return '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
+	}
+
+	function getActions(status: ReviewStatus) {
+		if (status === 'pending') {
+			return [
+				{ label: 'Aprobar', status: 'approved' as const, className: 'panel-action--approve' },
+				{ label: 'Rechazar', status: 'rejected' as const, className: 'panel-action--reject' },
+			];
+		}
+
+		if (status === 'approved') {
+			return [
+				{ label: 'Rechazar', status: 'rejected' as const, className: 'panel-action--reject' },
+				{ label: 'Volver a pendiente', status: 'pending' as const, className: 'panel-action--pending' },
+			];
+		}
+
+		return [
+			{ label: 'Aprobar', status: 'approved' as const, className: 'panel-action--approve' },
+			{ label: 'Volver a pendiente', status: 'pending' as const, className: 'panel-action--pending' },
+		];
+	}
+
+	function renderReview(review: Review) {
+		const actions = getActions(review.status)
+			.map(
+				(action) =>
+					`<button class="panel-action ${action.className}" type="button" data-review-action data-review-id="${review.id}" data-next-status="${action.status}">${action.label}</button>`,
+			)
+			.join('');
+
+		return `
+			<article class="panel-card" data-review-id="${review.id}" role="listitem">
+				<div class="panel-card__header">
+					<div>
+						<h2 class="panel-card__name">${escapeHtml(review.name)}</h2>
+						<p class="panel-card__meta">${formatDate(review.created_at)}</p>
+					</div>
+					<span class="panel-card__badge panel-card__badge--${review.status}">${STATUS_LABELS[review.status]}</span>
+				</div>
+				<p class="panel-card__stars" aria-label="${review.rating} de 5 estrellas">${renderStars(review.rating)}</p>
+				<p class="panel-card__opinion">${escapeHtml(review.opinion)}</p>
+				<div class="panel-card__actions">${actions}</div>
+			</article>
+		`;
+	}
+
+	function escapeHtml(value: string) {
+		return value
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#39;');
+	}
+
+	async function loadReviews() {
+		if (!listEl || !emptyEl || !statusEl) return;
+
+		statusEl.hidden = false;
+		statusEl.textContent = 'Cargando reseñas…';
+		emptyEl.hidden = true;
+		listEl.innerHTML = '';
+
+		try {
+			const response = await fetch(`/api/reviews-panel/reviews?status=${currentFilter}`);
+			const result = (await response.json()) as {
+				ok?: boolean;
+				reviews?: Review[];
+				error?: string;
+			};
+
+			if (!response.ok || !result.ok) {
+				statusEl.textContent = result.error ?? 'No se pudieron cargar las reseñas.';
+				return;
+			}
+
+			const reviews = result.reviews ?? [];
+			statusEl.hidden = true;
+
+			if (reviews.length === 0) {
+				emptyEl.hidden = false;
+				return;
+			}
+
+			listEl.innerHTML = reviews.map(renderReview).join('');
+		} catch {
+			statusEl.textContent = 'No se pudieron cargar las reseñas.';
+		}
+	}
+
+	function openModal(id: string, status: ReviewStatus) {
+		if (!modalEl || !modalTextEl || !modalErrorEl) return;
+
+		pendingChange = { id, status };
+		modalTextEl.textContent = `¿Confirmas cambiar el estado de esta reseña a ${STATUS_LABELS[status]}?`;
+		modalErrorEl.hidden = true;
+		modalErrorEl.textContent = '';
+		modalEl.hidden = false;
+		document.body.style.overflow = 'hidden';
+		modalConfirmEl?.focus();
+	}
+
+	function closeModal() {
+		if (!modalEl) return;
+		pendingChange = null;
+		modalEl.hidden = true;
+		document.body.style.overflow = '';
+	}
+
+	async function confirmChange() {
+		if (!pendingChange || !modalConfirmEl || !modalErrorEl) return;
+
+		modalConfirmEl.disabled = true;
+		modalErrorEl.hidden = true;
+		modalErrorEl.textContent = '';
+
+		try {
+			const response = await fetch('/api/reviews-panel/reviews', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(pendingChange),
+			});
+
+			const result = (await response.json()) as { ok?: boolean; error?: string };
+
+			if (!response.ok || !result.ok) {
+				modalErrorEl.textContent = result.error ?? 'No se pudo actualizar la reseña.';
+				modalErrorEl.hidden = false;
+				return;
+			}
+
+			closeModal();
+			await loadReviews();
+		} catch {
+			modalErrorEl.textContent = 'No se pudo actualizar la reseña. Inténtalo de nuevo.';
+			modalErrorEl.hidden = false;
+		} finally {
+			modalConfirmEl.disabled = false;
+		}
+	}
+
+	filterButtons.forEach((button) => {
+		button.addEventListener('click', () => {
+			filterButtons.forEach((item) => {
+				item.classList.remove('is-active');
+				item.setAttribute('aria-selected', 'false');
+			});
+			button.classList.add('is-active');
+			button.setAttribute('aria-selected', 'true');
+			currentFilter = (button.dataset.status as ReviewStatus | 'all') ?? 'pending';
+			void loadReviews();
+		});
+	});
+
+	listEl?.addEventListener('click', (event) => {
+		const target = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-review-action]');
+		if (!target) return;
+
+		const id = target.dataset.reviewId;
+		const status = target.dataset.nextStatus as ReviewStatus | undefined;
+		if (!id || !status) return;
+
+		openModal(id, status);
+	});
+
+	document.querySelectorAll('[data-panel-modal-close]').forEach((element) => {
+		element.addEventListener('click', closeModal);
+	});
+
+	modalConfirmEl?.addEventListener('click', () => {
+		void confirmChange();
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && modalEl && !modalEl.hidden) {
+			closeModal();
+		}
+	});
+
+	document.querySelector('[data-panel-logout]')?.addEventListener('click', async () => {
+		await fetch('/api/reviews-panel/logout', { method: 'POST' });
+		window.location.href = '/reviews-panel/login';
+	});
+
+	void loadReviews();
+</script>

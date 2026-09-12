@@ -1,3 +1,4 @@
+import { REVIEW_CLIENT_KEY_SALT } from 'astro:env/server';
 import type { APIRoute } from 'astro';
 import { buildReviewClientKey, getClientIp } from '../../lib/reviewClientKey';
 
@@ -57,19 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
 		});
 	}
 
-	const salt = import.meta.env.REVIEW_CLIENT_KEY_SALT;
-	if (!salt) {
-		console.error('Missing REVIEW_CLIENT_KEY_SALT');
-		return new Response(
-			JSON.stringify({ ok: false, error: 'El envío no está disponible temporalmente.' }),
-			{
-				status: 503,
-				headers: { 'Content-Type': 'application/json' },
-			},
-		);
-	}
-
-	const clientKey = buildReviewClientKey(getClientIp(request), salt);
+	const clientKey = buildReviewClientKey(getClientIp(request), REVIEW_CLIENT_KEY_SALT);
 
 	try {
 		const supabase = createSupabaseServerClient();
