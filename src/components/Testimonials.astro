@@ -1,14 +1,8 @@
----
-import { getApprovedReviews } from '../lib/reviews';
-
-const testimonials = await getApprovedReviews();
-const hasTestimonials = testimonials.length > 0;
----
-
 <section
 	id="opiniones"
 	class="testimonials-section border-t border-border-subtle px-6 py-16 sm:py-24"
 	aria-labelledby="testimonials-heading"
+	data-testimonials-section
 >
 	<div class="mx-auto max-w-7xl">
 		<div class="mx-auto max-w-3xl text-center">
@@ -41,258 +35,54 @@ const hasTestimonials = testimonials.length > 0;
 			</div>
 		</div>
 
-		{
-			hasTestimonials && (
-				<div
-					class="testimonials-carousel"
-					data-testimonials-carousel
-					data-active="0"
-					tabindex="0"
-					aria-roledescription="carrusel"
-					aria-label="Opiniones de clientes"
-					data-reveal
-				>
-					<div class="testimonials-carousel__viewport" data-carousel-viewport>
-						<div class="testimonials-carousel__track" data-carousel-track>
-							{testimonials.map((item, index) => (
-								<article
-									class="testimonials-carousel__slide"
-									data-carousel-slide
-									data-index={index}
-									id={`testimonial-slide-${index}`}
-									aria-roledescription="slide"
-									aria-label={`Opinión de ${item.client}`}
-									aria-current={index === 0 ? 'true' : 'false'}
-								>
-									<div class="testimonials-card">
-										<svg
-											class="testimonials-card__quote-icon"
-											viewBox="0 0 32 24"
-											fill="currentColor"
-											aria-hidden="true"
-										>
-											<path d="M0 24V14.4C0 9.6 1.067 5.733 3.2 2.8 5.333-.133 8.267-1.6 12-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4h7.6V24H0Zm18 0V14.4c0-4.8 1.067-8.667 3.2-11.6C23.333-.133 26.267-1.6 30-1.6v4.8c-2.4 0-4.267.8-5.6 2.4-1.333 1.6-2 3.733-2 6.4H28V24H18Z" />
-										</svg>
-
-										<blockquote class="testimonials-card__comment">
-											“{item.comment}”
-										</blockquote>
-
-										<footer class="testimonials-card__footer">
-											<cite class="testimonials-card__client">{item.client}</cite>
-											<div
-												class="testimonials-card__stars"
-												role="img"
-												aria-label={`${item.stars} de 5 estrellas`}
-											>
-												{Array.from({ length: 5 }, (_, starIndex) => (
-													<svg
-														class:list={[
-															'testimonials-card__star',
-															starIndex < item.stars && 'testimonials-card__star--filled',
-														]}
-														viewBox="0 0 20 20"
-														fill="currentColor"
-														aria-hidden="true"
-													>
-														<path d="M10 1.5l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.35 5.06 16.7l.94-5.5-4-3.9 5.53-.8L10 1.5z" />
-													</svg>
-												))}
-											</div>
-										</footer>
-									</div>
-								</article>
-							))}
-						</div>
-					</div>
-
-					<div class="testimonials-carousel__controls">
-						<button
-							type="button"
-							class="testimonials-carousel__arrow"
-							data-carousel-prev
-							aria-label="Opinión anterior"
-						>
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-								<path d="M15 18l-6-6 6-6"></path>
-							</svg>
-						</button>
-
-						<div class="testimonials-carousel__indicators" role="tablist" aria-label="Seleccionar opinión">
-							{testimonials.map((item, index) => (
-								<button
-									type="button"
-									class="testimonials-carousel__indicator"
-									data-carousel-indicator
-									data-index={index}
-									role="tab"
-									aria-selected={index === 0 ? 'true' : 'false'}
-									aria-label={item.client}
-								></button>
-							))}
-						</div>
-
-						<button
-							type="button"
-							class="testimonials-carousel__arrow"
-							data-carousel-next
-							aria-label="Opinión siguiente"
-						>
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-								<path d="M9 18l6-6-6-6"></path>
-							</svg>
-						</button>
-					</div>
-				</div>
-			)
-		}
+		<div data-testimonials-host hidden aria-hidden="true"></div>
 	</div>
 </section>
 
-{
-	hasTestimonials && (
-		<script define:vars={{ total: testimonials.length }}>
-	const carousel = document.querySelector('[data-testimonials-carousel]');
-	if (carousel) {
-		const slides = carousel.querySelectorAll('[data-carousel-slide]');
-		const indicators = carousel.querySelectorAll('[data-carousel-indicator]');
-		const prevBtn = carousel.querySelector('[data-carousel-prev]');
-		const nextBtn = carousel.querySelector('[data-carousel-next]');
-		const viewport = carousel.querySelector('[data-carousel-viewport]');
-		const AUTOPLAY_MS = 3000;
-		const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+<script>
+	import {
+		buildTestimonialsCarousel,
+		initTestimonialsCarousel,
+		type TestimonialItem,
+	} from '../scripts/testimonialsCarousel';
 
-		let active = 0;
-		let touchStartX = 0;
-		let autoplayTimer = null;
-		let isPaused = false;
+	const section = document.querySelector('[data-testimonials-section]');
+	const host = document.querySelector<HTMLElement>('[data-testimonials-host]');
 
-		const wrap = (index) => ((index % total) + total) % total;
+	async function loadTestimonials() {
+		if (!section || !host) return;
 
-		const getOffset = (index) => {
-			let diff = index - active;
-			if (diff > total / 2) diff -= total;
-			if (diff < -total / 2) diff += total;
-			return diff;
-		};
+		section.setAttribute('aria-busy', 'true');
 
-		const updateSlides = () => {
-			carousel.dataset.active = String(active);
+		try {
+			const response = await fetch('/api/reviews/approved');
+			if (!response.ok) throw new Error('Failed to load testimonials');
 
-			slides.forEach((slide, index) => {
-				const offset = getOffset(index);
-				slide.dataset.offset = String(offset);
-				slide.setAttribute('aria-current', offset === 0 ? 'true' : 'false');
-				slide.tabIndex = offset === 0 ? 0 : -1;
-			});
+			const payload = (await response.json()) as {
+				ok?: boolean;
+				reviews?: TestimonialItem[];
+			};
 
-			indicators.forEach((indicator, index) => {
-				indicator.setAttribute('aria-selected', index === active ? 'true' : 'false');
-				indicator.dataset.active = index === active ? 'true' : 'false';
-			});
-		};
+			const reviews = payload.reviews ?? [];
+			if (reviews.length === 0) return;
 
-		const stopAutoplay = () => {
-			if (autoplayTimer) {
-				clearInterval(autoplayTimer);
-				autoplayTimer = null;
-			}
-		};
+			const carousel = buildTestimonialsCarousel(reviews);
+			host.replaceChildren(carousel);
+			host.hidden = false;
+			host.removeAttribute('aria-hidden');
 
-		const startAutoplay = () => {
-			if (prefersReducedMotion || isPaused) return;
-			stopAutoplay();
-			autoplayTimer = setInterval(() => goTo(active + 1, { fromAutoplay: true }), AUTOPLAY_MS);
-		};
-
-		const goTo = (index, { fromAutoplay = false } = {}) => {
-			active = wrap(index);
-			updateSlides();
-			if (!fromAutoplay) startAutoplay();
-		};
-
-		prevBtn?.addEventListener('click', () => goTo(active - 1));
-		nextBtn?.addEventListener('click', () => goTo(active + 1));
-
-		indicators.forEach((indicator) => {
-			indicator.addEventListener('click', () => {
-				const index = Number(indicator.dataset.index);
-				if (!Number.isNaN(index)) goTo(index);
-			});
-		});
-
-		slides.forEach((slide) => {
-			slide.addEventListener('click', () => {
-				const index = Number(slide.dataset.index);
-				if (!Number.isNaN(index) && index !== active) goTo(index);
-			});
-		});
-
-		carousel.addEventListener('keydown', (event) => {
-			if (event.key === 'ArrowLeft') {
-				event.preventDefault();
-				goTo(active - 1);
-			}
-			if (event.key === 'ArrowRight') {
-				event.preventDefault();
-				goTo(active + 1);
-			}
-		});
-
-		carousel.addEventListener('mouseenter', () => {
-			isPaused = true;
-			stopAutoplay();
-		});
-
-		carousel.addEventListener('mouseleave', () => {
-			isPaused = false;
-			startAutoplay();
-		});
-
-		carousel.addEventListener('focusin', () => {
-			isPaused = true;
-			stopAutoplay();
-		});
-
-		carousel.addEventListener('focusout', (event) => {
-			if (carousel.contains(event.relatedTarget)) return;
-			isPaused = false;
-			startAutoplay();
-		});
-
-		document.addEventListener('visibilitychange', () => {
-			if (document.hidden) stopAutoplay();
-			else startAutoplay();
-		});
-
-		viewport?.addEventListener(
-			'touchstart',
-			(event) => {
-				touchStartX = event.changedTouches[0]?.clientX ?? 0;
-			},
-			{ passive: true },
-		);
-
-		viewport?.addEventListener(
-			'touchend',
-			(event) => {
-				const touchEndX = event.changedTouches[0]?.clientX ?? 0;
-				const delta = touchEndX - touchStartX;
-				if (Math.abs(delta) < 40) return;
-				if (delta > 0) goTo(active - 1);
-				else goTo(active + 1);
-			},
-			{ passive: true },
-		);
-
-		updateSlides();
-		startAutoplay();
+			initTestimonialsCarousel(carousel, reviews.length);
+		} catch (error) {
+			console.error('Failed to load testimonials:', error);
+		} finally {
+			section.removeAttribute('aria-busy');
+		}
 	}
-		</script>
-	)
-}
 
-<style>
+	loadTestimonials();
+</script>
+
+<style is:global>
 	.testimonials-section {
 		position: relative;
 		overflow: hidden;
