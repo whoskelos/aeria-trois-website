@@ -17,13 +17,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return next();
 	}
 
-	const [{ createSupabaseAuthClient }, { getReviewerSession }] = await Promise.all([
-		import('./lib/supabaseAuth'),
-		import('./lib/reviewPanelAuth'),
-	]);
-
-	const supabase = createSupabaseAuthClient(context.request, context.cookies);
-	const session = await getReviewerSession(supabase);
+	const { getReviewerSessionFromRequest } = await import('./lib/reviewPanelSession');
+	const session = await getReviewerSessionFromRequest(context.request, context.cookies);
 
 	if (!session) {
 		if (isPanelApi) {

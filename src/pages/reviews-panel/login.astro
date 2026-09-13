@@ -1,12 +1,10 @@
 ---
 import ReviewPanelLayout from '../../layouts/ReviewPanelLayout.astro';
-import { getReviewerSession } from '../../lib/reviewPanelAuth';
-import { createSupabaseAuthClient } from '../../lib/supabaseAuth';
+import { getReviewerSessionFromRequest } from '../../lib/reviewPanelSession';
 
 export const prerender = false;
 
-const supabase = createSupabaseAuthClient(Astro.request, Astro.cookies);
-const session = await getReviewerSession(supabase);
+const session = await getReviewerSessionFromRequest(Astro.request, Astro.cookies);
 
 if (session) {
 	return Astro.redirect('/reviews-panel');

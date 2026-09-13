@@ -3,7 +3,8 @@ import {
 	getReviewPanelAuthEmail,
 	isAllowedReviewPanelUsername,
 } from '../../../lib/reviewPanelAuth';
-import { createSupabaseAuthClient } from '../../../lib/supabaseAuth';
+import { setReviewPanelAccessToken } from '../../../lib/reviewPanelSession';
+import { fetchAuthUser, signInWithPassword } from '../../../lib/supabaseRest';
 
 export const prerender = false;
 
@@ -35,18 +36,25 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 		});
 	}
 
-	const supabase = createSupabaseAuthClient(request, cookies);
-	const { error } = await supabase.auth.signInWithPassword({
-		email: getReviewPanelAuthEmail(),
-		password,
-	});
+	const signIn = await signInWithPassword(getReviewPanelAuthEmail(), password);
 
-	if (error) {
+	if (signIn.error || !signIn.accessToken) {
 		return new Response(JSON.stringify({ ok: false, error: 'Credenciales incorrectas.' }), {
 			status: 401,
 			headers: { 'Content-Type': 'application/json' },
 		});
 	}
+
+	const { email, error: userError } = await fetchAuthUser(signIn.accessToken);
+
+	if (userError || email !== getReviewPanelAuthEmail()) {
+		return new Response(JSON.stringify({ ok: false, error: 'Credenciales incorrectas.' }), {
+			status: 401,
+			headers: { 'Content-Type': 'application/json' },
+		});
+	}
+
+	setReviewPanelAccessToken(cookies, signIn.accessToken, signIn.expiresIn ?? 3600);
 
 	return new Response(JSON.stringify({ ok: true }), {
 		status: 200,

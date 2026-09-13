@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 import type { ReviewStatus } from '../../../lib/database.types';
-import { assertReviewerSession, unauthorizedResponse } from '../../../lib/reviewPanelAuth';
-import { createSupabaseAdminClient } from '../../../lib/supabaseAdmin';
-import { createSupabaseAuthClient } from '../../../lib/supabaseAuth';
+import { unauthorizedResponse } from '../../../lib/reviewPanelAuth';
+import { getReviewerSessionFromRequest } from '../../../lib/reviewPanelSession';
+import { fetchPanelReviews, updatePanelReviewStatus } from '../../../lib/supabaseRest';
 
 export const prerender = false;
 
@@ -17,26 +17,14 @@ function parseStatusFilter(value: string | null): ReviewStatus | 'all' {
 }
 
 export const GET: APIRoute = async ({ request, cookies, url }) => {
-	const supabase = createSupabaseAuthClient(request, cookies);
-	const session = await assertReviewerSession(supabase);
+	const session = await getReviewerSessionFromRequest(request, cookies);
 
 	if (!session) {
 		return unauthorizedResponse();
 	}
 
 	const statusFilter = parseStatusFilter(url.searchParams.get('status'));
-	const admin = createSupabaseAdminClient();
-
-	let query = admin
-		.from('reviews')
-		.select('id, rating, name, opinion, status, created_at, updated_at')
-		.order('created_at', { ascending: false });
-
-	if (statusFilter !== 'all') {
-		query = query.eq('status', statusFilter);
-	}
-
-	const { data, error } = await query;
+	const { data, error } = await fetchPanelReviews(statusFilter);
 
 	if (error) {
 		return new Response(JSON.stringify({ ok: false, error: 'No se pudieron cargar las reseñas.' }), {
@@ -52,8 +40,7 @@ export const GET: APIRoute = async ({ request, cookies, url }) => {
 };
 
 export const PATCH: APIRoute = async ({ request, cookies }) => {
-	const supabase = createSupabaseAuthClient(request, cookies);
-	const session = await assertReviewerSession(supabase);
+	const session = await getReviewerSessionFromRequest(request, cookies);
 
 	if (!session) {
 		return unauthorizedResponse();
@@ -84,13 +71,7 @@ export const PATCH: APIRoute = async ({ request, cookies }) => {
 		});
 	}
 
-	const admin = createSupabaseAdminClient();
-	const { data, error } = await admin
-		.from('reviews')
-		.update({ status: status as ReviewStatus })
-		.eq('id', id)
-		.select('id, rating, name, opinion, status, created_at, updated_at')
-		.single();
+	const { data, error } = await updatePanelReviewStatus(id, status as ReviewStatus);
 
 	if (error || !data) {
 		return new Response(JSON.stringify({ ok: false, error: 'No se pudo actualizar la reseña.' }), {

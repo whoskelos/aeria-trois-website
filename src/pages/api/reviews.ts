@@ -4,7 +4,7 @@ import { buildReviewClientKey, getClientIp } from '../../lib/reviewClientKey';
 
 export const prerender = false;
 import { validateReview } from '../../lib/reviewValidation';
-import { createSupabaseServerClient } from '../../lib/supabaseServer';
+import { callSupabaseRpc } from '../../lib/supabaseRest';
 
 const RPC_ERROR_MESSAGES: Record<string, string> = {
 	invalid_client_key: 'No se pudo verificar el envío. Inténtalo de nuevo.',
@@ -61,8 +61,7 @@ export const POST: APIRoute = async ({ request }) => {
 	const clientKey = buildReviewClientKey(getClientIp(request), REVIEW_CLIENT_KEY_SALT);
 
 	try {
-		const supabase = createSupabaseServerClient();
-		const { data, error } = await supabase.rpc('submit_review', {
+		const { data, error } = await callSupabaseRpc<string>('submit_review', {
 			p_rating: result.data.rating,
 			p_name: result.data.name,
 			p_opinion: result.data.opinion,
@@ -71,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
 		});
 
 		if (error) {
-			console.error('Supabase submit_review error:', error);
+			console.error('Supabase submit_review error:', error.message);
 			return new Response(JSON.stringify({ ok: false, error: mapRpcError(error.message) }), {
 				status: error.message.includes('rate_limit') ? 429 : 400,
 				headers: { 'Content-Type': 'application/json' },
