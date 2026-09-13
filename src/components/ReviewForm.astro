@@ -44,14 +44,14 @@ const stars = [1, 2, 3, 4, 5] as const;
 		</fieldset>
 
 		<div class="review-form__field" data-field="name">
-			<label class="review-form__label" for="review-name">Nombre</label>
+			<label class="review-form__label" for="review-name">Cliente o empresa</label>
 			<input
 				class="review-form__input"
 				id="review-name"
 				name="name"
 				type="text"
-				autocomplete="name"
-				placeholder="Tu nombre o el de la empresa"
+				autocomplete="organization"
+				placeholder="Nombre del cliente o empresa que contrató el servicio"
 				required
 				minlength={REVIEW_LIMITS.nameMin}
 				maxlength={REVIEW_LIMITS.nameMax}
@@ -91,13 +91,42 @@ const stars = [1, 2, 3, 4, 5] as const;
 					aria-describedby="review-error-privacy"
 				/>
 				<span>
-					Acepto la{' '}
+					He leído y acepto la{' '}
 					<a href="/privacidad" target="_blank" rel="noopener noreferrer">política de privacidad</a>
-					{' '}y el{' '}
-					<a href="/aviso-legal" target="_blank" rel="noopener noreferrer">aviso legal</a>.
+					{' '}y autorizo la publicación de mi reseña (cliente/empresa, valoración y comentario) en
+					la web.
 				</span>
 			</label>
 			<p class="review-form__error" id="review-error-privacy" data-error hidden></p>
+			<div class="review-form__rgpd" aria-label="Información básica de protección de datos">
+				<p class="review-form__rgpd-title">Información básica de protección de datos</p>
+				<ul class="review-form__rgpd-list">
+					<li>
+						<strong>Responsable:</strong>{' '}
+						<span class="review-form__placeholder">[NOMBRE REPRESENTANTE / GRUPO ARTÍSTICO]</span>{' '}
+						(<span class="review-form__placeholder">[DNI/NIF]</span>).
+					</li>
+					<li>
+						<strong>Datos:</strong> nombre del cliente o empresa que contrató el servicio,
+						valoración en estrellas y comentario.
+					</li>
+					<li>
+						<strong>Finalidad:</strong> moderar y publicar la reseña enviada sobre nuestros
+						espectáculos.
+					</li>
+					<li>
+						<strong>Legitimación:</strong> consentimiento expreso del usuario.
+					</li>
+					<li>
+						<strong>Destinatarios:</strong> el nombre o empresa, la valoración y el comentario se
+						publicarán de forma visible en la web tras su aprobación.
+					</li>
+					<li>
+						<strong>Derechos:</strong> acceso, rectificación y supresión enviando un e-mail a{' '}
+						<span class="review-form__placeholder">[EMAIL DE CONTACTO]</span>.
+					</li>
+				</ul>
+			</div>
 		</div>
 
 		<p
@@ -488,6 +517,48 @@ const stars = [1, 2, 3, 4, 5] as const;
 	.review-form__check a:focus-visible {
 		outline: 2px solid var(--color-accent);
 		outline-offset: 3px;
+	}
+
+	.review-form__rgpd {
+		padding: 0.875rem 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.5rem;
+		background: var(--color-base);
+	}
+
+	.review-form__rgpd-title {
+		margin: 0 0 0.5rem;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-muted);
+	}
+
+	.review-form__rgpd-list {
+		margin: 0;
+		padding-left: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+		font-size: 0.75rem;
+		line-height: 1.55;
+		color: var(--color-subtle);
+	}
+
+	.review-form__rgpd-list li {
+		text-wrap: pretty;
+	}
+
+	.review-form__rgpd-list strong {
+		color: var(--color-muted-soft);
+		font-weight: 600;
+	}
+
+	.review-form__placeholder {
+		color: var(--color-accent);
+		font-weight: 500;
+		overflow-wrap: anywhere;
 	}
 
 	.review-form__submit,

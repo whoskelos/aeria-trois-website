@@ -8,9 +8,10 @@ import { callSupabaseRpc } from '../../lib/supabaseRest';
 
 const RPC_ERROR_MESSAGES: Record<string, string> = {
 	invalid_client_key: 'No se pudo verificar el envío. Inténtalo de nuevo.',
-	privacy_not_accepted: 'Debes aceptar la política de privacidad y el aviso legal.',
+	privacy_not_accepted:
+		'Debes aceptar la política de privacidad y autorizar la publicación de tu reseña.',
 	invalid_rating: 'Elige una valoración de 1 a 5 estrellas.',
-	invalid_name: 'Revisa el nombre: debe tener entre 2 y 120 caracteres.',
+	invalid_name: 'Revisa el cliente o empresa: debe tener entre 2 y 120 caracteres.',
 	invalid_opinion: 'Revisa la opinión: debe tener entre 20 y 2000 caracteres.',
 	rate_limit_exceeded: 'Has enviado demasiadas reseñas. Vuelve a intentarlo en una hora.',
 	rate_limit_global: 'Estamos recibiendo muchos envíos. Inténtalo de nuevo más tarde.',

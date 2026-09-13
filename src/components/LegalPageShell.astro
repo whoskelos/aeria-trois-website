@@ -1,0 +1,180 @@
+---
+interface Props {
+	title: string;
+	titleAccent?: string;
+	description: string;
+	canonicalPath: string;
+	backHref?: string;
+	backLabel?: string;
+	lede?: string;
+}
+
+const {
+	title,
+	titleAccent,
+	description,
+	canonicalPath,
+	backHref = '/',
+	backLabel = 'Volver al inicio',
+	lede,
+} = Astro.props;
+
+const pageTitle = titleAccent ? `${title}${titleAccent}` : title.trim();
+
+import Layout from '../layouts/Layout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+---
+
+<Layout title={pageTitle} description={description} canonicalPath={canonicalPath}>
+	<Header />
+	<main
+		class="legal-page pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+	>
+		<section class="relative overflow-hidden px-6 py-16 sm:py-24">
+			<div class="legal-page__glow" aria-hidden="true"></div>
+
+			<article class="relative mx-auto max-w-2xl">
+				<header class="max-w-xl" data-reveal>
+					<h1 class="text-balance text-3xl font-light text-foreground md:text-5xl">
+						{title}
+						{titleAccent && <span class="text-accent">{titleAccent}</span>}
+					</h1>
+					{
+						lede && (
+							<p class="mt-4 text-pretty text-sm leading-relaxed text-muted sm:mt-6">{lede}</p>
+						)
+					}
+				</header>
+
+				<div class="legal-content mt-10 sm:mt-12" data-reveal>
+					<slot />
+				</div>
+
+				<p class="mt-12" data-reveal>
+					<a
+						href={backHref}
+						class="inline-flex min-h-11 items-center justify-center rounded-full border border-border px-6 py-3 text-sm tracking-[0.12em] text-muted-soft uppercase transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [@media(pointer:coarse)]:min-h-12"
+					>
+						{backLabel}
+					</a>
+				</p>
+			</article>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.legal-page {
+		caret-color: var(--color-accent);
+	}
+
+	.legal-page ::selection {
+		background: rgb(226 184 87 / 0.35);
+		color: var(--color-foreground);
+	}
+
+	.legal-page__glow {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			ellipse 70% 40% at 50% 0%,
+			rgb(226 184 87 / 0.07) 0%,
+			transparent 70%
+		);
+	}
+
+	.legal-content {
+		max-width: 70ch;
+		font-size: 0.9375rem;
+		line-height: 1.65;
+		color: var(--color-muted-soft);
+	}
+
+	.legal-content :global(> section) {
+		padding-top: 1.75rem;
+		border-top: 1px solid var(--color-border-subtle);
+	}
+
+	.legal-content :global(> section:first-child) {
+		padding-top: 0;
+		border-top: 0;
+	}
+
+	.legal-content :global(> section + section) {
+		margin-top: 0;
+	}
+
+	.legal-content :global(h2) {
+		margin: 0 0 0.875rem;
+		font-family: var(--font-serif);
+		font-size: clamp(1.125rem, 1rem + 0.35vw, 1.375rem);
+		font-weight: 400;
+		line-height: 1.25;
+		color: var(--color-foreground);
+	}
+
+	.legal-content :global(p) {
+		margin: 0;
+		text-wrap: pretty;
+	}
+
+	.legal-content :global(p + p),
+	.legal-content :global(p + ul),
+	.legal-content :global(ul + p) {
+		margin-top: 0.875rem;
+	}
+
+	.legal-content :global(ul) {
+		margin: 0;
+		padding-left: 1.125rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.legal-content :global(ul ul) {
+		margin-top: 0.5rem;
+		padding-left: 1rem;
+		gap: 0.35rem;
+	}
+
+	.legal-content :global(li) {
+		padding-left: 0.1rem;
+		text-wrap: pretty;
+	}
+
+	.legal-content :global(li::marker) {
+		color: var(--color-accent);
+	}
+
+	.legal-content :global(strong) {
+		font-weight: 600;
+		color: var(--color-muted);
+	}
+
+	.legal-content :global(a) {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.18em;
+	}
+
+	.legal-content :global(a:hover) {
+		color: var(--color-accent-muted);
+	}
+
+	.legal-content :global(a:focus-visible) {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
+	.legal-content :global(.legal-placeholder) {
+		display: inline;
+		color: var(--color-accent);
+		font-weight: 500;
+		overflow-wrap: anywhere;
+	}
+</style>

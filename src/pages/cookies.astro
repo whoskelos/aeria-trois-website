@@ -1,0 +1,25 @@
+---
+import LegalPageShell from '../components/LegalPageShell.astro';
+
+const description =
+	'Política de cookies de Aeria Trois: información sobre el uso de cookies y almacenamiento técnico en el sitio web.';
+---
+
+<LegalPageShell
+	title="Política de "
+	titleAccent="cookies"
+	description={description}
+	canonicalPath="/cookies"
+	lede="Información sobre el uso de cookies y almacenamiento técnico en este sitio web."
+>
+	<section>
+		<h2>Uso de cookies</h2>
+		<p>
+			Este sitio web <strong>no utiliza cookies propias ni de terceros</strong> con fines
+			analíticos, publicitarios o de seguimiento. Únicamente se emplean elementos técnicos de
+			almacenamiento de sesión indispensables para el funcionamiento correcto de la web, por lo
+			que no se recopila información técnica con fines promocionales ni de perfiles de
+			navegación.
+		</p>
+	</section>
+</LegalPageShell>

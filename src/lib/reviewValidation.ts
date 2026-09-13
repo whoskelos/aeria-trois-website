@@ -61,11 +61,11 @@ export function validateReview(input: ReviewInput): {
 
 	const rawName = asString(input.name);
 	if (MARKUP_HINT.test(rawName)) {
-		errors.name = 'Escribe el nombre en texto, sin código ni HTML.';
+		errors.name = 'Escribe el cliente o empresa en texto, sin código ni HTML.';
 	} else {
 		const name = sanitizePlainText(rawName, false);
 		if (!name) {
-			errors.name = 'Escribe tu nombre o el de la empresa.';
+			errors.name = 'Escribe el nombre del cliente o empresa que contrató el servicio.';
 		} else if (name.length < REVIEW_LIMITS.nameMin || name.length > REVIEW_LIMITS.nameMax) {
 			errors.name = `El nombre debe tener entre ${REVIEW_LIMITS.nameMin} y ${REVIEW_LIMITS.nameMax} caracteres.`;
 		}
@@ -87,7 +87,8 @@ export function validateReview(input: ReviewInput): {
 	}
 
 	if (input.privacyAccepted !== true) {
-		errors.privacy = 'Debes aceptar la política de privacidad y el aviso legal.';
+		errors.privacy =
+			'Debes aceptar la política de privacidad y autorizar la publicación de tu reseña.';
 	}
 
 	if (Object.keys(errors).length > 0) {

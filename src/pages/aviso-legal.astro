@@ -1,52 +1,71 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { siteConfig } from '../config/site';
+import LegalPageShell from '../components/LegalPageShell.astro';
 
-const description = 'Aviso legal de Aeria Trois: identificación, uso del sitio y condiciones de las reseñas.';
+const description =
+	'Aviso legal de Aeria Trois: identificación del responsable, uso del sitio y propiedad intelectual.';
 ---
 
-<Layout title="Aviso legal" description={description} canonicalPath="/aviso-legal">
-	<Header />
-	<main
-		class="pt-[calc(3.75rem+env(safe-area-inset-top,0px))] lg:pt-[calc(4rem+env(safe-area-inset-top,0px))]"
-	>
-		<article class="mx-auto max-w-2xl px-6 py-16 sm:py-24">
-			<h1 class="text-balance text-3xl font-light text-foreground md:text-5xl" data-reveal>
-				Aviso <span class="text-accent">legal</span>
-			</h1>
-			<p class="mt-4 text-sm leading-relaxed text-muted sm:mt-6" data-reveal>
-				Este sitio presenta el trabajo de {siteConfig.name} en {siteConfig.location.locality} y
-				España.
-			</p>
-			<div class="mt-10 space-y-5 text-sm leading-relaxed text-muted-soft" data-reveal>
-				<p>
-					Los contenidos (textos, imágenes, vídeos y marcas) pertenecen a {siteConfig.name} salvo
-					indicación contraria. No está permitido copiarlos o reutilizarlos sin permiso.
-				</p>
-				<p>
-					Las reseñas que envíes deben referirse a una experiencia real. No publiques datos de
-					terceros, insultos ni contenido ilegal. Nos reservamos el derecho de no publicar un
-					texto que no cumpla estas condiciones.
-				</p>
-				<p>
-					Para cualquier cuestión legal o de contratación:
-					<a
-						class="text-accent underline decoration-1 underline-offset-4 hover:text-accent-muted"
-						href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a
-					>.
-				</p>
-			</div>
-			<p class="mt-12" data-reveal>
-				<a
-					href="/review"
-					class="inline-flex min-h-11 items-center justify-center rounded-full border border-border px-6 py-3 text-sm tracking-[0.12em] text-muted-soft uppercase transition-colors hover:border-accent hover:text-accent"
-				>
-					Volver a la reseña
-				</a>
-			</p>
-		</article>
-	</main>
-	<Footer />
-</Layout>
+<LegalPageShell
+	title="Aviso "
+	titleAccent="legal"
+	description={description}
+	canonicalPath="/aviso-legal"
+	lede="Información legal sobre la titularidad del sitio, su uso y los derechos de propiedad intelectual."
+>
+	<section>
+		<h2>1. Datos identificativos del responsable</h2>
+		<p>
+			En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la
+			Sociedad de la Información y Comercio Electrónico (LSSI-CE), se informan los siguientes
+			datos:
+		</p>
+		<ul>
+			<li>
+				<strong>Nombre del grupo artístico:</strong>{' '}
+				<span class="legal-placeholder">[NOMBRE DEL GRUPO ARTÍSTICO]</span>
+			</li>
+			<li>
+				<strong>Representante legal / titular:</strong>{' '}
+				<span class="legal-placeholder">[NOMBRE Y APELLIDOS DEL REPRESENTANTE]</span>
+			</li>
+			<li>
+				<strong>N.I.F. / D.N.I.:</strong>{' '}
+				<span class="legal-placeholder">[DNI O NIF DEL REPRESENTANTE]</span>
+			</li>
+			<li>
+				<strong>Domicilio a efectos de notificaciones:</strong>{' '}
+				<span class="legal-placeholder">[DIRECCIÓN COMPLETA / LOCALIDAD Y PROVINCIA]</span>
+			</li>
+			<li>
+				<strong>Correo electrónico de contacto:</strong>{' '}
+				<span class="legal-placeholder">[EMAIL DE CONTACTO]</span>
+			</li>
+			<li>
+				<strong>Sitio web:</strong>{' '}
+				<span class="legal-placeholder">[DOMINIO WEB]</span>
+			</li>
+		</ul>
+	</section>
+
+	<section>
+		<h2>2. Objeto y ámbito de aplicación</h2>
+		<p>
+			El presente Aviso Legal regula el acceso, navegación y uso del sitio web{' '}
+			<span class="legal-placeholder">[DOMINIO WEB]</span>, puesto a disposición del público para
+			informar sobre los espectáculos, actividades y servicios artísticos prestados por el
+			colectivo.
+		</p>
+	</section>
+
+	<section>
+		<h2>3. Propiedad intelectual e industrial</h2>
+		<p>
+			Todos los contenidos del sitio web (textos, fotografías, vídeos, logotipos, diseños,
+			marcas, código fuente) son propiedad exclusiva de{' '}
+			<span class="legal-placeholder">[NOMBRE DEL GRUPO ARTÍSTICO]</span> o de sus respectivos
+			autores bajo licencia o autorización, quedando protegidos por la legislación sobre
+			Propiedad Intelectual e Industrial. Queda prohibida la reproducción total o parcial sin
+			autorización expresa.
+		</p>
+	</section>
+</LegalPageShell>
