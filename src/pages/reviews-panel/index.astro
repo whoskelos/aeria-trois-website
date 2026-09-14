@@ -542,6 +542,7 @@ export const prerender = false;
 
 	let currentFilter: ReviewStatus | 'all' = 'pending';
 	let pendingChange: { id: string; status: ReviewStatus } | null = null;
+	let loadReviewsController: AbortController | null = null;
 
 	function formatDate(value: string) {
 		return new Intl.DateTimeFormat('es-ES', {
@@ -611,18 +612,25 @@ export const prerender = false;
 	async function loadReviews() {
 		if (!listEl || !emptyEl || !statusEl) return;
 
+		loadReviewsController?.abort();
+		loadReviewsController = new AbortController();
+		const { signal } = loadReviewsController;
+		const filter = currentFilter;
+
 		statusEl.hidden = false;
 		statusEl.textContent = 'Cargando reseñas…';
 		emptyEl.hidden = true;
 		listEl.innerHTML = '';
 
 		try {
-			const response = await fetch(`/api/reviews-panel/reviews?status=${currentFilter}`);
+			const response = await fetch(`/api/reviews-panel/reviews?status=${filter}`, { signal });
 			const result = (await response.json()) as {
 				ok?: boolean;
 				reviews?: Review[];
 				error?: string;
 			};
+
+			if (signal.aborted) return;
 
 			if (!response.ok || !result.ok) {
 				statusEl.textContent = result.error ?? 'No se pudieron cargar las reseñas.';
@@ -638,7 +646,11 @@ export const prerender = false;
 			}
 
 			listEl.innerHTML = reviews.map(renderReview).join('');
-		} catch {
+		} catch (error) {
+			if (error instanceof DOMException && error.name === 'AbortError') {
+				return;
+			}
+
 			statusEl.textContent = 'No se pudieron cargar las reseñas.';
 		}
 	}
