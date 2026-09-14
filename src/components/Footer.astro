@@ -11,95 +11,104 @@ const legalLinks = [
 	{ href: '/cookies', label: 'Cookies' },
 ] as const;
 
-const linkClass =
-	'inline-flex min-h-9 items-center text-subtle transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [@media(pointer:coarse)]:min-h-11';
+const footerLinkClass =
+	'text-subtle transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent';
+
+const touchLinkClass =
+	`inline-flex min-h-9 items-center ${footerLinkClass} [@media(pointer:coarse)]:min-h-11`;
 ---
 
-<footer class="site-footer border-t border-border-subtle bg-base px-6 py-10 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:py-12">
-	<div class="mx-auto flex max-w-7xl flex-col gap-10 sm:gap-12 md:flex-row md:items-start md:justify-between">
-		<div class="flex gap-3 sm:gap-4" data-reveal>
-			<a href="/" class="shrink-0" aria-label="Aeria Trois — inicio">
-				<img
-					src={logo.src}
-					alt=""
-					width={logo.width}
-					height={logo.height}
-					class="h-16 w-16 object-contain sm:h-20 sm:w-20"
-					loading="lazy"
-				/>
-			</a>
+<footer class="site-footer border-t border-border-subtle bg-base px-6 py-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:py-10">
+	<div class="mx-auto flex max-w-7xl flex-col gap-6 md:gap-5">
+		<div class="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-8">
+			<div class="flex flex-col gap-2" data-reveal>
+				<div class="flex gap-3">
+					<a href="/" class="shrink-0" aria-label="Aeria Trois — inicio">
+						<img
+							src={logo.src}
+							alt=""
+							width={logo.width}
+							height={logo.height}
+							class="h-14 w-14 object-contain sm:h-16 sm:w-16"
+							loading="lazy"
+						/>
+					</a>
 
-			<div class="min-w-0 pt-0.5 sm:pt-1">
+					<div class="min-w-0 pt-0.5">
+						<a
+							href="/"
+							class="font-serif text-2xl font-light tracking-wide text-foreground transition-colors hover:text-accent sm:text-3xl"
+						>
+							Aeria <span class="text-accent">Trois</span>
+						</a>
+						<p class="mt-1 text-sm text-muted">Tela y aro aéreo · Madrid</p>
+						<p class="mt-1 text-sm text-muted">Performances · Eventos · Clases</p>
+					</div>
+				</div>
+			</div>
+
+			<div
+				class="flex flex-col gap-2 border-t border-border-subtle pt-5 text-left md:items-end md:border-0 md:pt-0 md:text-right"
+				data-reveal
+			>
 				<a
-					href="/"
-					class="font-serif text-2xl font-light tracking-wide text-foreground transition-colors hover:text-accent sm:text-3xl"
+					href={instagramUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class={`${touchLinkClass} gap-2 text-sm text-muted`}
+					aria-label="Instagram de Aeria Trois (@aeria.trois)"
 				>
-					Aeria <span class="text-accent">Trois</span>
+					<svg
+						class="h-4 w-4 shrink-0"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						aria-hidden="true"
+					>
+						<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+						<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+						<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+					</svg>
+					@aeria.trois
 				</a>
-				<p class="mt-2 text-sm text-muted">Tela y aro aéreo · Madrid</p>
+
+				<nav
+					class="flex flex-col text-xs md:flex-row md:flex-wrap md:items-center md:justify-end md:gap-x-3"
+					aria-label="Información legal"
+				>
+					{
+						legalLinks.map((link, index) => (
+							<>
+								{index > 0 && (
+									<span class="hidden text-border md:inline" aria-hidden="true">
+										·
+									</span>
+								)}
+								<a href={link.href} class={`${footerLinkClass} py-0.5 md:py-0`}>
+									{link.label}
+								</a>
+							</>
+						))
+					}
+				</nav>
 			</div>
 		</div>
 
 		<div
-			class="flex flex-col gap-3 border-t border-border-subtle pt-8 text-left md:items-end md:border-0 md:pt-0 md:text-right"
+			class="flex flex-col gap-1 border-t border-border-subtle pt-4 text-xs sm:flex-row sm:items-center sm:justify-between"
 			data-reveal
 		>
+			<p class="text-subtle leading-snug">© {currentYear} Aeria Trois</p>
 			<a
-				href={instagramUrl}
+				href="https://kelvinguerrero.dev"
 				target="_blank"
 				rel="noopener noreferrer"
-				class={`${linkClass} gap-2 text-sm text-muted`}
-				aria-label="Instagram de Aeria Trois (@aeria.trois)"
+				class={`${footerLinkClass} inline-flex gap-1 leading-snug`}
 			>
-				<svg
-					class="h-4 w-4 shrink-0"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					aria-hidden="true"
-				>
-					<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-					<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-					<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-				</svg>
-				@aeria.trois
+				<span>made with ❤️ by</span>
+				<span class="underline sm:no-underline">kelvin</span>
 			</a>
-
-			<p class="text-sm text-muted">Performances · Eventos · Clases</p>
-
-			<p class="text-sm text-subtle">© {currentYear} Aeria Trois</p>
-
-			<nav
-				class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs md:justify-end lg:gap-x-4"
-				aria-label="Información legal"
-			>
-				{
-					legalLinks.map((link, index) => (
-						<>
-							{index > 0 && (
-								<span class="text-border" aria-hidden="true">
-									·
-								</span>
-							)}
-							<a href={link.href} class={linkClass}>
-								{link.label}
-							</a>
-						</>
-					))
-				}
-			</nav>
-
-			<p>
-				<a
-					href="https://kelvinguerrero.dev"
-					target="_blank"
-					rel="noopener noreferrer"
-					class={`${linkClass} text-xs`}
-				>
-					made with ❤️ by <span class="underline sm:no-underline">kelvin</span>
-				</a>
-			</p>
 		</div>
 	</div>
 </footer>
