@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import instrumentSerifLatin from '@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url';
+import manropeLatin from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
 import { siteConfig } from '../config/site';
 import { absoluteUrl, buildPageJsonLd, resolveTitle } from '../lib/seo';
 
@@ -40,6 +42,20 @@ const jsonLd = noindex
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<link
+			rel="preload"
+			href={instrumentSerifLatin}
+			as="font"
+			type="font/woff2"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="preload"
+			href={manropeLatin}
+			as="font"
+			type="font/woff2"
+			crossorigin="anonymous"
+		/>
 		<link rel="icon" href="/favicon.ico" sizes="any" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -87,11 +103,31 @@ const jsonLd = noindex
 	<body>
 		<slot />
 		<script>
-			import { initScrollReveal } from '../scripts/scrollReveal';
 			import { initLazyVideoPreviews } from '../scripts/lazyVideo';
 
-			initScrollReveal();
 			initLazyVideoPreviews();
+
+			const revealFallback = window.setTimeout(() => {
+				document.documentElement.classList.remove('motion-pending');
+			}, 3000);
+
+			function loadScrollReveal() {
+				import('../scripts/scrollReveal')
+					.then(({ initScrollReveal }) => {
+						window.clearTimeout(revealFallback);
+						initScrollReveal();
+					})
+					.catch(() => {
+						window.clearTimeout(revealFallback);
+						document.documentElement.classList.remove('motion-pending');
+					});
+			}
+
+			if ('requestIdleCallback' in window) {
+				requestIdleCallback(loadScrollReveal, { timeout: 2000 });
+			} else {
+				window.setTimeout(loadScrollReveal, 1);
+			}
 		</script>
 	</body>
 </html>

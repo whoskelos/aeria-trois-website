@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import 'tailwind-animations';
-@import '@fontsource-variable/manrope';
-@import '@fontsource/instrument-serif';
+@import './fonts.css';
 
 @theme {
 	/* Fondo y superficies */
@@ -49,10 +48,43 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	html.motion-pending [data-reveal-hero],
 	html.motion-pending [data-reveal] {
 		opacity: 0;
 		transform: translate3d(0, 16px, 0) scale(0.97);
+	}
+
+	@keyframes hero-reveal {
+		from {
+			transform: translate3d(0, 16px, 0) scale(0.97);
+		}
+
+		to {
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+	}
+
+	.hero-copy > [data-reveal-hero] {
+		animation: hero-reveal var(--duration-reveal) var(--ease-out) both;
+	}
+
+	.hero-copy > [data-reveal-hero]:nth-child(1) {
+		animation-delay: 120ms;
+	}
+
+	.hero-copy > [data-reveal-hero]:nth-child(2) {
+		animation-delay: calc(120ms + var(--stagger-reveal));
+	}
+
+	.hero-copy > [data-reveal-hero]:nth-child(3) {
+		animation-delay: calc(120ms + var(--stagger-reveal) * 2);
+	}
+
+	.hero-copy > [data-reveal-hero]:nth-child(4) {
+		animation-delay: calc(120ms + var(--stagger-reveal) * 3);
+	}
+
+	.hero-copy > [data-reveal-hero]:nth-child(5) {
+		animation-delay: calc(120ms + var(--stagger-reveal) * 4);
 	}
 }
 

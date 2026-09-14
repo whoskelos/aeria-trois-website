@@ -63,27 +63,15 @@ export function initScrollReveal() {
 
 	motionContext = gsap.context(() => {
 		const scrollItems = gsap.utils.toArray<HTMLElement>('[data-reveal]');
-		const heroItems = gsap.utils.toArray<HTMLElement>('[data-reveal-hero]');
-		const allTargets = [...scrollItems, ...heroItems];
 
 		if (reducedMotion) {
-			gsap.set(allTargets, { ...VISIBLE, clearProps: 'transform' });
+			gsap.set(scrollItems, { ...VISIBLE, clearProps: 'transform' });
 			document.documentElement.classList.remove('motion-pending');
 			return;
 		}
 
-		gsap.set(allTargets, HIDDEN);
+		gsap.set(scrollItems, HIDDEN);
 		document.documentElement.classList.remove('motion-pending');
-
-		if (heroItems.length) {
-			const heroTimeline = gsap.timeline({ delay: 0.12 });
-			heroItems.forEach((element, index) => {
-				heroTimeline.add(
-					revealToVisible(element),
-					index === 0 ? 0 : '<+=0.07',
-				);
-			});
-		}
 
 		scrollItems.forEach((element) => {
 			revealToVisible(element, {
