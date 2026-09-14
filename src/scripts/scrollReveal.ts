@@ -1,96 +1,44 @@
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+const REVEAL_ROOT_MARGIN = '0px 0px -32px 0px';
 
-gsap.registerPlugin(ScrollTrigger);
-
-const REVEAL = {
-	duration: 0.55,
-	stagger: 0.07,
-	y: 16,
-	scale: 0.97,
-	ease: 'power3.out',
-} as const;
-
-const HIDDEN = {
-	autoAlpha: 0,
-	y: REVEAL.y,
-	scale: REVEAL.scale,
-} as const;
-
-const VISIBLE = {
-	autoAlpha: 1,
-	y: 0,
-	scale: 1,
-} as const;
-
-const SCROLL_START = 'top bottom-=32';
-
-let motionContext: gsap.Context | null = null;
-
-function isHidden(element: HTMLElement) {
-	const opacity = Number(gsap.getProperty(element, 'opacity'));
-	if (!Number.isNaN(opacity) && opacity < 0.05) return true;
-
-	return Number.parseFloat(getComputedStyle(element).opacity) < 0.05;
+function revealElement(element: HTMLElement) {
+	element.classList.add('is-revealed');
 }
 
-function revealToVisible(element: HTMLElement, options: gsap.TweenVars = {}) {
-	return gsap.to(element, {
-		...VISIBLE,
-		duration: REVEAL.duration,
-		ease: REVEAL.ease,
-		...options,
-	});
-}
-
-function revealIfHidden(elements: HTMLElement[]) {
-	elements.forEach((element) => {
-		if (!isHidden(element)) return;
-
-		const { top, bottom } = element.getBoundingClientRect();
-		const inView = top < window.innerHeight && bottom > 0;
-		if (!inView) return;
-
-		revealToVisible(element);
-	});
+function isInViewport(element: HTMLElement) {
+	const { top, bottom } = element.getBoundingClientRect();
+	return top < window.innerHeight && bottom > 0;
 }
 
 export function initScrollReveal() {
-	motionContext?.revert();
-	motionContext = null;
+	const elements = document.querySelectorAll<HTMLElement>('[data-reveal]');
+	if (elements.length === 0) return;
 
 	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	if (reducedMotion) {
+		elements.forEach((element) => revealElement(element));
+		return;
+	}
 
-	motionContext = gsap.context(() => {
-		const scrollItems = gsap.utils.toArray<HTMLElement>('[data-reveal]');
-
-		if (reducedMotion) {
-			gsap.set(scrollItems, { ...VISIBLE, clearProps: 'transform' });
-			document.documentElement.classList.remove('motion-pending');
-			return;
+	const pending = Array.from(elements).filter((element) => {
+		if (isInViewport(element)) {
+			revealElement(element);
+			return false;
 		}
-
-		gsap.set(scrollItems, HIDDEN);
-		document.documentElement.classList.remove('motion-pending');
-
-		scrollItems.forEach((element) => {
-			revealToVisible(element, {
-				scrollTrigger: {
-					trigger: element,
-					start: SCROLL_START,
-					once: true,
-				},
-			});
-		});
-
-		const syncScrollItems = () => {
-			ScrollTrigger.refresh();
-			revealIfHidden(scrollItems);
-		};
-
-		requestAnimationFrame(syncScrollItems);
-		window.addEventListener('load', syncScrollItems, { once: true });
+		return true;
 	});
 
-	return motionContext;
+	if (pending.length === 0) return;
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				revealElement(entry.target as HTMLElement);
+				observer.unobserve(entry.target);
+			}
+		},
+		{ rootMargin: REVEAL_ROOT_MARGIN, threshold: 0 },
+	);
+
+	pending.forEach((element) => observer.observe(element));
 }

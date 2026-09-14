@@ -17,6 +17,9 @@ export default defineConfig({
   site: siteUrl,
   output: 'static',
   adapter: vercel(),
+  build: {
+    inlineStylesheets: 'always',
+  },
   env: {
     schema: {
       REVIEW_CLIENT_KEY_SALT: envField.string({ context: 'server', access: 'secret' }),

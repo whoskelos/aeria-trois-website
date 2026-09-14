@@ -104,35 +104,29 @@ const jsonLd = noindex
 		<script>
 			import { initLazyVideoPreviews } from '../scripts/lazyVideo';
 
-			initLazyVideoPreviews();
+			function runWhenIdle(callback: () => void) {
+				const idleWindow = window as Window & {
+					requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+				};
 
-			const revealFallback = window.setTimeout(() => {
-				document.documentElement.classList.remove('motion-pending');
-			}, 3000);
+				if (typeof idleWindow.requestIdleCallback === 'function') {
+					idleWindow.requestIdleCallback(callback, { timeout: 2000 });
+				} else {
+					setTimeout(callback, 1);
+				}
+			}
+
+			runWhenIdle(() => initLazyVideoPreviews());
 
 			function loadScrollReveal() {
-				if (!document.querySelector('[data-reveal]')) {
-					window.clearTimeout(revealFallback);
-					document.documentElement.classList.remove('motion-pending');
-					return;
-				}
+				if (!document.querySelector('[data-reveal]')) return;
 
 				import('../scripts/scrollReveal')
-					.then(({ initScrollReveal }) => {
-						window.clearTimeout(revealFallback);
-						initScrollReveal();
-					})
-					.catch(() => {
-						window.clearTimeout(revealFallback);
-						document.documentElement.classList.remove('motion-pending');
-					});
+					.then(({ initScrollReveal }) => initScrollReveal())
+					.catch(() => undefined);
 			}
 
-			if ('requestIdleCallback' in window) {
-				requestIdleCallback(loadScrollReveal, { timeout: 2000 });
-			} else {
-				window.setTimeout(loadScrollReveal, 1);
-			}
+			runWhenIdle(loadScrollReveal);
 		</script>
 	</body>
 </html>

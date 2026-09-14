@@ -11,20 +11,11 @@
 			]
 		},
 		{
-			"source": "/favicon.ico",
+			"source": "/(favicon\\.ico|apple-touch-icon\\.png|favicon-16x16\\.png|favicon-32x32\\.png|android-chrome-192x192\\.png|android-chrome-512x512\\.png|og\\.jpg|site\\.webmanifest)",
 			"headers": [
 				{
 					"key": "Cache-Control",
 					"value": "public, max-age=86400"
-				}
-			]
-		},
-		{
-			"source": "/(.*\\.(?:png|jpg|jpeg|webp|woff2|webmanifest))",
-			"headers": [
-				{
-					"key": "Cache-Control",
-					"value": "public, max-age=604800"
 				}
 			]
 		}

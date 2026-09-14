@@ -1,4 +1,5 @@
 ---
+import { getImage } from 'astro:assets';
 import showcasePoster1 from '../assets/showcase/1-poster.webp';
 import showcasePoster2 from '../assets/showcase/2-poster.webp';
 import showcasePoster3 from '../assets/showcase/3-poster.webp';
@@ -47,6 +48,19 @@ const galleryItems = [
 		poster: showcasePoster4,
 	},
 ];
+
+const galleryItemsWithPosters = await Promise.all(
+	galleryItems.map(async (item) => ({
+		...item,
+		posterSrc: (
+			await getImage({
+				src: item.poster,
+				width: 640,
+				quality: 75,
+			})
+		).src,
+	})),
+);
 ---
 
 <section id="experiencias" class="border-t border-border-subtle px-6 py-16 sm:py-24">
@@ -65,14 +79,14 @@ const galleryItems = [
 
 		<div class="bento-grid gallery-bento">
 			{
-				galleryItems.map((item, index) => (
+				galleryItemsWithPosters.map((item, index) => (
 					<GalleryItem
 						category={item.category}
 						title={item.title}
 						meta={item.meta}
 						description={item.description}
 						videoSrc={item.video}
-						posterSrc={item.poster.src}
+						posterSrc={item.posterSrc}
 						index={index}
 					/>
 				))

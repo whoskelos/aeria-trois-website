@@ -79,7 +79,20 @@
 		}
 	}
 
-	loadTestimonials();
+	if (!section) {
+		loadTestimonials();
+	} else {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (!entries.some((entry) => entry.isIntersecting)) return;
+				observer.disconnect();
+				loadTestimonials();
+			},
+			{ rootMargin: '400px' },
+		);
+
+		observer.observe(section);
+	}
 </script>
 
 <style is:global>

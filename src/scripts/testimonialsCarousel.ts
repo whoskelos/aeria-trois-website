@@ -96,7 +96,6 @@ export function buildTestimonialsCarousel(testimonials: TestimonialItem[]) {
 	carousel.tabIndex = 0;
 	carousel.setAttribute('aria-roledescription', 'carrusel');
 	carousel.setAttribute('aria-label', 'Opiniones de clientes');
-	carousel.dataset.reveal = '';
 
 	const viewport = document.createElement('div');
 	viewport.className = 'testimonials-carousel__viewport';

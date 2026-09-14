@@ -21,12 +21,14 @@ const facts = [
 			<Image
 				src={equipoImage}
 				alt="Integrantes de Aeria Trois en actuación aérea"
-				widths={[400, 600, 800]}
+				widths={[360, 480, 640, 800]}
 				sizes="(min-width: 768px) 50vw, 100vw"
+				quality={75}
 				layout="none"
 				fit="cover"
 				class="absolute inset-0 h-full w-full object-cover object-[50%_62%] md:object-[50%_58%]"
 				loading="lazy"
+				decoding="async"
 			/>
 		</div>
 

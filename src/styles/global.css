@@ -48,9 +48,17 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	html.motion-pending [data-reveal] {
+	[data-reveal]:not(.is-revealed) {
 		opacity: 0;
 		transform: translate3d(0, 16px, 0) scale(0.97);
+	}
+
+	[data-reveal].is-revealed {
+		opacity: 1;
+		transform: translate3d(0, 0, 0) scale(1);
+		transition:
+			opacity var(--duration-reveal) var(--ease-out),
+			transform var(--duration-reveal) var(--ease-out);
 	}
 
 	@keyframes hero-reveal {
