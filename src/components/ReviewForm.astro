@@ -117,9 +117,9 @@ const stars = [1, 2, 3, 4, 5] as const;
 		<p class="review-form__success-copy">
 			La hemos recibido correctamente. La revisaremos antes de publicarla en la web.
 		</p>
-		<button class="review-form__again" type="button" data-review-again>
-			Escribir otra reseña
-		</button>
+		<a class="review-form__again" href="/">
+			Volver al inicio
+		</a>
 	</div>
 </form>
 
@@ -132,7 +132,6 @@ const stars = [1, 2, 3, 4, 5] as const;
 	if (form) {
 		const panel = form.querySelector<HTMLElement>('[data-review-panel]');
 		const success = form.querySelector<HTMLElement>('[data-review-success]');
-		const again = form.querySelector<HTMLButtonElement>('[data-review-again]');
 		const submit = form.querySelector<HTMLButtonElement>('[data-review-submit]');
 		const submitError = form.querySelector<HTMLElement>('[data-submit-error]');
 		const opinion = form.querySelector<HTMLTextAreaElement>('#review-opinion');
@@ -252,18 +251,6 @@ const stars = [1, 2, 3, 4, 5] as const;
 			if (!(target instanceof HTMLElement)) return;
 			const key = target.closest('[data-field]')?.getAttribute('data-field');
 			if (key === 'rating' || key === 'privacy') setError(key);
-		});
-
-		again?.addEventListener('click', () => {
-			form.reset();
-			clearErrors();
-			setSubmitError();
-			updateCount();
-			if (panel && success) {
-				success.hidden = true;
-				panel.hidden = false;
-			}
-			form.querySelector<HTMLInputElement>('#review-name')?.focus();
 		});
 
 		updateCount();
@@ -540,6 +527,7 @@ const stars = [1, 2, 3, 4, 5] as const;
 
 	.review-form__again {
 		margin-top: 0.25rem;
+		text-decoration: none;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
