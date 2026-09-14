@@ -102,8 +102,6 @@ const jsonLd = noindex
 	<body>
 		<slot />
 		<script>
-			import { initLazyVideoPreviews } from '../scripts/lazyVideo';
-
 			function runWhenIdle(callback: () => void) {
 				const idleWindow = window as Window & {
 					requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
@@ -116,17 +114,37 @@ const jsonLd = noindex
 				}
 			}
 
-			runWhenIdle(() => initLazyVideoPreviews());
-
-			function loadScrollReveal() {
-				if (!document.querySelector('[data-reveal]')) return;
-
-				import('../scripts/scrollReveal')
-					.then(({ initScrollReveal }) => initScrollReveal())
+			runWhenIdle(() => {
+				import('../scripts/lazyVideo')
+					.then(({ initLazyVideoPreviews }) => initLazyVideoPreviews())
 					.catch(() => undefined);
+			});
+
+			if (
+				!CSS.supports('animation-timeline: view()') &&
+				document.querySelector('[data-reveal]')
+			) {
+				runWhenIdle(() => {
+					import('../scripts/scrollReveal')
+						.then(({ initScrollReveal }) => initScrollReveal())
+						.catch(() => undefined);
+				});
 			}
 
-			runWhenIdle(loadScrollReveal);
+			const testimonialsSection = document.querySelector('[data-testimonials-section]');
+			if (testimonialsSection) {
+				const observer = new IntersectionObserver(
+					(entries) => {
+						if (!entries.some((entry) => entry.isIntersecting)) return;
+						observer.disconnect();
+						import('../scripts/testimonialsLoader')
+							.then(({ loadTestimonials }) => loadTestimonials())
+							.catch(() => undefined);
+					},
+					{ rootMargin: '400px' },
+				);
+				observer.observe(testimonialsSection);
+			}
 		</script>
 	</body>
 </html>
