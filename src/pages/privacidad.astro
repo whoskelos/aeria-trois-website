@@ -1,8 +1,14 @@
 ---
 import LegalPageShell from '../components/LegalPageShell.astro';
+import { siteConfig } from '../config/site';
 
 const description =
 	'Política de privacidad de Aeria Trois sobre el tratamiento de datos personales recabados a través del formulario de reseñas.';
+
+const groupName = 'AERIA TROIS';
+const representatives = 'Lydia Soria, Andrea Pérez y Paloma De Mera';
+const taxIds = '49067375A, 48742299D y 02309063R';
+const contactEmail = siteConfig.email;
 ---
 
 <LegalPageShell
@@ -18,16 +24,14 @@ const description =
 		<h2>1. Responsable del tratamiento</h2>
 		<ul>
 			<li>
-				<strong>Responsable:</strong>{' '}
-				<span class="legal-placeholder">[NOMBRE Y APELLIDOS DEL REPRESENTANTE / NOMBRE DEL GRUPO]</span>
+				<strong>Responsable:</strong> {groupName} ({representatives})
 			</li>
 			<li>
-				<strong>N.I.F.:</strong>{' '}
-				<span class="legal-placeholder">[DNI O NIF]</span>
+				<strong>N.I.F. / D.N.I.:</strong> {taxIds}
 			</li>
 			<li>
 				<strong>Contacto de privacidad:</strong>{' '}
-				<span class="legal-placeholder">[EMAIL DE CONTACTO]</span>
+				<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
 			</li>
 		</ul>
 	</section>
@@ -125,9 +129,8 @@ const description =
 		</ul>
 		<p>
 			Para ejercer estos derechos, puede enviar un correo electrónico a{' '}
-			<span class="legal-placeholder">[EMAIL DE CONTACTO]</span> indicando en el asunto «Derechos
-			RGPD — Reseñas» y adjuntando copia de un documento de identidad para verificar su
-			titularidad.
+			<a href={`mailto:${contactEmail}`}>{contactEmail}</a> indicando en el asunto «Derechos RGPD
+			— Reseñas» y adjuntando copia de un documento de identidad para verificar su titularidad.
 		</p>
 	</section>
 </LegalPageShell>

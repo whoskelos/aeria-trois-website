@@ -1,8 +1,16 @@
 ---
 import LegalPageShell from '../components/LegalPageShell.astro';
+import { siteConfig } from '../config/site';
 
 const description =
 	'Aviso legal de Aeria Trois: identificación del responsable, uso del sitio y propiedad intelectual.';
+
+const groupName = 'AERIA TROIS';
+const representatives = 'Lydia Soria, Andrea Pérez y Paloma De Mera';
+const taxIds = '49067375A, 48742299D y 02309063R';
+const contactEmail = siteConfig.email;
+const website = 'aeriatrois.es';
+const websiteUrl = `https://${website}`;
 ---
 
 <LegalPageShell
@@ -21,39 +29,40 @@ const description =
 		</p>
 		<ul>
 			<li>
-				<strong>Nombre del grupo artístico:</strong>{' '}
-				<span class="legal-placeholder">[NOMBRE DEL GRUPO ARTÍSTICO]</span>
+				<strong>Nombre del grupo artístico:</strong> {groupName}
 			</li>
 			<li>
-				<strong>Representante legal / titular:</strong>{' '}
-				<span class="legal-placeholder">[NOMBRE Y APELLIDOS DEL REPRESENTANTE]</span>
+				<strong>Representante legal / titular:</strong> {representatives}
 			</li>
 			<li>
-				<strong>N.I.F. / D.N.I.:</strong>{' '}
-				<span class="legal-placeholder">[DNI O NIF DEL REPRESENTANTE]</span>
+				<strong>N.I.F. / D.N.I.:</strong> {taxIds}
 			</li>
 			<li>
-				<strong>Domicilio a efectos de notificaciones:</strong>{' '}
-				<span class="legal-placeholder">[DIRECCIÓN COMPLETA / LOCALIDAD Y PROVINCIA]</span>
+				<strong>Canal electrónico de notificación:</strong>{' '}
+				<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
 			</li>
 			<li>
 				<strong>Correo electrónico de contacto:</strong>{' '}
-				<span class="legal-placeholder">[EMAIL DE CONTACTO]</span>
+				<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
 			</li>
 			<li>
 				<strong>Sitio web:</strong>{' '}
-				<span class="legal-placeholder">[DOMINIO WEB]</span>
+				<a href={websiteUrl}>{website}</a>
 			</li>
 		</ul>
+		<p>
+			Al no disponer de local comercial u oficina física, se facilita un canal electrónico de
+			notificación operativo para garantizar la comunicación directa y efectiva con los usuarios,
+			conforme al artículo 10.1.b de la LSSI-CE, sin publicar un domicilio particular.
+		</p>
 	</section>
 
 	<section>
 		<h2>2. Objeto y ámbito de aplicación</h2>
 		<p>
 			El presente Aviso Legal regula el acceso, navegación y uso del sitio web{' '}
-			<span class="legal-placeholder">[DOMINIO WEB]</span>, puesto a disposición del público para
-			informar sobre los espectáculos, actividades y servicios artísticos prestados por el
-			colectivo.
+			<a href={websiteUrl}>{website}</a>, puesto a disposición del público para informar sobre
+			los espectáculos, actividades y servicios artísticos prestados por el colectivo.
 		</p>
 	</section>
 
@@ -61,11 +70,10 @@ const description =
 		<h2>3. Propiedad intelectual e industrial</h2>
 		<p>
 			Todos los contenidos del sitio web (textos, fotografías, vídeos, logotipos, diseños,
-			marcas, código fuente) son propiedad exclusiva de{' '}
-			<span class="legal-placeholder">[NOMBRE DEL GRUPO ARTÍSTICO]</span> o de sus respectivos
-			autores bajo licencia o autorización, quedando protegidos por la legislación sobre
-			Propiedad Intelectual e Industrial. Queda prohibida la reproducción total o parcial sin
-			autorización expresa.
+			marcas, código fuente) son propiedad exclusiva de {groupName} o de sus respectivos autores
+			bajo licencia o autorización, quedando protegidos por la legislación sobre Propiedad
+			Intelectual e Industrial. Queda prohibida la reproducción total o parcial sin autorización
+			expresa.
 		</p>
 	</section>
 </LegalPageShell>
