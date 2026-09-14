@@ -54,7 +54,7 @@ export function buildPageJsonLd({
 				url: `${baseUrl}/`,
 				logo: {
 					'@type': 'ImageObject',
-					url: absoluteUrl('/favicon.svg', siteUrl),
+					url: absoluteUrl('/favicon.ico', siteUrl),
 				},
 				image: absoluteUrl(siteConfig.defaultOgImage, siteUrl),
 				sameAs: [...siteConfig.sameAs],

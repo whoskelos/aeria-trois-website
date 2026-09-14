@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import equipoImage from '../assets/equipo.webp';
 
 const facts = [
@@ -17,11 +18,13 @@ const facts = [
 			class="relative aspect-[4/5] overflow-hidden md:aspect-auto md:min-h-[20rem]"
 			data-reveal
 		>
-			<img
-				src={equipoImage.src}
+			<Image
+				src={equipoImage}
 				alt="Integrantes de Aeria Trois en actuación aérea"
-				width={equipoImage.width}
-				height={equipoImage.height}
+				widths={[400, 600, 800]}
+				sizes="(min-width: 768px) 50vw, 100vw"
+				layout="none"
+				fit="cover"
 				class="absolute inset-0 h-full w-full object-cover object-[50%_62%] md:object-[50%_58%]"
 				loading="lazy"
 			/>
