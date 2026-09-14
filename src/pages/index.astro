@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import introPoster from '../assets/intro-poster.webp';
 import ServicesTicker from '../components/ServicesTicker.astro';
 import Gallery from '../components/Gallery.astro';
 import About from '../components/About.astro';
@@ -13,6 +14,7 @@ import Footer from '../components/Footer.astro';
 ---
 
 <Layout>
+	<link slot="head" rel="preload" as="image" href={introPoster.src} fetchpriority="high" />
 	<Header />
 	<main>
 		<Hero />

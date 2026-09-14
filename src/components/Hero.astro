@@ -1,5 +1,6 @@
 ---
 import introVideo from '../assets/intro.webm';
+import introPoster from '../assets/intro-poster.webp';
 ---
 
 <section
@@ -12,8 +13,11 @@ import introVideo from '../assets/intro.webm';
 			muted
 			loop
 			playsinline
+			poster={introPoster.src}
+			preload="metadata"
 			src={introVideo}
-		/>
+		>
+		</video>
 		<div
 			class="absolute inset-0 bg-gradient-to-t from-base via-base/80 to-base/30 md:via-base/70 md:to-base/20"
 		>
