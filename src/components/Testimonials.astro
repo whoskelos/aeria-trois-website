@@ -35,6 +35,43 @@
 			</div>
 		</div>
 
+		<div
+			data-testimonials-loading
+			class="testimonials-loading"
+			role="status"
+			aria-live="polite"
+			aria-busy="true"
+		>
+			<div class="testimonials-loading__content">
+				<svg
+					class="testimonials-loading__spinner"
+					viewBox="0 0 32 32"
+					fill="none"
+					aria-hidden="true"
+				>
+					<circle
+						class="testimonials-loading__track"
+						cx="16"
+						cy="16"
+						r="13"
+						stroke="currentColor"
+						stroke-width="2"
+					></circle>
+					<circle
+						class="testimonials-loading__arc"
+						cx="16"
+						cy="16"
+						r="13"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-dasharray="20 62"
+					></circle>
+				</svg>
+				<p class="testimonials-loading__label">Cargando opiniones</p>
+			</div>
+		</div>
+
 		<div data-testimonials-host hidden aria-hidden="true"></div>
 	</div>
 </section>
@@ -113,6 +150,56 @@
 			rgb(226 184 87 / 0.07) 0%,
 			transparent 70%
 		);
+	}
+
+	.testimonials-loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 3rem;
+		min-height: clamp(19rem, 52vw, 22.5rem);
+	}
+
+	@media (min-width: 640px) {
+		.testimonials-loading {
+			margin-top: 4rem;
+		}
+	}
+
+	.testimonials-loading__content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 0.75rem;
+	}
+
+	.testimonials-loading__label {
+		margin: 0;
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: var(--color-subtle);
+	}
+
+	.testimonials-loading__spinner {
+		width: 2rem;
+		height: 2rem;
+		flex-shrink: 0;
+		color: var(--color-border);
+		animation: testimonials-loading-spin 0.85s linear infinite;
+	}
+
+	.testimonials-loading__arc {
+		color: var(--color-accent);
+		transform-origin: center;
+	}
+
+	@keyframes testimonials-loading-spin {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.testimonials-carousel {
@@ -486,6 +573,11 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.testimonials-loading__spinner {
+			animation: none;
+			opacity: 0.85;
+		}
+
 		.testimonials-carousel__slide,
 		.testimonials-carousel__arrow {
 			transition-duration: 150ms;

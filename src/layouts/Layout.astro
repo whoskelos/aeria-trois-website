@@ -132,7 +132,12 @@ const jsonLd = noindex
 			}
 
 			const testimonialsSection = document.querySelector('[data-testimonials-section]');
-			if (testimonialsSection) {
+			if (
+				testimonialsSection instanceof HTMLElement &&
+				testimonialsSection.dataset.testimonialsLoad !== 'pending'
+			) {
+				testimonialsSection.dataset.testimonialsLoad = 'pending';
+
 				const observer = new IntersectionObserver(
 					(entries) => {
 						if (!entries.some((entry) => entry.isIntersecting)) return;

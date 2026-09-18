@@ -5,9 +5,30 @@ import {
 	type TestimonialItem,
 } from './testimonialsCarousel';
 
-export async function loadTestimonials() {
+let loadPromise: Promise<void> | null = null;
+
+function hideTestimonialsLoading(loading: HTMLElement | null) {
+	if (!loading) return;
+
+	loading.hidden = true;
+	loading.setAttribute('aria-hidden', 'true');
+	loading.removeAttribute('aria-busy');
+}
+
+export function loadTestimonials() {
+	if (loadPromise) return loadPromise;
+
+	loadPromise = loadTestimonialsOnce().finally(() => {
+		loadPromise = null;
+	});
+
+	return loadPromise;
+}
+
+async function loadTestimonialsOnce() {
 	const section = document.querySelector('[data-testimonials-section]');
 	const host = document.querySelector<HTMLElement>('[data-testimonials-host]');
+	const loading = document.querySelector<HTMLElement>('[data-testimonials-loading]');
 	if (!section || !host) return;
 
 	section.setAttribute('aria-busy', 'true');
@@ -24,6 +45,8 @@ export async function loadTestimonials() {
 		const reviews = payload.reviews ?? [];
 		if (reviews.length === 0) return;
 
+		if (!host.isConnected) return;
+
 		const carousel = buildTestimonialsCarousel(reviews);
 		host.replaceChildren(carousel);
 		host.hidden = false;
@@ -32,8 +55,13 @@ export async function loadTestimonials() {
 		initTestimonialsCarousel(carousel, reviews.length);
 		initTestimonialModal(carousel);
 	} catch (error) {
-		console.error('Failed to load testimonials:', error);
+		if ((error as Error).name !== 'AbortError') {
+			console.error('Failed to load testimonials:', error);
+		}
 	} finally {
-		section.removeAttribute('aria-busy');
+		if (section.isConnected) {
+			hideTestimonialsLoading(loading);
+			section.removeAttribute('aria-busy');
+		}
 	}
 }
