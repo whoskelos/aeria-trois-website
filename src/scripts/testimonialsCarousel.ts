@@ -109,6 +109,10 @@ function createSlide(item: TestimonialItem, index: number) {
 	return article;
 }
 
+function isTestimonialModalOpen() {
+	return document.getElementById('testimonial-modal')?.dataset.open === 'true';
+}
+
 function renderModalStars(container: HTMLElement, count: number) {
 	container.replaceChildren();
 
@@ -133,12 +137,20 @@ export function initTestimonialModal(carousel: HTMLElement) {
 	let previouslyFocused: HTMLElement | null = null;
 
 	const closeModal = () => {
+		const restoreTarget = previouslyFocused;
+		previouslyFocused = null;
+
+		if (restoreTarget?.isConnected && !restoreTarget.hidden) {
+			restoreTarget.focus();
+		} else {
+			carousel.focus();
+		}
+
 		modal.dataset.open = 'false';
 		modal.setAttribute('aria-hidden', 'true');
+		modalStars.setAttribute('aria-hidden', 'true');
 		document.body.classList.remove('overflow-hidden');
 		document.dispatchEvent(new CustomEvent('testimonial-modal-toggle', { detail: { open: false } }));
-		previouslyFocused?.focus();
-		previouslyFocused = null;
 	};
 
 	const openModal = (slide: HTMLElement) => {
@@ -155,10 +167,11 @@ export function initTestimonialModal(carousel: HTMLElement) {
 
 		previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
+		document.dispatchEvent(new CustomEvent('testimonial-modal-toggle', { detail: { open: true } }));
+
 		modal.dataset.open = 'true';
 		modal.setAttribute('aria-hidden', 'false');
 		document.body.classList.add('overflow-hidden');
-		document.dispatchEvent(new CustomEvent('testimonial-modal-toggle', { detail: { open: true } }));
 
 		const closeButton = modal.querySelector<HTMLButtonElement>('[data-testimonial-modal-close-button]');
 		closeButton?.focus();
@@ -277,7 +290,7 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 	};
 
 	const startAutoplay = () => {
-		if (prefersReducedMotion || isPaused) return;
+		if (prefersReducedMotion || isPaused || isTestimonialModalOpen()) return;
 		stopAutoplay();
 		autoplayTimer = setInterval(() => goTo(active + 1, { fromAutoplay: true }), AUTOPLAY_MS);
 	};
@@ -315,6 +328,7 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 	});
 
 	carousel.addEventListener('mouseleave', () => {
+		if (isTestimonialModalOpen()) return;
 		isPaused = false;
 		startAutoplay();
 	});
@@ -326,12 +340,13 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 
 	carousel.addEventListener('focusout', (event: FocusEvent) => {
 		if (carousel.contains(event.relatedTarget as Node | null)) return;
+		if (isTestimonialModalOpen()) return;
 		isPaused = false;
 		startAutoplay();
 	});
 
 	document.addEventListener('visibilitychange', () => {
-		if (document.hidden) stopAutoplay();
+		if (document.hidden || isTestimonialModalOpen()) stopAutoplay();
 		else startAutoplay();
 	});
 
