@@ -47,6 +47,9 @@ function createSlide(item: TestimonialItem, index: number) {
 	article.className = 'testimonials-carousel__slide';
 	article.dataset.carouselSlide = '';
 	article.dataset.index = String(index);
+	article.dataset.comment = item.comment;
+	article.dataset.client = item.client;
+	article.dataset.stars = String(item.stars);
 	article.id = `testimonial-slide-${index}`;
 	article.setAttribute('aria-roledescription', 'slide');
 	article.setAttribute('aria-label', `Opinión de ${item.client}`);
@@ -57,9 +60,27 @@ function createSlide(item: TestimonialItem, index: number) {
 
 	const quoteIcon = createSvg(QUOTE_ICON_PATH, 'testimonials-card__quote-icon', '0 0 32 24');
 
+	const body = document.createElement('div');
+	body.className = 'testimonials-card__body';
+
 	const blockquote = document.createElement('blockquote');
 	blockquote.className = 'testimonials-card__comment';
-	blockquote.textContent = `\u201C${item.comment}\u201D`;
+
+	const commentText = document.createElement('p');
+	commentText.className = 'testimonials-card__comment-text';
+	commentText.textContent = `\u201C${item.comment}\u201D`;
+
+	blockquote.append(commentText);
+
+	const readMore = document.createElement('button');
+	readMore.type = 'button';
+	readMore.className = 'testimonials-card__read-more';
+	readMore.dataset.testimonialReadMore = '';
+	readMore.textContent = 'Leer más';
+	readMore.setAttribute('aria-label', `Leer opinión completa de ${item.client}`);
+	readMore.hidden = true;
+
+	body.append(blockquote, readMore);
 
 	const footer = document.createElement('footer');
 	footer.className = 'testimonials-card__footer';
@@ -82,10 +103,88 @@ function createSlide(item: TestimonialItem, index: number) {
 	}
 
 	footer.append(cite, stars);
-	card.append(quoteIcon, blockquote, footer);
+	card.append(quoteIcon, body, footer);
 	article.append(card);
 
 	return article;
+}
+
+function renderModalStars(container: HTMLElement, count: number) {
+	container.replaceChildren();
+
+	for (let starIndex = 0; starIndex < 5; starIndex += 1) {
+		const star = createSvg(
+			STAR_ICON_PATH,
+			`testimonials-card__star${starIndex < count ? ' testimonials-card__star--filled' : ''}`,
+		);
+		container.append(star);
+	}
+}
+
+export function initTestimonialModal(carousel: HTMLElement) {
+	const modal = document.getElementById('testimonial-modal');
+	const modalComment = document.getElementById('testimonial-modal-comment');
+	const modalClient = document.getElementById('testimonial-modal-client');
+	const modalStars = document.getElementById('testimonial-modal-stars');
+	const closeTriggers = modal?.querySelectorAll('[data-testimonial-modal-close]');
+
+	if (!modal || !modalComment || !modalClient || !modalStars) return;
+
+	let previouslyFocused: HTMLElement | null = null;
+
+	const closeModal = () => {
+		modal.dataset.open = 'false';
+		modal.setAttribute('aria-hidden', 'true');
+		document.body.classList.remove('overflow-hidden');
+		document.dispatchEvent(new CustomEvent('testimonial-modal-toggle', { detail: { open: false } }));
+		previouslyFocused?.focus();
+		previouslyFocused = null;
+	};
+
+	const openModal = (slide: HTMLElement) => {
+		const { comment, client, stars } = slide.dataset;
+		if (!comment || !client) return;
+
+		const starCount = Number(stars) || 0;
+
+		modalComment.textContent = `\u201C${comment}\u201D`;
+		modalClient.textContent = client;
+		renderModalStars(modalStars, starCount);
+		modalStars.setAttribute('aria-label', `${starCount} de 5 estrellas`);
+		modalStars.removeAttribute('aria-hidden');
+
+		previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+		modal.dataset.open = 'true';
+		modal.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('overflow-hidden');
+		document.dispatchEvent(new CustomEvent('testimonial-modal-toggle', { detail: { open: true } }));
+
+		const closeButton = modal.querySelector<HTMLButtonElement>('[data-testimonial-modal-close-button]');
+		closeButton?.focus();
+	};
+
+	carousel.addEventListener('click', (event) => {
+		const readMore = (event.target as Element | null)?.closest<HTMLButtonElement>('[data-testimonial-read-more]');
+		if (!readMore) return;
+
+		event.stopPropagation();
+
+		const slide = readMore.closest<HTMLElement>('[data-carousel-slide]');
+		if (!slide) return;
+
+		openModal(slide);
+	});
+
+	closeTriggers?.forEach((trigger) => {
+		trigger.addEventListener('click', closeModal);
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && modal.dataset.open === 'true') {
+			closeModal();
+		}
+	});
 }
 
 export function buildTestimonialsCarousel(testimonials: TestimonialItem[]) {
@@ -164,6 +263,18 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 		return diff;
 	};
 
+	const syncReadMoreVisibility = () => {
+		slides.forEach((slide) => {
+			const text = slide.querySelector<HTMLElement>('.testimonials-card__comment-text');
+			const readMore = slide.querySelector<HTMLElement>('[data-testimonial-read-more]');
+			if (!text || !readMore) return;
+
+			const isActive = slide.dataset.offset === '0';
+			const isTruncated = text.scrollHeight > text.clientHeight + 1;
+			readMore.hidden = !(isActive && isTruncated);
+		});
+	};
+
 	const updateSlides = () => {
 		carousel.dataset.active = String(active);
 
@@ -178,6 +289,8 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 			indicator.setAttribute('aria-selected', index === active ? 'true' : 'false');
 			indicator.dataset.active = index === active ? 'true' : 'false';
 		});
+
+		requestAnimationFrame(syncReadMoreVisibility);
 	};
 
 	const stopAutoplay = () => {
@@ -253,6 +366,13 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 		else startAutoplay();
 	});
 
+	document.addEventListener('testimonial-modal-toggle', (event) => {
+		const { open } = (event as CustomEvent<{ open: boolean }>).detail;
+		isPaused = open;
+		if (open) stopAutoplay();
+		else startAutoplay();
+	});
+
 	viewport?.addEventListener(
 		'touchstart',
 		(event: TouchEvent) => {
@@ -272,6 +392,16 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 		},
 		{ passive: true },
 	);
+
+	const resizeObserver = new ResizeObserver(() => syncReadMoreVisibility());
+	slides.forEach((slide) => {
+		const text = slide.querySelector('.testimonials-card__comment-text');
+		if (text) resizeObserver.observe(text);
+	});
+
+	if (document.fonts?.ready) {
+		document.fonts.ready.then(() => syncReadMoreVisibility()).catch(() => undefined);
+	}
 
 	updateSlides();
 	startAutoplay();

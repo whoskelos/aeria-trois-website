@@ -1,5 +1,6 @@
 import {
 	buildTestimonialsCarousel,
+	initTestimonialModal,
 	initTestimonialsCarousel,
 	type TestimonialItem,
 } from './testimonialsCarousel';
@@ -29,6 +30,7 @@ export async function loadTestimonials() {
 		host.removeAttribute('aria-hidden');
 
 		initTestimonialsCarousel(carousel, reviews.length);
+		initTestimonialModal(carousel);
 	} catch (error) {
 		console.error('Failed to load testimonials:', error);
 	} finally {
