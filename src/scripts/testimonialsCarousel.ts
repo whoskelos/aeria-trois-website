@@ -214,27 +214,9 @@ export function buildTestimonialsCarousel(testimonials: TestimonialItem[]) {
 	controls.className = 'testimonials-carousel__controls';
 
 	const prevBtn = createArrowButton('Opinión anterior', 'prev');
-
-	const indicators = document.createElement('div');
-	indicators.className = 'testimonials-carousel__indicators';
-	indicators.setAttribute('role', 'tablist');
-	indicators.setAttribute('aria-label', 'Seleccionar opinión');
-
-	testimonials.forEach((item, index) => {
-		const indicator = document.createElement('button');
-		indicator.type = 'button';
-		indicator.className = 'testimonials-carousel__indicator';
-		indicator.dataset.carouselIndicator = '';
-		indicator.dataset.index = String(index);
-		indicator.setAttribute('role', 'tab');
-		indicator.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
-		indicator.setAttribute('aria-label', item.client);
-		indicators.append(indicator);
-	});
-
 	const nextBtn = createArrowButton('Opinión siguiente', 'next');
 
-	controls.append(prevBtn, indicators, nextBtn);
+	controls.append(prevBtn, nextBtn);
 	carousel.append(viewport, controls);
 
 	return carousel;
@@ -242,7 +224,6 @@ export function buildTestimonialsCarousel(testimonials: TestimonialItem[]) {
 
 export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 	const slides = carousel.querySelectorAll<HTMLElement>('[data-carousel-slide]');
-	const indicators = carousel.querySelectorAll<HTMLButtonElement>('[data-carousel-indicator]');
 	const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-carousel-prev]');
 	const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-carousel-next]');
 	const viewport = carousel.querySelector<HTMLElement>('[data-carousel-viewport]');
@@ -285,11 +266,6 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 			slide.tabIndex = offset === 0 ? 0 : -1;
 		});
 
-		indicators.forEach((indicator, index) => {
-			indicator.setAttribute('aria-selected', index === active ? 'true' : 'false');
-			indicator.dataset.active = index === active ? 'true' : 'false';
-		});
-
 		requestAnimationFrame(syncReadMoreVisibility);
 	};
 
@@ -314,13 +290,6 @@ export function initTestimonialsCarousel(carousel: HTMLElement, total: number) {
 
 	prevBtn?.addEventListener('click', () => goTo(active - 1));
 	nextBtn?.addEventListener('click', () => goTo(active + 1));
-
-	indicators.forEach((indicator) => {
-		indicator.addEventListener('click', () => {
-			const index = Number(indicator.dataset.index);
-			if (!Number.isNaN(index)) goTo(index);
-		});
-	});
 
 	slides.forEach((slide) => {
 		slide.addEventListener('click', () => {
