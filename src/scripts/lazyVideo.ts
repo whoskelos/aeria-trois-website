@@ -9,22 +9,36 @@ export function ensureVideoSrc(video: HTMLVideoElement): boolean {
 	return true;
 }
 
-export function initLazyVideoPreviews() {
-	const videos = document.querySelectorAll<HTMLVideoElement>('video[data-lazy-video]');
-	if (!videos.length) return;
+const boundVideos = new WeakSet<HTMLVideoElement>();
 
-	const observer = new IntersectionObserver(
+let previewObserver: IntersectionObserver | null = null;
+
+function getPreviewObserver() {
+	if (previewObserver) return previewObserver;
+
+	previewObserver = new IntersectionObserver(
 		(entries) => {
 			for (const entry of entries) {
 				if (!entry.isIntersecting) continue;
 				ensureVideoSrc(entry.target as HTMLVideoElement);
-				observer.unobserve(entry.target);
+				previewObserver?.unobserve(entry.target as HTMLVideoElement);
 			}
 		},
 		{ rootMargin: '300px' },
 	);
 
+	return previewObserver;
+}
+
+export function observeLazyVideos(root: ParentNode = document) {
+	const videos = root.querySelectorAll<HTMLVideoElement>('video[data-lazy-video]');
+	if (!videos.length) return;
+
+	const observer = getPreviewObserver();
+
 	videos.forEach((video) => {
+		if (boundVideos.has(video)) return;
+		boundVideos.add(video);
 		observer.observe(video);
 
 		const trigger = video.closest('button');
@@ -47,6 +61,10 @@ export function initLazyVideoPreviews() {
 		trigger.addEventListener('focus', playPreview);
 		trigger.addEventListener('blur', pausePreview);
 	});
+}
+
+export function initLazyVideoPreviews() {
+	observeLazyVideos(document);
 }
 
 export function pauseLazyPreviewVideos(exclude?: HTMLVideoElement) {

@@ -11,28 +11,51 @@ export type GalleryMedia = {
 	alt: string;
 };
 
+export type GalleryNote = {
+	label: string;
+	text: string;
+};
+
 export type GalleryEvent = {
 	id: string;
 	title: string;
 	meta: string;
 	category: string;
-	description: string;
+	notes: GalleryNote[];
 	media: GalleryMedia[];
 };
 
-const eventDescriptions: Record<string, string> = {
-	'Festival-Centenera-Rock_Festival-Aldeacentenera-Caceres':
-		'Actuación de telas aéreas en el escenario del Centenera Rock, integrada con la programación en vivo del festival.',
-	'Festival-Enraizarte_Festival-Peñascosa-Albacete':
-		'Actuación de telas aéreas en el escenario del festival, integrada con la programación en vivo del evento.',
-	'Jornadas-De-Bienestar_Ayto-Arroyomolinos_Arroyomolinos-Madrid':
-		'Intervención de telas aéreas para las jornadas de bienestar organizadas por el Ayuntamiento de Arroyomolinos.',
-	'Jowke-Racing_Jowke-Club_Madrid-EventoPrivado':
-		'Número de telas aéreas en el Jowke Club, con coreografía adaptada al ambiente del evento privado.',
-	'Jowke-Racing_Jowke_Madrid-EventoPrivado':
-		'Performance aérea en el espacio Jowke, diseñada para el ritmo y la escala del evento privado.',
-	'Navipark_Feria-Navideña_Mostoles-Madrid':
-		'Espectáculo aéreo en la feria navideña de Navipark, con números pensados para familias y público general.',
+const eventNotes: Record<string, GalleryNote[]> = {
+	'Festival-Centenera-Rock_Festival-Aldeacentenera-Caceres': [
+		{ label: 'Ambiente', text: 'Escenario de noche, con la luz roja del festival.' },
+		{ label: 'Vestuario', text: 'Malla negra de lentejuelas, recortada.' },
+		{ label: 'Pieza', text: 'Coreografía metida en el directo del festival.' },
+	],
+	'Festival-Enraizarte_Festival-Peñascosa-Albacete': [
+		{ label: 'Ambiente', text: 'Plaza de pueblo, de día, con el público alrededor.' },
+		{ label: 'Vestuario', text: 'Rojo bordado y abanicos de color.' },
+		{ label: 'Pieza', text: 'Del suelo a la tela azul, en la misma pieza.' },
+	],
+	'Jowke-Racing_Jowke-Club_Madrid-EventoPrivado': [
+		{ label: 'Ambiente', text: 'Paddock de día, con el público en las gradas.' },
+		{ label: 'Vestuario', text: 'Rojo y negro con cuadros de competición.' },
+		{ label: 'Pieza', text: 'Telas negras, pensadas para verse desde lejos.' },
+	],
+	'Jowke-Racing_Jowke_Madrid-EventoPrivado': [
+		{ label: 'Ambiente', text: 'La misma pista, de noche y con focos.' },
+		{ label: 'Vestuario', text: 'Amarillo y negro sobre la tela oscura.' },
+		{ label: 'Pieza', text: 'Caídas y suspensiones más largas.' },
+	],
+	'Jornadas-De-Bienestar_Ayto-Arroyomolinos_Arroyomolinos-Madrid': [
+		{ label: 'Ambiente', text: 'Al aire libre, delante de la torre de ladrillo.' },
+		{ label: 'Vestuario', text: 'Blanco, con telas azules.' },
+		{ label: 'Pieza', text: 'Movimiento más pausado, de jornada de bienestar.' },
+	],
+	'Navipark_Feria-Navideña_Mostoles-Madrid': [
+		{ label: 'Ambiente', text: 'Feria de noche, con luces y pompas.' },
+		{ label: 'Vestuario', text: 'Claro, con telas naranjas.' },
+		{ label: 'Pieza', text: 'Número para familias, con el pase en vídeo.' },
+	],
 };
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>('../assets/gallery/**/*.webp', {
@@ -187,9 +210,12 @@ export function getGalleryEvents(): GalleryEvent[] {
 			title,
 			meta,
 			category: 'Telas aéreas',
-			description:
-				eventDescriptions[id] ??
-				`Número aéreo en ${title.toLowerCase()}, adaptado al espacio y al ritmo del evento.`,
+			notes: eventNotes[id] ?? [
+				{
+					label: 'Pieza',
+					text: `Número aéreo en ${title.toLowerCase()}, adaptado al espacio y al ritmo del evento.`,
+				},
+			],
 			media,
 		};
 	});

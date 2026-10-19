@@ -91,7 +91,6 @@
 	const lightboxImage = document.getElementById('experience-lightbox-image') as HTMLImageElement | null;
 	const lightboxVideo = document.getElementById('experience-lightbox-video') as HTMLVideoElement | null;
 	const lightboxCaption = document.getElementById('experience-lightbox-caption');
-	const items = document.querySelectorAll<HTMLButtonElement>('[data-experience-item]');
 	const closeTriggers = document.querySelectorAll('[data-experience-close]');
 	let previouslyFocused: HTMLElement | null = null;
 
@@ -157,8 +156,14 @@
 		previouslyFocused = null;
 	};
 
-	items.forEach((item) => {
-		item.addEventListener('click', () => openLightbox(item));
+	document.addEventListener('click', (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) return;
+
+		const item = target.closest<HTMLButtonElement>('[data-experience-item]');
+		if (!item) return;
+
+		openLightbox(item);
 	});
 
 	closeTriggers.forEach((trigger) => {

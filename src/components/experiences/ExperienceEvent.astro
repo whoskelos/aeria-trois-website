@@ -1,6 +1,6 @@
 ---
 import type { GalleryEvent } from '../../lib/gallery';
-import { assignBentoFormats } from '../../lib/bentoLayout';
+import { assignBentoFormats, isOpeningBand } from '../../lib/bentoLayout';
 import ExperienceMediaTile from './ExperienceMediaTile.astro';
 
 interface Props {
@@ -10,12 +10,22 @@ interface Props {
 
 const { event, isFirstEvent = false } = Astro.props;
 const bentoAssignments = assignBentoFormats(event.media);
+const preview = event.media.flatMap((media, index) => {
+	const assignment = bentoAssignments[index];
+	return assignment && isOpeningBand(assignment, index) ? [{ media, assignment, index }] : [];
+});
+const rest = event.media.flatMap((media, index) => {
+	const assignment = bentoAssignments[index];
+	return assignment && !isOpeningBand(assignment, index) ? [{ media, assignment, index }] : [];
+});
+const gridId = `event-grid-${event.id}`;
+const restLabel = rest.length === 1 ? 'Ver 1 foto más' : `Ver ${rest.length} fotos más`;
 ---
 
 <article class="border-b border-border-subtle px-6 py-14 sm:py-20" aria-labelledby={`event-${event.id}`}>
 	<div class="mx-auto max-w-7xl">
 		<header
-			class="mb-8 flex flex-col gap-6 lg:mb-10 lg:flex-row lg:items-start lg:justify-between"
+			class="mb-8 flex flex-col gap-6 lg:mb-10 lg:flex-row lg:items-center lg:justify-between"
 			data-reveal
 		>
 			<div class="max-w-xl">
@@ -32,19 +42,31 @@ const bentoAssignments = assignBentoFormats(event.media);
 					{event.meta}
 				</p>
 			</div>
-			<p class="max-w-sm text-sm leading-relaxed text-muted lg:max-w-md lg:pt-8 lg:text-right">
-				{event.description}
-			</p>
+			<dl class="grid max-w-md gap-4 border-t border-border-subtle pt-5 lg:shrink-0 lg:border-t-0 lg:border-l lg:pt-1 lg:pl-8">
+				{
+					event.notes.map((note) => (
+						<div>
+							<dt class="text-sm text-accent">{note.label}</dt>
+							<dd class="mt-1 text-sm leading-relaxed text-foreground">{note.text}</dd>
+						</div>
+					))
+				}
+			</dl>
 		</header>
 
 		{
-			event.media.length > 0 && (
-				<div class="bento-grid experience-bento" data-reveal>
+			preview.length > 0 && (
+				<div
+					id={gridId}
+					class="bento-grid experience-bento"
+					data-experience-grid
+					data-reveal
+				>
 					{
-						event.media.map((media, index) => (
+						preview.map(({ media, assignment, index }) => (
 							<ExperienceMediaTile
 								media={media}
-								assignment={bentoAssignments[index]}
+								assignment={assignment}
 								eventTitle={event.title}
 								priority={isFirstEvent && index === 0 && media.type === 'image'}
 							/>
@@ -53,5 +75,94 @@ const bentoAssignments = assignBentoFormats(event.media);
 				</div>
 			)
 		}
+
+		{
+			rest.length > 0 && (
+				<>
+					<template data-experience-rest>
+						{
+							rest.map(({ media, assignment }) => (
+								<ExperienceMediaTile
+									media={media}
+									assignment={assignment}
+									eventTitle={event.title}
+									extra
+								/>
+							))
+						}
+					</template>
+					<button
+						type="button"
+						class="experience-more mt-6 inline-flex min-h-11 items-center gap-3 rounded-full border border-border bg-surface px-5 text-sm text-foreground transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+						data-experience-more
+						data-rest-label={restLabel}
+						aria-expanded="false"
+						aria-controls={gridId}
+					>
+						<span data-experience-more-label>{restLabel}</span>
+						<svg class="experience-more__chevron h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+							<path d="M6 9l6 6 6-6"></path>
+						</svg>
+					</button>
+				</>
+			)
+		}
 	</div>
 </article>
+
+<script>
+	import { observeLazyVideos } from '../../scripts/lazyVideo';
+
+	const setOpen = (button: HTMLButtonElement, grid: HTMLElement, open: boolean) => {
+		grid.querySelectorAll<HTMLElement>('[data-experience-extra]').forEach((item) => {
+			item.hidden = !open;
+			if (open) return;
+
+			item.querySelectorAll('video').forEach((video) => {
+				video.pause();
+				video.currentTime = 0;
+			});
+		});
+
+		button.setAttribute('aria-expanded', String(open));
+		const label = button.querySelector('[data-experience-more-label]');
+		if (label) label.textContent = open ? 'Ocultar' : button.dataset.restLabel || 'Ver el resto';
+	};
+
+	document.addEventListener('click', (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) return;
+
+		const button = target.closest<HTMLButtonElement>('[data-experience-more]');
+		if (!button) return;
+
+		const article = button.closest('article');
+		const grid = article?.querySelector<HTMLElement>('[data-experience-grid]');
+		const template = article?.querySelector<HTMLTemplateElement>('template[data-experience-rest]');
+		if (!grid || !template) return;
+
+		const open = button.getAttribute('aria-expanded') === 'true';
+		if (!open && !grid.querySelector('[data-experience-extra]')) {
+			grid.append(template.content.cloneNode(true));
+			observeLazyVideos(grid);
+		}
+
+		setOpen(button, grid, !open);
+	});
+</script>
+
+<style>
+	.experience-more__chevron {
+		transition: transform 300ms var(--ease-out);
+	}
+
+	.experience-more[aria-expanded='true'] .experience-more__chevron {
+		transform: rotate(180deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.experience-more__chevron {
+			transition: none;
+		}
+	}
+</style>
