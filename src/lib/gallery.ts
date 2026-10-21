@@ -11,28 +11,81 @@ export type GalleryMedia = {
 	alt: string;
 };
 
+export type GalleryNote = {
+	label: string;
+	text: string;
+};
+
 export type GalleryEvent = {
 	id: string;
 	title: string;
 	meta: string;
 	category: string;
-	description: string;
+	notes: GalleryNote[];
 	media: GalleryMedia[];
 };
 
-const eventDescriptions: Record<string, string> = {
-	'Festival-Centenera-Rock_Festival-Aldeacentenera-Caceres':
-		'Actuación de telas aéreas en el escenario del Centenera Rock, integrada con la programación en vivo del festival.',
-	'Festival-Enraizarte_Festival-Peñascosa-Albacete':
-		'Actuación de telas aéreas en el escenario del festival, integrada con la programación en vivo del evento.',
-	'Jornadas-De-Bienestar_Ayto-Arroyomolinos_Arroyomolinos-Madrid':
-		'Intervención de telas aéreas para las jornadas de bienestar organizadas por el Ayuntamiento de Arroyomolinos.',
-	'Jowke-Racing_Jowke-Club_Madrid-EventoPrivado':
-		'Número de telas aéreas en el Jowke Club, con coreografía adaptada al ambiente del evento privado.',
-	'Jowke-Racing_Jowke_Madrid-EventoPrivado':
-		'Performance aérea en el espacio Jowke, diseñada para el ritmo y la escala del evento privado.',
-	'Navipark_Feria-Navideña_Mostoles-Madrid':
-		'Espectáculo aéreo en la feria navideña de Navipark, con números pensados para familias y público general.',
+const eventNotes: Record<string, GalleryNote[]> = {
+	'Festival-Centenera-Rock_Festival-Aldeacentenera-Caceres': [
+		{
+			label: 'Ambiente',
+			text: 'Escenario de noche con luces acorde a la intensidad del baile.',
+		},
+		{
+			label: 'Vestuario',
+			text: 'Hecho a mano, sacando la versión más rockera de Aeria Trois.',
+		},
+		{
+			label: 'Pieza',
+			text: 'Mezcla musical de 20 minutos con las baladas más emblemáticas del mundo del rock.',
+		},
+	],
+	'Festival-Enraizarte_Festival-Peñascosa-Albacete': [
+		{ label: 'Ambiente', text: 'Plaza de pueblo, de día, con el público alrededor.' },
+		{
+			label: 'Vestuario',
+			text: 'Piezas hechas a mano recreando las raíces del mundo: agua, tierra y fuego.',
+		},
+		{
+			label: 'Pieza',
+			text: 'Mezcla musical de 25 minutos con narración de una historia.',
+		},
+	],
+	'Jowke-Racing_Jowke-Club_Madrid-EventoPrivado': [
+		{ label: 'Ambiente', text: 'Evento privado de concentración de coches.' },
+		{
+			label: 'Vestuario',
+			text: 'Moteras con trenza tematizada con bengalas de humo rojas.',
+		},
+		{
+			label: 'Pieza',
+			text: 'Dos pases con pieza musical de 15 minutos inspirada en Fast & Furious.',
+		},
+	],
+	'Jowke-Racing_Jowke_Madrid-EventoPrivado': [
+		{ label: 'Ambiente', text: 'Evento privado de exposición de coches.' },
+		{ label: 'Vestuario', text: 'Body neón ambientado en Anas Racing.' },
+		{ label: 'Pieza', text: 'Mezcla musical con una duración de 10 minutos.' },
+	],
+	'Jornadas-De-Bienestar_Ayto-Arroyomolinos_Arroyomolinos-Madrid': [
+		{
+			label: 'Ambiente',
+			text: 'En mitad de la plaza frente a un monumento emblemático de la ciudad.',
+		},
+		{ label: 'Vestuario', text: 'Temática celta hecha a mano.' },
+		{
+			label: 'Pieza',
+			text: 'Mezcla musical de 15 minutos buscando los éxitos celtas como El último mohicano.',
+		},
+	],
+	'Navipark_Feria-Navideña_Mostoles-Madrid': [
+		{ label: 'Ambiente', text: 'Actuación nocturna en un parque de Navidad.' },
+		{ label: 'Vestuario', text: 'Hada mágica de la Navidad y del invierno.' },
+		{
+			label: 'Pieza',
+			text: 'Número musical de 20 minutos con puesta en escena e historia a ver.',
+		},
+	],
 };
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>('../assets/gallery/**/*.webp', {
@@ -187,9 +240,12 @@ export function getGalleryEvents(): GalleryEvent[] {
 			title,
 			meta,
 			category: 'Telas aéreas',
-			description:
-				eventDescriptions[id] ??
-				`Número aéreo en ${title.toLowerCase()}, adaptado al espacio y al ritmo del evento.`,
+			notes: eventNotes[id] ?? [
+				{
+					label: 'Pieza',
+					text: `Número aéreo en ${title.toLowerCase()}, adaptado al espacio y al ritmo del evento.`,
+				},
+			],
 			media,
 		};
 	});

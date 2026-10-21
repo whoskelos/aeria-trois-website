@@ -14,9 +14,10 @@ interface Props {
 	assignment: BentoAssignment;
 	eventTitle: string;
 	priority?: boolean;
+	extra?: boolean;
 }
 
-const { media, assignment, eventTitle, priority = false } = Astro.props;
+const { media, assignment, eventTitle, priority = false, extra = false } = Astro.props;
 const { format } = assignment;
 const placementStyle = bentoPlacementStyle(assignment);
 ---
@@ -24,7 +25,7 @@ const placementStyle = bentoPlacementStyle(assignment);
 <button
 	type="button"
 	class:list={[
-		'experience-tile bento-cell group relative min-h-0 w-full overflow-hidden border border-border-subtle bg-surface p-0 text-left',
+		'experience-tile bento-cell group relative min-h-0 w-full cursor-pointer overflow-hidden border border-border-subtle bg-surface p-0 text-left',
 		'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
 		bentoSpanClasses[format],
 		bentoPlacementClass(assignment),
@@ -32,6 +33,7 @@ const placementStyle = bentoPlacementStyle(assignment);
 	]}
 	style={placementStyle}
 	data-experience-item
+	data-experience-extra={extra ? '' : undefined}
 	data-media-type={media.type}
 	data-media-src={media.src}
 	data-media-alt={media.alt}

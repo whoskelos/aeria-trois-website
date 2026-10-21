@@ -170,6 +170,14 @@ function pickFormatForSlot(
 	return fallbackOrder.find((format) => available.includes(format)) ?? available[0];
 }
 
+const OPENING_BAND_ROWS = DESKTOP_CELLS.hero.rows;
+
+/** First visual row of the desktop mosaic: the hero band (rows 0–5). */
+export function isOpeningBand(assignment: BentoAssignment, index: number): boolean {
+	if (!assignment.placement) return index < 4;
+	return assignment.placement.row < OPENING_BAND_ROWS;
+}
+
 export function assignBentoFormats(media: GalleryMedia[]): BentoAssignment[] {
 	if (media.length === 0) return [];
 
