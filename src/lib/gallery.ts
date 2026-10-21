@@ -27,34 +27,64 @@ export type GalleryEvent = {
 
 const eventNotes: Record<string, GalleryNote[]> = {
 	'Festival-Centenera-Rock_Festival-Aldeacentenera-Caceres': [
-		{ label: 'Ambiente', text: 'Escenario de noche, con la luz roja del festival.' },
-		{ label: 'Vestuario', text: 'Malla negra de lentejuelas, recortada.' },
-		{ label: 'Pieza', text: 'Coreografía metida en el directo del festival.' },
+		{
+			label: 'Ambiente',
+			text: 'Escenario de noche con luces acorde a la intensidad del baile.',
+		},
+		{
+			label: 'Vestuario',
+			text: 'Hecho a mano, sacando la versión más rockera de Aeria Trois.',
+		},
+		{
+			label: 'Pieza',
+			text: 'Mezcla musical de 20 minutos con las baladas más emblemáticas del mundo del rock.',
+		},
 	],
 	'Festival-Enraizarte_Festival-Peñascosa-Albacete': [
 		{ label: 'Ambiente', text: 'Plaza de pueblo, de día, con el público alrededor.' },
-		{ label: 'Vestuario', text: 'Rojo bordado y abanicos de color.' },
-		{ label: 'Pieza', text: 'Del suelo a la tela azul, en la misma pieza.' },
+		{
+			label: 'Vestuario',
+			text: 'Piezas hechas a mano recreando las raíces del mundo: agua, tierra y fuego.',
+		},
+		{
+			label: 'Pieza',
+			text: 'Mezcla musical de 25 minutos con narración de una historia.',
+		},
 	],
 	'Jowke-Racing_Jowke-Club_Madrid-EventoPrivado': [
-		{ label: 'Ambiente', text: 'Paddock de día, con el público en las gradas.' },
-		{ label: 'Vestuario', text: 'Rojo y negro con cuadros de competición.' },
-		{ label: 'Pieza', text: 'Telas negras, pensadas para verse desde lejos.' },
+		{ label: 'Ambiente', text: 'Evento privado de concentración de coches.' },
+		{
+			label: 'Vestuario',
+			text: 'Moteras con trenza tematizada con bengalas de humo rojas.',
+		},
+		{
+			label: 'Pieza',
+			text: 'Dos pases con pieza musical de 15 minutos inspirada en Fast & Furious.',
+		},
 	],
 	'Jowke-Racing_Jowke_Madrid-EventoPrivado': [
-		{ label: 'Ambiente', text: 'La misma pista, de noche y con focos.' },
-		{ label: 'Vestuario', text: 'Amarillo y negro sobre la tela oscura.' },
-		{ label: 'Pieza', text: 'Caídas y suspensiones más largas.' },
+		{ label: 'Ambiente', text: 'Evento privado de exposición de coches.' },
+		{ label: 'Vestuario', text: 'Body neón ambientado en Anas Racing.' },
+		{ label: 'Pieza', text: 'Mezcla musical con una duración de 10 minutos.' },
 	],
 	'Jornadas-De-Bienestar_Ayto-Arroyomolinos_Arroyomolinos-Madrid': [
-		{ label: 'Ambiente', text: 'Al aire libre, delante de la torre de ladrillo.' },
-		{ label: 'Vestuario', text: 'Blanco, con telas azules.' },
-		{ label: 'Pieza', text: 'Movimiento más pausado, de jornada de bienestar.' },
+		{
+			label: 'Ambiente',
+			text: 'En mitad de la plaza frente a un monumento emblemático de la ciudad.',
+		},
+		{ label: 'Vestuario', text: 'Temática celta hecha a mano.' },
+		{
+			label: 'Pieza',
+			text: 'Mezcla musical de 15 minutos buscando los éxitos celtas como El último mohicano.',
+		},
 	],
 	'Navipark_Feria-Navideña_Mostoles-Madrid': [
-		{ label: 'Ambiente', text: 'Feria de noche, con luces y pompas.' },
-		{ label: 'Vestuario', text: 'Claro, con telas naranjas.' },
-		{ label: 'Pieza', text: 'Número para familias, con el pase en vídeo.' },
+		{ label: 'Ambiente', text: 'Actuación nocturna en un parque de Navidad.' },
+		{ label: 'Vestuario', text: 'Hada mágica de la Navidad y del invierno.' },
+		{
+			label: 'Pieza',
+			text: 'Número musical de 20 minutos con puesta en escena e historia a ver.',
+		},
 	],
 };
 
